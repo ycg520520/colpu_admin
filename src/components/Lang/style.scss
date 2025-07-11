@@ -6,9 +6,11 @@
   &-icon {
     $color: rgba(255, 255, 255, 0.88);
     position: absolute;
-    font-size: 1em;
-    line-height: 1;
+    font-size: 14px;
+    line-height: 16px;
+    text-align: center;
     border: 1px solid $color;
+    border-radius: 3px;
     color: $color;
     bottom: 0;
     right: 0;
