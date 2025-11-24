@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-03-18 20:41:58
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-06-26 11:11:55
+ * @LastEditTime: 2025-11-24 16:44:14
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -18,15 +18,31 @@ export default {
     center: "User center",
     settings: "Account Settings",
   },
-  // example: {
-  //   name: "Example",
-  //   mock: "Mock Data",
-  //   search: "Search List",
-  //   redux: {
-  //     name: "Redux Example",
-  //     sub: "Sub Redux",
-  //     subIndex: "Redux SubIndex",
-  //   },
-  // },
-  // nochild: 'Nochild'
+  system: {
+    name: "System Manger",
+    user: {
+      name: "User Manger",
+      add: "Add User",
+      edit: "Edit User",
+    },
+    role: {
+      name: "Role Manger",
+      add: "Add Role",
+      edit: "Edit Role",
+    },
+    dict: {
+      name: "Dict Manger",
+      data: "Dict Data",
+    },
+    menu: "Menu Manager",
+    dept: "Department Manager",
+    post: "Post Manager",
+  },
+  example: {
+    form: "Form Example",
+    table: "Table Example",
+    layout: "Child Layout",
+    other_layout: "Other Layout",
+    link: "External Link",
+  },
 };

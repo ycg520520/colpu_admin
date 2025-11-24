@@ -4,7 +4,7 @@
  * @Author: colpu
  * @Date: 2025-03-18 21:23:51
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-07-11 00:27:31
+ * @LastEditTime: 2025-11-23 14:35:04
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -15,7 +15,7 @@ export const noMatchRouter: RouteType = {
     meta: {
       title: "404",
     },
-    hiddenTitle: true,
+    hideTitle: true,
   },
   element: "exception/404",
 };
@@ -28,7 +28,7 @@ export const baseRouter: RouteType[] = [
       meta: {
         title: "用户登录",
       },
-      hiddenTitle: true,
+      hideTitle: true,
     },
     element: "login/index",
   },
@@ -39,7 +39,7 @@ export const baseRouter: RouteType[] = [
       meta: {
         title: "服务错误",
       },
-      hiddenTitle: true,
+      hideTitle: true,
     },
     element: "exception/403",
   },
@@ -50,7 +50,7 @@ export const baseRouter: RouteType[] = [
       meta: {
         title: "服务错误",
       },
-      hiddenTitle: true,
+      hideTitle: true,
     },
     element: "exception/500",
   },
@@ -64,6 +64,7 @@ export const asyncRouter: RouteType[] = [
   // {
   //   path: "dashboard",
   //   handle: {
+  //     layout: 'MainLayout',
   //     name: "dashboard",
   //     icon: "SpotifyOutlined",
   //     translationKey: "menu.dashboard.name",
@@ -87,7 +88,7 @@ export const asyncRouter: RouteType[] = [
   //       handle: {
   //         name: "analysis",
   //         translationKey: "menu.dashboard.analysis",
-  //         roles: ["editor"],
+  //         roles: ["admin","editor"],
   //       },
   //       lazy: "dashboard/analysis",
   //     },

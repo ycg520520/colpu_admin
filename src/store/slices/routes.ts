@@ -2,11 +2,11 @@
  * @Author: colpu
  * @Date: 2025-07-02 08:48:54
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-07-10 01:14:03
+ * @LastEditTime: 2025-10-27 11:59:56
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
-import { apiRoutes, RoutesResponse } from "@/api/routes";
+import { getRoutes } from "@/api/menus";
 import { RouteType } from "@/router";
 import { StatusEnum, Status } from "@/types";
 import { createSlice } from "@reduxjs/toolkit";
@@ -27,16 +27,16 @@ const routesSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(apiRoutes.pending, (state) => {
+      .addCase(getRoutes.pending, (state) => {
         state.status = StatusEnum.LOADING;
         state.error = undefined;
       })
-      .addCase(apiRoutes.fulfilled, (state, action) => {
-        const payload = action.payload as RoutesResponse;
-        state.routes = payload.data;
+      .addCase(getRoutes.fulfilled, (state, action) => {
+        const payload = action.payload as RouteType[];
+        state.routes = payload;
         state.status = StatusEnum.SUCCEEDED;
       })
-      .addCase(apiRoutes.rejected, (state, action) => {
+      .addCase(getRoutes.rejected, (state, action) => {
         state.error =
           typeof action.payload === "string"
             ? action.payload

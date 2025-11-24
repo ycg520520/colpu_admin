@@ -2,58 +2,47 @@
  * @Author: colpu
  * @Date: 2025-06-15 14:30:04
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-07-10 01:35:45
+ * @LastEditTime: 2025-11-12 21:59:57
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 
-import { User } from "@/store/slices/user/types";
+import { ObjectMaps } from "@/types";
 import { createThunk } from "@/utils";
-import { post } from "@/utils/request";
+import $http, { get, post, RequestMethod } from "@/utils/request";
 
-export interface UserRequest {
-  username: string;
-  password: string;
-}
-export interface UserResponse {
-  userInfo: User;
-  token: string;
-  refreshToken: string;
-}
-export const apiLogin = createThunk<UserRequest>("user/login", async (data) =>
-  post("/api/login", data)
+export const getUserToken = createThunk("token", (data: ObjectMaps) => {
+  return post("/api/token", { grant_type: "password", ...data });
+});
+
+export const getUserInfo = createThunk("user/info", () =>
+  get("/api/user/info")
 );
 
-export const apiRole = async () => {
-  // 模拟登出API请求
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ success: true });
-    }, 500);
-  });
-};
-export const aliLogout = async () => {
-  // 模拟登出API请求
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ success: true });
-    }, 500);
-  });
+export const getUserList = (params: any) => {
+  return get("/api/user/list", { params });
 };
 
-export const apiGetUserInfo = async () => {
-  // 模拟获取用户信息API请求
+export const getUserById = (id: any) => {
+  return get("/api/user", { params: { id } });
+};
+
+export const getCheckUser = (params: ObjectMaps) => {
+  return get("/api/user/check", { params, extra: { original: true } });
+};
+
+export const apiUser = (params: ObjectMaps, method: RequestMethod = "get") => {
+  return ($http as any)[method](
+    "/api/user",
+    ["get", "delete"].includes(method) ? { params } : params
+  );
+};
+
+export const getRoleList = (params: any) => {
+  return get("/api/role/list", { params });
+};
+export const postLogout = () => {
   return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        data: {
-          user: {
-            id: "1",
-            name: "John Doe",
-            email: "",
-          },
-        },
-      });
-    });
+    resolve({ status: 0, message: "登出成功" });
   });
 };

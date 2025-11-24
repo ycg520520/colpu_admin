@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-15 12:01:36
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-07-11 00:20:17
+ * @LastEditTime: 2025-11-24 00:54:32
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -17,31 +17,43 @@ export function composeMenu(
   translation?: TFunction,
   iconFunction?: IconFunction
 ): MenuDataItem[] {
-  if (!routes) return [];
-  const list = routes
-    .map((route: RouteType): MenuDataItem | undefined => {
-      const { index, children = [], path, handle = {} } = route;
-      const { hidden, icon, translationKey, ns, name } = handle;
-      if (index || hidden || !path) return;
-      const item: MenuDataItem = {
-        path,
-        icon: icon && iconFunction ? iconFunction(icon) : undefined,
-        name,
-      };
-      if (children.length) {
-        item.children = composeMenu(children, translation, iconFunction);
-      }
+  if (!routes.length) return [];
+  const menuList: MenuDataItem[] = [];
+  for (let idx = 0; idx < routes.length; idx++) {
+    const route: RouteType = routes[idx];
+    const { index, children = [], path, handle = {} } = route;
+    const {
+      icon,
+      translationKey,
+      ns,
+      name,
+      hideChildrenInMenu,
+      hideInMenu,
+      hideTitle,
+      target,
+    } = handle;
+    if ((index || !path) && !handle.layout) continue;
 
-      if (translation && translationKey) {
-        item.name = translation(translationKey, { ns });
-      }
-      return item;
-    })
-    .filter((item): item is MenuDataItem => !!item);
-  if (list.length === 1 && Array.isArray(list[0])) {
-    return list[0];
+    const item: MenuDataItem = {
+      path,
+      icon: icon && iconFunction ? iconFunction(icon) : undefined,
+      name,
+      hideChildrenInMenu,
+      hideInMenu,
+      hideTitle,
+      target,
+    };
+
+    if (children.length) {
+      item.children = composeMenu(children, translation, iconFunction);
+    }
+
+    if (translation && translationKey) {
+      item.name = translation(translationKey, { ns });
+    }
+    menuList.push(item);
   }
-  return list;
+  return menuList;
 }
 
 export function createThunk<T>(
@@ -96,7 +108,7 @@ export function installTree(
   }
   for (const i in dict) {
     const item = dict[i];
-    const father = item[key_fid];
+    const father = item[key_fid] || 0;
     const fatherData = dict[father];
     if (father > 0 && fatherData) {
       if (!fatherData.children) {
@@ -109,7 +121,8 @@ export function installTree(
   const result: any[] = [];
   for (const i in dict) {
     const item = dict[i];
-    if (item[key_fid] === id || item[key_id] === id) {
+    const father = item[key_fid] || 0;
+    if (father === id || item[key_id] === id) {
       filterItem.push(item);
       result.push(item);
     }
@@ -135,6 +148,125 @@ export function installTree(
     loop(filterItem, res);
     return res;
   }
+  return result;
+}
+export function treeToPlan(data: any, arr: any[] = []) {
+  data.forEach((item: any) => {
+    arr.push(item);
+    if (item.children) {
+      treeToPlan(item.children, arr);
+    }
+  });
+  return arr;
+}
+/**
+ * 筛选出复合条件的数据，并保留其子节点
+ * 用于筛选树形数据
+ * eg: const predicate = (item: any) => item.status === 1; // 筛选出 status 为 1 的数据
+ * @param tree
+ * @param predicate
+ * @param childrenKey
+ * @returns
+ */
+export function filterTree(
+  tree: any[],
+  predicate: (item: any) => any,
+  childrenKey: string = "children"
+) {
+  return tree
+    .map((item) => ({ ...item }))
+    .filter((item) => {
+      if (item[childrenKey] && item.children.length) {
+        item[childrenKey] = filterTree(item.children, predicate, childrenKey);
+      }
+      return (
+        predicate(item) || (item[childrenKey] && item[childrenKey].length > 0)
+      );
+    });
+}
 
+export function pagination(pages: any, options?: any): any {
+  const { defaultPageSize = 10, showTotal } = options || {};
+  const pageSizeOptions = [10, 20, 30, 40, 50, 100];
+  if (pageSizeOptions.indexOf(defaultPageSize) === -1) {
+    pageSizeOptions.push(defaultPageSize);
+    pageSizeOptions.sort((a, b) => a - b);
+  }
+  const { page: current, pageSize, total } = pages;
+  return {
+    current,
+    pageSize,
+    total,
+    size: "small",
+    defaultPageSize,
+    pageSizeOptions,
+    showSizeChanger: true,
+    showQuickJumper: true,
+    showTotal: showTotal
+      ? showTotal
+      : (total: number, range: any) =>
+          `第 ${range[0]}-${range[1]} 条，共 ${total} 条`,
+  };
+}
+
+/**
+ * 获取元素距离文档顶部的距离
+ * @param {HTMLElement} element - 目标元素
+ * @param {boolean} includeMargin - 是否包含外边距
+ * @returns {number} 距离顶部的像素值
+ */
+export function getOffsetTop(
+  element: HTMLElement | null,
+  includeMargin: boolean = false
+): number {
+  if (!element) return 0;
+
+  let top = 0;
+
+  // 方法1: 使用 getBoundingClientRect (推荐)
+  if (element.getBoundingClientRect) {
+    const rect = element.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    top = rect.top + scrollTop;
+
+    // 如果包含外边距
+    if (includeMargin) {
+      const styles = window.getComputedStyle(element);
+      const marginTop = parseFloat(styles.marginTop) || 0;
+      top -= marginTop;
+    }
+  }
+  // 方法2: 传统 offsetTop 方法
+  else {
+    top = element.offsetTop;
+    let parent: any = element.offsetParent;
+
+    while (parent) {
+      top += parent.offsetTop;
+      parent = parent.offsetParent;
+    }
+  }
+
+  return top;
+}
+
+export const sleep = (time: number = 100) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, time);
+  });
+};
+
+export function filterValues(data: any) {
+  if (Array.isArray(data)) {
+    return data.filter((item) => item !== null && item !== undefined);
+  }
+  const result: any = {};
+  Object.keys(data).forEach((key: string) => {
+    if (data[key] !== null && data[key] !== undefined) {
+      result[key] = data[key];
+    }
+  });
   return result;
 }

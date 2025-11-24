@@ -39,7 +39,6 @@ export type RouteHandle = {
   permissions?: string[]; // 权限列表
   roles?: string[]; // 角色列表
   icon?: string; // 图标
-  hidden?: boolean; // 是否隐藏，控制路由是否显示在Sidebar
   danger?: boolean; // 是否危险操作
   /** @name 在菜单中隐藏子节点 */
   hideChildrenInMenu?: boolean;
@@ -52,7 +51,7 @@ export type RouteHandle = {
   fallback?: React.ReactNode;
   translationKey?: string; // 国际化对应健值
   ns?: string; // 国际化对应命名空间
-  hiddenTitle?: boolean; // 隐藏PageContainer组件的标题
+  hideTitle?: boolean; // 隐藏PageContainer组件的标题
   [key: string]: any;
 };
 

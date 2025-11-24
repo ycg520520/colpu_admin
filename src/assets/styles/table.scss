@@ -1,0 +1,29 @@
+.ant-table-wrapper .ant-table .ant-table-thead > tr > th,
+.ant-table-wrapper .ant-table .ant-table-tbody > tr > th,
+.ant-table-wrapper .ant-table .ant-table-tbody > tr > td,
+.ant-table-wrapper .ant-table tfoot > tr > th,
+.ant-table-wrapper .ant-table tfoot > tr > td {
+  padding: 8px 16px;
+}
+.ant-table-wrapper .ant-table.ant-table-small .ant-table-thead > tr > th,
+.ant-table-wrapper .ant-table.ant-table-small .ant-table-tbody > tr > th,
+.ant-table-wrapper .ant-table.ant-table-small .ant-table-tbody > tr > td,
+.ant-table-wrapper .ant-table.ant-table-small tfoot > tr > th,
+.ant-table-wrapper .ant-table.ant-table-small tfoot > tr > td {
+  padding: 4px 8px;
+}
+.ant-table-wrapper .ant-table.ant-table-middle .ant-table-thead > tr > th,
+.ant-table-wrapper .ant-table.ant-table-middle .ant-table-tbody > tr > th,
+.ant-table-wrapper .ant-table.ant-table-middle .ant-table-tbody > tr > td,
+.ant-table-wrapper .ant-table.ant-table-middle tfoot > tr > th,
+.ant-table-wrapper .ant-table.ant-table-middle tfoot > tr > td {
+  padding: 6px 12px;
+}
+
+.even-row {
+  background-color: #fafafa;
+}
+
+.odd-row {
+  background-color: #ffffff;
+}

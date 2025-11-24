@@ -4,11 +4,12 @@ import { CustomLocale } from "../types";
  * @Author: colpu
  * @Date: 20250318 20:41:58
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-03-19 15:43:58
+ * @LastEditTime: 2025-09-17 08:16:09
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 const settings: CustomLocale = {
+  title: "印点信息后台",
   basic: {
     name: "基本设置",
     avatar: "头像",

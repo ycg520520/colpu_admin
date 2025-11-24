@@ -2,16 +2,15 @@
  * @Author: colpu
  * @Date: 2025-03-18 21:46:37
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-07-11 09:12:08
+ * @LastEditTime: 2025-11-23 14:45:45
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
-import { Navigate, RouteObject } from "react-router";
-import { baseRouter, asyncRouter, noMatchRouter } from "./routes";
+import { Navigate, Outlet, RouteObject } from "react-router";
+import { baseRouter, noMatchRouter } from "./routes";
 import { lazyElement, lazyRouteObject } from "./utils";
-import AppLayout from "@/layouts";
 import React from "react";
-
+import layouts from "@/layouts";
 export type MetaType = {
   title: string; // 页面标题
   keywords?: string; // 页面关键词
@@ -23,28 +22,24 @@ export type RouteHandle = {
   permissions?: string[]; // 权限列表
   roles?: string[]; // 角色列表
   icon?: string; // 图标
-  hidden?: boolean; // 是否隐藏，控制路由是否显示在Sidebar
   danger?: boolean; // 是否危险操作
-  /** @name 在菜单中隐藏子节点 */
-  hideChildrenInMenu?: boolean;
-  /** @name 在菜单中隐藏自己和子节点 */
-  hideInMenu?: boolean;
-  /** @name disable 菜单选项 */
-  disabled?: boolean;
-  /** @name disable menu 的 tooltip 菜单选项 */
-  disabledTooltip?: boolean;
+  hideChildrenInMenu?: boolean; // 在菜单中隐藏子节点
+  hideInMenu?: boolean; // 在菜单中隐藏自己和子节点
+  disabled?: boolean; // disabled 菜单选项
+  disabledTooltip?: boolean; // disabledTooltip menu 的 tooltip 菜单选项
   fallback?: React.ReactNode;
   translationKey?: string; // 国际化对应健值
+  isCache?: boolean; // 是否缓存页面
   ns?: string; // 国际化对应命名空间
-  hiddenTitle?: boolean; // 隐藏PageContainer组件的标题
+  hideTitle?: boolean; // 隐藏PageContainer组件的标题
   [key: string]: any;
 };
 
-export type RouteType = {
-  // 对应RouteObject类型字段
-  caseSensitive?: boolean; // 是否区分大小写
-  index?: boolean; // 是否为默认路由
-  path?: string; // 路由路径
+export type RouteType = RouteObject & {
+  // // 对应RouteObject类型字段
+  // caseSensitive?: boolean; // 是否区分大小写
+  // index?: boolean; // 是否为默认路由
+  // path?: string; // 路由路径
 
   // 扩展RouteObject类型字段
   id?: number; // 路由ID
@@ -53,6 +48,7 @@ export type RouteType = {
   element?: string; // 组件实例字符串名称
   children?: RouteType[]; // 子路由
   handle?: RouteHandle; // 路由控制集合
+  layout?: string; // 布局组件相对路径
 };
 
 /**
@@ -71,38 +67,50 @@ export type RouteType = {
  */
 export function generatorRouter(routers: RouteType[]): RouteObject[] {
   return routers.map((item: RouteType) => {
-    const {
-      caseSensitive = true,
-      index,
-      children = [],
-      element,
-      lazy,
-      handle,
-    } = item;
-
+    const { caseSensitive = true, index, element, lazy, handle } = item;
+    let children = item.children || [];
     // 为了防止出现后端返回结果不规范，处理有可能出现拼接出两个反斜杠
     let path = item.path || "";
     if (!/^(https?|\/\/)/.test(path) && path) {
       path = path.replace("//", "/");
     }
-
     const currentRouter: RouteObject = {
       caseSensitive,
       index,
       handle,
     };
-    // 将字符串lazy路由转换成RouteObject.lazy类型路由(动态加载)
-    if (lazy) {
-      currentRouter.lazy = lazyRouteObject(lazy, handle);
-    }
-    if (element) {
-      const Element = lazyElement(element, handle);
-      currentRouter.element = <Element />;
-    }
-    if (index === true) {
-      currentRouter.element = <Navigate to={path} replace />;
-    } else {
+    // 处理layout
+    if (handle && handle.layout) {
       currentRouter.path = path;
+      currentRouter.element = (layouts as any)[handle.layout] || <Outlet />;
+      // 对独立菜单添加子集，原因是存在layout
+      if ((element || lazy) && children.length === 0) {
+        const childrenHandle = { ...handle };
+        delete childrenHandle.layout;
+        children = [
+          {
+            caseSensitive,
+            index,
+            handle: childrenHandle,
+            element,
+            lazy,
+          },
+        ];
+      }
+    } else {
+      // 将字符串lazy路由转换成RouteObject.lazy类型路由(动态加载)
+      if (lazy) {
+        currentRouter.lazy = lazyRouteObject(lazy, handle);
+      }
+      if (element) {
+        const Element = lazyElement(element, handle);
+        currentRouter.element = <Element />;
+      }
+      if (index === true) {
+        currentRouter.element = <Navigate to={path} replace />;
+      } else {
+        currentRouter.path = path;
+      }
     }
 
     // 是否有子菜单，并递归处理
@@ -125,16 +133,10 @@ export function generatorRouter(routers: RouteType[]): RouteObject[] {
  * @example
  * const routes = generatorAllRouter();
  */
-export function generatorAllRouter(routes: RouteType[] = []): RouteObject {
+export function generatorAllRouter(routes: RouteType[] = []): RouteObject[] {
   const baseRoutes: RouteObject[] = generatorRouter(baseRouter);
   const noMatchRouters: RouteObject[] = generatorRouter([noMatchRouter]);
-  const asyncRouterRoot: RouteObject[] = generatorRouter([
-    ...routes,
-    ...asyncRouter,
-  ]);
-  return {
-    path: "/",
-    element: <AppLayout />,
-    children: [...baseRoutes, ...asyncRouterRoot, ...noMatchRouters],
-  };
+  const asyncRouterRoot: RouteObject[] = generatorRouter(routes);
+  const routers = [...baseRoutes, ...asyncRouterRoot, ...noMatchRouters];
+  return routers;
 }

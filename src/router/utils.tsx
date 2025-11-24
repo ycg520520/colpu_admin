@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-17 09:14:12
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-07-11 08:47:47
+ * @LastEditTime: 2025-11-20 17:06:18
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -14,6 +14,7 @@ import { RouteHandle, RouteType } from ".";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { createBrowserRouter } from "react-router-dom";
 import { ObjectMaps } from "@/types";
+import KeepAlive from "react-activation";
 /**
  * @function _getPagesMap 私有方法获取所有的页面map
  * @description
@@ -68,21 +69,29 @@ export function importPage(path: string): () => Promise<any> {
  */
 export const lazyElement = <T extends ComponentType<any>>(
   path: string,
-  option: RouteHandle = {}
+  handle: RouteHandle = {}
 ): React.FC<React.ComponentProps<T>> => {
   const LazyComponent = lazy(importPage(path));
-  return (props: React.ComponentProps<T>) => (
-    <Suspense fallback={option.fallback || <Loading />}>
-      {option.roles || option.permissions ? (
-        <ProtectedRoute roles={option.roles} permissions={option.permissions}>
-          <LazyComponent {...props} />
-        </ProtectedRoute>
-      ) : (
-        <LazyComponent {...props} />
-      )}
-    </Suspense>
-  );
+  return (props: React.ComponentProps<T>) => {
+    return (
+      <Suspense fallback={handle.fallback || <Loading />}>
+        {handle.roles || handle.permissions ? (
+          <ProtectedRoute roles={handle.roles} permissions={handle.permissions}>
+            {_keepAliveComponent(<LazyComponent {...props} />, handle.isCache)}
+          </ProtectedRoute>
+        ) : (
+          _keepAliveComponent(<LazyComponent {...props} />, handle.isCache)
+        )}
+      </Suspense>
+    );
+  };
 };
+function _keepAliveComponent(children: any, isCache: boolean | undefined) {
+  if (isCache) {
+    return <KeepAlive>{children}</KeepAlive>;
+  }
+  return children;
+}
 
 /**
  * @function lazyRouteObject
@@ -98,7 +107,7 @@ export const lazyElement = <T extends ComponentType<any>>(
  */
 export function lazyRouteObject(
   path: string,
-  option: RouteHandle = {}
+  handle: RouteHandle = {}
 ): LazyRouteFunction<RouteObject> {
   return async () => {
     const res = (await importPage(path)()) || {};
@@ -107,23 +116,22 @@ export function lazyRouteObject(
     if (defaultComponent && !Component) {
       Component = defaultComponent;
     }
-
+    const element = _keepAliveComponent(<Component />, handle.isCache);
     const routeObject = {
       ...res,
       element:
-        option.roles || option.permissions ? (
-          <ProtectedRoute roles={option.roles} permissions={option.permissions}>
-            <Component />
+        handle.roles || handle.permissions ? (
+          <ProtectedRoute roles={handle.roles} permissions={handle.permissions}>
+            {element}
           </ProtectedRoute>
         ) : (
-          <Component />
+          element
         ),
     };
     return routeObject;
   };
 }
-
-export function routerToTree(data: RouteType[], id: number = 0) {
+export function routerToTree(data: RouteType[]) {
   data = JSON.parse(JSON.stringify(data)); // 解决对象应用地址一样导致数据重复
   const dict: { [key: string]: any } = {};
 
@@ -134,36 +142,58 @@ export function routerToTree(data: RouteType[], id: number = 0) {
       dict[id] = item;
     }
   });
+  const addRedirectIndex = (item: any, where: any[], isdel: boolean = true) => {
+    const { index, path } = item;
+    if (index) {
+      where.unshift({
+        index,
+        path,
+      });
+      if (isdel) {
+        delete item.index;
+      }
+    }
+  };
 
   const result: RouteType[] = [];
-  for (const i in dict) {
-    const item = dict[i];
-    const fid = item.fid;
+  for (const key in dict) {
+    const item = dict[key];
+    const fid = item.parentId;
+
     const fatherItem = dict[fid];
-    if (fid > id && fatherItem) {
+    if (fatherItem) {
       if (!fatherItem.children) {
         fatherItem.children = [];
       }
-      const { index, path } = item;
-      if (index) {
-        fatherItem.children.push({
-          index,
-          path,
-        });
-        delete item.index;
+
+      if (fatherItem.index) {
+        const { handle } = fatherItem;
+        const { hideChildrenInMenu } = handle || {};
+        const newHandle = { ...handle };
+        const fatherItemToChildItem = {
+          ...fatherItem,
+          path: `index`,
+          handle: newHandle,
+        };
+
+        if (hideChildrenInMenu) {
+          addRedirectIndex(fatherItemToChildItem, fatherItem.children);
+          delete newHandle.hideChildrenInMenu;
+          delete fatherItem.lazy;
+        }
+        delete fatherItemToChildItem.children;
+        fatherItem.children.push(fatherItemToChildItem);
+        fatherItem.index = false;
       }
 
-      fatherItem.children.push(item);
-    }
-    if (item.fid === id) {
-      const { index, path } = item;
-      if (index) {
-        result.push({
-          index,
-          path,
-        });
-        delete item.index;
+      const { index, handle } = item;
+      const { hideChildrenInMenu } = handle || {};
+      if (index && !hideChildrenInMenu) {
+        addRedirectIndex(item, fatherItem.children);
       }
+      fatherItem.children.push(item);
+    } else {
+      addRedirectIndex(item, result);
       result.push(item);
     }
   }
@@ -175,8 +205,8 @@ export function routerToTree(data: RouteType[], id: number = 0) {
  * @param routes
  * @returns
  */
-export function createRouter(routes: RouteObject) {
-  return createBrowserRouter([routes], {
+export function createRouter(routes: RouteObject[]) {
+  return createBrowserRouter(routes, {
     future: {
       v7_relativeSplatPath: true,
     },

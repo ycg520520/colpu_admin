@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-26 16:52:43
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-07-11 00:31:23
+ * @LastEditTime: 2025-10-29 16:51:23
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -29,6 +29,7 @@ export default function UserForm({ token }: { token: any }) {
         placeholder={t("pages.login.username.placeholder", {
           defaultValue: "用户名: admin or manager or editor",
         })}
+        initialValue='admin'
         rules={[
           {
             required: true,
@@ -40,6 +41,7 @@ export default function UserForm({ token }: { token: any }) {
       />
       <ProFormText.Password
         name="password"
+        initialValue='admin'
         fieldProps={{
           size: "large",
           prefix: (

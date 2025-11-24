@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-17 23:31:43
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-07-10 09:20:51
+ * @LastEditTime: 2025-11-24 15:40:25
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -10,12 +10,21 @@ export interface User {
   id: number;
   username: string;
   nickname?: string;
+  phone?: string;
   email?: string;
   src?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  gender?: number;
+  remark?: string;
+  created_at?: string;
+  updated_at?: string;
   roles?: string[];
   permissions?: string[];
+}
+export interface UserToken {
+  access_token: string;
+  expires_in: number;
+  refresh_token: string;
+  token_type: string;
 }
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";

@@ -2,10 +2,13 @@
  * @Author: colpu
  * @Date: 2025-06-25 15:37:27
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-07-09 14:24:51
+ * @LastEditTime: 2025-11-24 14:18:15
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
+
+import { FullscreenExitOutlined, FullscreenOutlined } from "@ant-design/icons";
+
 // 加载状态文本配置
 export const statusText = {
   contentrefresh: "正在加载…",
@@ -17,7 +20,6 @@ export const PLATFORM = "@PLATFORM"; // 当前平台标识
 export const CONFIG = "@CONFIG"; // 全局配置
 export const USER = "@USER_INFO"; // 用户信息
 export const TOKEN = "@USER_TOKEN"; // 用户TOKEN
-export const REFRESH_TOKEN = "@USER_REFRESH_TOKEN"; // 用户刷新
 export const I18NEXTLNG = "@I18NEXTLNG"; // 用户刷新
 
 export const FILE_TYPE_CODE = {
@@ -52,3 +54,96 @@ export const defaultLoaderData = (extend = {}) => {
     ...extend,
   };
 };
+
+export const RADIO_STATUS = [
+  {
+    label: "启用",
+    value: 1,
+  },
+  {
+    label: "禁用",
+    value: 0,
+  },
+];
+export const RADIO_STATUS_YES_NO = [
+  {
+    label: "是",
+    value: 1,
+  },
+  {
+    label: "否",
+    value: 0,
+  },
+];
+export const RADIO_STATUS_HIDE = [
+  {
+    label: "显示",
+    value: 1,
+  },
+  {
+    label: "隐藏",
+    value: 0,
+  },
+];
+export const RADIO_STATUS_SHOW = [
+  {
+    label: "显示",
+    value: 0,
+  },
+  {
+    label: "隐藏",
+    value: 1,
+  },
+];
+export const RADIO_STATUS_CACHE = [
+  {
+    label: "缓存",
+    value: 1,
+  },
+  {
+    label: "不缓存",
+    value: 0,
+  },
+];
+export const RADIO_MENU_TYPE = [
+  {
+    label: "目录",
+    value: 0,
+    data_code: "directory",
+  },
+  {
+    label: "菜单",
+    value: 1,
+    data_code: "menu",
+  },
+  {
+    label: "按钮",
+    value: 2,
+    data_code: "button",
+  },
+];
+export const GENDER_TYPE = [
+  {
+    label: "男",
+    value: 1,
+  },
+  {
+    label: "女",
+    value: 2,
+  },
+  {
+    label: "未知",
+    value: 0,
+  },
+];
+
+// 全屏图标Map
+export const FULLSCREEN_ICONS = {
+  fullscreen: FullscreenExitOutlined,
+  exitFullScreen: FullscreenOutlined,
+};
+export const LAYOUT_OPTIONS = [
+  { value: "MainLayout", label: "主体布局" },
+  { value: "OtherLayout", label: "其他布局" },
+  { value: "ChildLayout", label: "嵌套布局" },
+];

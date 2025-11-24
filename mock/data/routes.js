@@ -9,7 +9,7 @@
 export const routes = [
   {
     id: 1,
-    fid: 0,
+    parentId: 0,
     path: "dashboard",
     index: true,
     handle: {
@@ -20,7 +20,7 @@ export const routes = [
   },
   {
     id: 2,
-    fid: 1,
+    parentId: 1,
     index: true,
     path: "desk",
     handle: {
@@ -32,7 +32,7 @@ export const routes = [
   },
   {
     id: 3,
-    fid: 1,
+    parentId: 1,
     path: "analysis",
     handle: {
       name: "analysis",
@@ -43,7 +43,7 @@ export const routes = [
   },
   {
     id: 4,
-    fid: 1,
+    parentId: 1,
     path: "monitor",
     handle: {
       name: "monitor",
@@ -54,7 +54,7 @@ export const routes = [
   },
   {
     id: 5,
-    fid: 0,
+    parentId: 0,
     path: "example",
     handle: {
       name: "example",
@@ -64,7 +64,7 @@ export const routes = [
   },
   {
     id: 6,
-    fid: 5,
+    parentId: 5,
     index: true,
     path: "mock",
     handle: {
@@ -82,7 +82,7 @@ export const routes = [
   },
   {
     id: 7,
-    fid: 5,
+    parentId: 5,
     path: "search",
     handle: {
       name: "search",
@@ -99,7 +99,7 @@ export const routes = [
   },
   {
     id: 8,
-    fid: 5,
+    parentId: 5,
     path: "redux",
     handle: {
       name: "redux",
@@ -110,9 +110,9 @@ export const routes = [
   },
   {
     id: 9,
-    fid: 8,
+    parentId: 8,
     index: true,
-    path: "sub-index",
+    path: "sub/index",
     handle: {
       name: "subIndex",
       translationKey: "example.redux.subIndex",
@@ -127,23 +127,22 @@ export const routes = [
   },
   {
     id: 10,
-    fid: 8,
+    parentId: 8,
     path: "sub",
     handle: {
       name: "sub",
-      translationKey: "example.redux.sub",
-      ns: "example",
+      translationKey: "menu.example.redux.sub",
       meta: {
         title: "redux-sub列子",
         keywords: "关键词设置",
         description: "页面描述",
       },
     },
-    lazy: "example/index",
+    lazy: "example/redux_sub",
   },
   {
     id: 11,
-    fid: 0,
+    parentId: 0,
     path: "example_nochild",
     handle: {
       name: "nochild",
@@ -160,7 +159,7 @@ export const routes = [
   },
   {
     id: 12,
-    fid: 0,
+    parentId: 0,
     path: "account",
     handle: {
       name: "account",
@@ -169,7 +168,7 @@ export const routes = [
   },
   {
     id: 13,
-    fid: 12,
+    parentId: 12,
     index: true,
     path: "center",
     handle: {
@@ -181,7 +180,7 @@ export const routes = [
   },
   {
     id: 14,
-    fid: 12,
+    parentId: 12,
     path: "settings",
     handle: {
       name: "settings",
@@ -190,4 +189,80 @@ export const routes = [
     },
     lazy: "account/settings",
   },
+  {
+    id: 15,
+    parentId: 0,
+    path: "system",
+    handle: {
+      name: "system",
+      translationKey: "menu.system.name",
+    },
+  },
+  {
+    id: 16,
+    parentId: 15,
+    path: "user",
+    index: true,
+    handle: {
+      name: "user",
+      translationKey: "menu.system.user.name",
+      hideChildrenInMenu: true,
+    },
+  },
+  {
+    id: 17,
+    parentId: 16,
+    path: "list",
+    index: true,
+    handle: {
+      name: "list",
+      translationKey: "menu.system.user.list",
+    },
+    lazy: "system/user/index",
+  },
+  {
+    id: 18,
+    parentId: 16,
+    path: "add",
+    handle: {
+      hideInMenu: true,
+      name: "add",
+      translationKey: "menu.system.user.add",
+    },
+    lazy: "system/user/add_edit",
+  },
+  {
+    id: 19,
+    parentId: 16,
+    path: "edit",
+    handle: {
+      hideInMenu: true,
+      hideTitle: true,
+      name: "edit",
+      translationKey: "menu.system.user.edit",
+    },
+    lazy: "system/user/add_edit",
+  },
+  {
+    id: 20,
+    parentId: 15,
+    path: "role",
+    handle: {
+      name: "role",
+      translationKey: "menu.system.role.name",
+      hideChildrenInMenu: true,
+    },
+  },
+  {
+    id: 21,
+    parentId: 20,
+    path: "list",
+    index: true,
+    handle: {
+      name: "list",
+      translationKey: "menu.system.role.list",
+    },
+    lazy: "system/role/index",
+  },
+
 ];

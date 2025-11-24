@@ -2,11 +2,12 @@
  * @Author: colpu
  * @Date: 20250318 20:41:58
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-03-19 16:17:43
+ * @LastEditTime: 2025-09-17 08:15:54
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 export default {
+  title:"Print Info Managerment Backend",
   basic: {
     name: "Basic Settings",
     avatar: "Avatar",
