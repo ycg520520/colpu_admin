@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-26 10:19:21
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-06-26 10:27:09
+ * @LastEditTime: 2025-11-25 21:56:28
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -22,9 +22,9 @@ export default function MenuFooter(props: { collapsed?: any }) {
   if (props?.collapsed) return undefined;
   return (
     <p className={styles.copyright}>
-      © 2021 Made with love
+      © 2025 Made with love
       <br />
-      by Ant Design
+      by Colpu CMS
     </p>
   );
 }

@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-03 10:36:35
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-15 10:07:25
+ * @LastEditTime: 2025-12-03 23:18:21
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -11,14 +11,12 @@ import { BetaSchemaForm } from "@ant-design/pro-components";
 import { useEffect } from "react";
 import { message } from "antd";
 import { checkDictData } from "@/api/dict";
-import { useDebouncedValidation } from "@/hooks/useDebounce";
-import { RADIO_STATUS } from "@/constants";
+import { useAppSelector } from "@/store/hooks";
 
 const DataForm = (props: any) => {
   const { title, open, isEdit, editData, onFinish, modalProps, formRef } =
     props;
-  const { debouncedValidator } = useDebouncedValidation();
-
+  const { dict } = useAppSelector((state) => state.dict);
   const colProps = {
     span: 12,
   };
@@ -30,6 +28,11 @@ const DataForm = (props: any) => {
     (key: string, msg = "数据标签已存在") =>
     async (value: string) => {
       return new Promise((resolve, reject) => {
+        const initValue = formRef.current?.getFieldValue(key);
+        // 如果值没变，跳过远程验证
+        if (value === initValue) {
+          return resolve(true);
+        }
         const params: any = {
           type_code: editData.type_code,
         };
@@ -46,7 +49,7 @@ const DataForm = (props: any) => {
   const columns = [
     {
       title: "ID",
-      name: "id",
+      dataIndex: "id",
       style: { display: "none" },
       fieldProps: {
         disabled: true,
@@ -55,7 +58,7 @@ const DataForm = (props: any) => {
     },
     {
       title: "字典类型",
-      name: "type_code",
+      dataIndex: "type_code",
       colProps,
       fieldProps: {
         disabled: true,
@@ -64,43 +67,52 @@ const DataForm = (props: any) => {
     },
     {
       title: "数据标签",
-      name: "label",
+      dataIndex: "label",
       colProps,
       formItemProps: {
         ...formItemProps,
+        validateDebounce: 600, // 防抖
         rules: [
           { required: true, message: "请输入数据标签" },
-
-          {
-            validator: debouncedValidator("label", validateData("label"), 600),
-          },
+          ...(isEdit
+            ? []
+            : [
+                {
+                  validator: (_: any, value: any) => {
+                    return validateData("label")(value);
+                  },
+                },
+              ]),
         ],
       },
     },
     {
-      name: "value",
       title: "数据键值",
+      dataIndex: "value",
       colProps,
       fieldProps: {
         allowClear: true,
       },
       formItemProps: {
         ...formItemProps,
+        validateDebounce: 600,
         rules: [
           { required: true, message: "请输入数据键值" },
-          {
-            validator: debouncedValidator(
-              "value",
-              validateData("value", "数据键值已存在"),
-              600
-            ),
-          },
+          ...(isEdit
+            ? []
+            : [
+                {
+                  validator: (_: any, value: any) => {
+                    return validateData("value")(value);
+                  },
+                },
+              ]),
         ],
       },
     },
     {
-      name: "data_code",
       title: "数据编码",
+      dataIndex: "code",
       colProps,
       formItemProps: {
         ...formItemProps,
@@ -108,8 +120,8 @@ const DataForm = (props: any) => {
       },
     },
     {
-      name: "css_class",
       title: "回显样式",
+      dataIndex: "css_class",
       fieldProps: {
         allowClear: true,
       },
@@ -117,20 +129,20 @@ const DataForm = (props: any) => {
       colProps,
     },
     {
-      name: "status",
       title: "状态",
+      dataIndex: "status",
       valueType: "radio",
       initialValue: 1,
       fieldProps: {
         optionType: "button",
-        options: RADIO_STATUS,
+        options: dict.enabled_status.options,
       },
       formItemProps,
       colProps,
     },
     {
       title: "排序",
-      name: "sort_order",
+      dataIndex: "sort_order",
       valueType: "digit",
       fieldProps: {
         min: 0,
@@ -140,8 +152,8 @@ const DataForm = (props: any) => {
       colProps,
     },
     {
-      name: "is_default",
       title: "是否默认",
+      dataIndex: "is_default",
       valueType: "radio",
       fieldProps: {
         defaultValue: 0,
@@ -160,8 +172,8 @@ const DataForm = (props: any) => {
       colProps,
     },
     {
-      name: "remark",
       title: "备注",
+      dataIndex: "remark",
       valueType: "textarea",
       formItemProps: {
         labelCol: { span: 4 },
@@ -169,7 +181,7 @@ const DataForm = (props: any) => {
       },
       colProps: { span: 24 },
     },
-  ];
+  ].filter(Boolean);
   useEffect(() => {
     formRef.current?.setFieldsValue(editData);
   }, [editData, formRef]);
@@ -178,7 +190,7 @@ const DataForm = (props: any) => {
       formRef={formRef}
       title={`${isEdit ? "编辑" : "添加"}${title}`}
       rowProps={{
-        gutter: [16, 16],
+        gutter: [16, 0],
       }}
       colProps={{
         span: 12,

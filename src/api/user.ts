@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-15 14:30:04
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-12 21:59:57
+ * @LastEditTime: 2025-12-04 16:28:28
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -46,3 +46,6 @@ export const postLogout = () => {
     resolve({ status: 0, message: "登出成功" });
   });
 };
+
+export const apiUserSearch = (params: any) =>
+  get("/api/user/search", { params });

@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-25 15:37:27
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-24 14:18:15
+ * @LastEditTime: 2025-11-25 14:15:20
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -54,88 +54,6 @@ export const defaultLoaderData = (extend = {}) => {
     ...extend,
   };
 };
-
-export const RADIO_STATUS = [
-  {
-    label: "启用",
-    value: 1,
-  },
-  {
-    label: "禁用",
-    value: 0,
-  },
-];
-export const RADIO_STATUS_YES_NO = [
-  {
-    label: "是",
-    value: 1,
-  },
-  {
-    label: "否",
-    value: 0,
-  },
-];
-export const RADIO_STATUS_HIDE = [
-  {
-    label: "显示",
-    value: 1,
-  },
-  {
-    label: "隐藏",
-    value: 0,
-  },
-];
-export const RADIO_STATUS_SHOW = [
-  {
-    label: "显示",
-    value: 0,
-  },
-  {
-    label: "隐藏",
-    value: 1,
-  },
-];
-export const RADIO_STATUS_CACHE = [
-  {
-    label: "缓存",
-    value: 1,
-  },
-  {
-    label: "不缓存",
-    value: 0,
-  },
-];
-export const RADIO_MENU_TYPE = [
-  {
-    label: "目录",
-    value: 0,
-    data_code: "directory",
-  },
-  {
-    label: "菜单",
-    value: 1,
-    data_code: "menu",
-  },
-  {
-    label: "按钮",
-    value: 2,
-    data_code: "button",
-  },
-];
-export const GENDER_TYPE = [
-  {
-    label: "男",
-    value: 1,
-  },
-  {
-    label: "女",
-    value: 2,
-  },
-  {
-    label: "未知",
-    value: 0,
-  },
-];
 
 // 全屏图标Map
 export const FULLSCREEN_ICONS = {

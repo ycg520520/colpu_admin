@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-18 16:15:05
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-20 11:59:13
+ * @LastEditTime: 2025-12-01 23:01:04
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -10,9 +10,11 @@ import $http, { get, type RequestMethod } from "@/utils/request";
 import { createThunk, installTree } from "@/utils";
 import { routerToTree } from "@/router/utils";
 import { ObjectMaps } from "@/types";
+import { asyncRouter } from "@/router/routes";
 export const getRoutes = createThunk("routes/get", () =>
   get("/api/routes").then((data: any) => {
-    return routerToTree(data);
+    if (data.length) return routerToTree(data);
+    else return asyncRouter;
   })
 );
 
@@ -23,7 +25,7 @@ export const getRoutes = createThunk("routes/get", () =>
  */
 export const getMenusAll = (params: any) =>
   // 发送GET请求获取菜单数据，params作为查询参数
-  get("/api/menus/all", { params }).then(({ count: total, rows }: any) => {
+  get("/api/menus/all", { params }).then(({ total, rows }: any) => {
     // 使用installTree函数将数据转换为树形结构，指定parent_id作为父子关联字段
     return { rows: installTree(rows, { key_fid: "parent_id" }), total };
   });

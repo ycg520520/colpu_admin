@@ -2,15 +2,16 @@
  * @Author: colpu
  * @Date: 2025-03-18 21:46:37
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-23 14:45:45
+ * @LastEditTime: 2025-12-02 16:27:08
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 import { Navigate, Outlet, RouteObject } from "react-router";
-import { baseRouter, noMatchRouter } from "./routes";
+import { asyncRouter, baseRouter, noMatchRouter } from "./routes";
 import { lazyElement, lazyRouteObject } from "./utils";
 import React from "react";
 import layouts from "@/layouts";
+import InitLayout from "@/layouts/InitLayout";
 export type MetaType = {
   title: string; // 页面标题
   keywords?: string; // 页面关键词
@@ -121,6 +122,25 @@ export function generatorRouter(routers: RouteType[]): RouteObject[] {
   });
 }
 
+export const setRouteIndex = (routes: RouteType[]) => {
+  if (routes.length) {
+    const firstRoute = routes[0];
+    if (!firstRoute.index) {
+      routes.unshift({
+        index: true,
+        path: firstRoute.path,
+      });
+      console.log(firstRoute.path);
+      if (firstRoute.children) {
+        // delete firstRoute.path;
+      }
+      if (firstRoute.children) {
+        setRouteIndex(firstRoute.children);
+      }
+    }
+  }
+};
+
 /**
  * @function generatorAllRouter
  * @description
@@ -136,7 +156,15 @@ export function generatorRouter(routers: RouteType[]): RouteObject[] {
 export function generatorAllRouter(routes: RouteType[] = []): RouteObject[] {
   const baseRoutes: RouteObject[] = generatorRouter(baseRouter);
   const noMatchRouters: RouteObject[] = generatorRouter([noMatchRouter]);
+  // 解决没有index路由时，默认跳转第一个路由，不然会出现空白页面
+  // setRouteIndex(routes);
   const asyncRouterRoot: RouteObject[] = generatorRouter(routes);
   const routers = [...baseRoutes, ...asyncRouterRoot, ...noMatchRouters];
-  return routers;
+  return [
+    {
+      path: "/",
+      element: <InitLayout />,
+      children: routers,
+    },
+  ];
 }

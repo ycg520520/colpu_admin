@@ -8,29 +8,25 @@
  */
 
 import { BetaSchemaForm } from "@ant-design/pro-components";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { message } from "antd";
-import { RADIO_STATUS } from "@/constants";
 import {
   colProps,
   colPropsFull,
   formItemProps,
   formItemPropsFull,
 } from "@/constants/form";
-import { getDepartmentTree } from "@/api/departments";
+import { useAppSelector } from "@/store/hooks";
+import { cloneDeep } from "lodash";
 
 const DepartmentForm = (props: any) => {
   const { title, open, isEdit, editData, onFinish, modalProps, formRef } =
     props;
+  const { dict } = useAppSelector((state) => state.dict);
+  const treeData = useAppSelector((state) => cloneDeep(state.dept.treeData));
   useEffect(() => {
     formRef.current?.setFieldsValue({ ...editData });
   }, [editData, formRef]);
-  const [treeData, setTreeData] = useState<any[]>([]);
-  useEffect(() => {
-    getDepartmentTree().then((res) => {
-      setTreeData(res);
-    });
-  }, []);
 
   // form 表单配置
   const formColumns = [
@@ -105,7 +101,7 @@ const DepartmentForm = (props: any) => {
       valueType: "radio",
       fieldProps: {
         defaultValue: 1,
-        options: RADIO_STATUS,
+        options: dict.enabled_status.options,
       },
       colProps,
       formItemProps,

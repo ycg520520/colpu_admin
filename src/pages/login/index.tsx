@@ -16,6 +16,7 @@ import PhoneForm from "./components/PhoneForm";
 import Lang from "@/components/Lang";
 import { useTranslation } from "react-i18next";
 import { ObjectMaps } from "@/types";
+import { getRoutes } from "@/api/menus";
 
 type LoginType = "phone" | "account";
 
@@ -204,6 +205,7 @@ const Page = () => {
             })
           );
         });
+        dispatch(getRoutes(undefined));
         msg.success(
           t("pages.login.success", {
             defaultMessage: "登录成功！",

@@ -2,13 +2,13 @@
  * @Author: colpu
  * @Date: 2025-11-16 23:07:18
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-24 08:55:24
+ * @LastEditTime: 2025-12-02 23:03:21
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 import { apiUser, getUserList } from "@/api/user";
-import { Card, Divider, Modal, Space, Splitter, Switch, TreeProps } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { Card, Divider, Modal, Space, Splitter, TreeProps } from "antd";
+import { useRef, useState } from "react";
 import "@/assets/styles/table.scss";
 import {
   ActionType,
@@ -21,40 +21,45 @@ import UserForm from "./components/user_form";
 import { composeColumns } from "@/utils/columns";
 import useProTableFullscreen from "@/hooks/useProTableFullscreen";
 import useFormModal from "@/hooks/useFormModal";
-import { FULLSCREEN_ICONS, RADIO_STATUS } from "@/constants";
+import { FULLSCREEN_ICONS } from "@/constants";
 import ToolBarTitle from "@/components/ToolBarTitle";
 import useTableColor from "@/hooks/useTableColor";
 import ActionRender from "@/components/ActionRender";
-import { getDepartmentTree } from "@/api/departments";
 import { useTreeStyle } from "@/hooks/useTreeStyle";
 import TreeSearch, { TreeSearchRef } from "@/components/TreeSearch";
 import { filterValues } from "@/utils";
+import ModifyPassword from "@/components/ModifyPassword";
+import { renderStatus } from "@/constants/public";
+import { useAppSelector } from "@/store/hooks";
+import { cloneDeep } from "lodash";
+import { hasPermissions } from "@/utils/permissions";
+import { PermissionButton } from "@/components/Permission";
 
 export default function UserList() {
+  const { user } = useAppSelector((state) => state.user);
+  const { permissions = [] } = user || {};
   const [disabled, setDisabled] = useState(true);
   const { open, onOK, onCancel, formRef } = useFormModal();
+  const {
+    open: openModify,
+    onOK: onOKModify,
+    onCancel: onCancelModify,
+  } = useFormModal();
   const { isFullscreen } = useProTableFullscreen();
   const [editData, setEditData] = useState<any>({});
   const [isEdit, setIsEdit] = useState(false);
   const actionRef = useRef<ActionType | null>(null);
   const { tableStyles, rowClassName } = useTableColor();
   const formSearchRef = useRef<ProFormInstance>();
-
   const treeStyles = useTreeStyle();
   const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
-  const [treeData, setTreeData] = useState<any[]>([]);
   const treeRef = useRef<TreeSearchRef>(null); // 树形控件ref
-  useEffect(() => {
-    getDepartmentTree().then((res) => {
-      setTreeData(res);
-    });
-  }, []);
+  const { dict } = useAppSelector((state) => state.dict);
+  const treeData = useAppSelector((state) => cloneDeep(state.dept.treeData));
   const onSelectTree: TreeProps["onSelect"] = (keys: any[]) => {
-    if (keys.length) {
-      handdleSearch({
-        dept: keys.join(","),
-      });
-    }
+    handdleSearch({
+      dept_id: keys.join(","),
+    });
     setSelectedKeys(keys);
   };
   const treeProps = {
@@ -79,9 +84,9 @@ export default function UserList() {
     let data = [];
     let total = 0;
     try {
-      const { rows }: any = await getUserList(params);
-      data = rows || [];
-      total = data.length;
+      const res: any = (await getUserList(params)) || {};
+      data = res.rows || [];
+      total = res.total;
       setEditData({});
     } catch (err) {
       console.log(err);
@@ -127,9 +132,7 @@ export default function UserList() {
   };
 
   const onSelect = (_current: any, _selected: boolean, selectedRows: any[]) => {
-    console.log(selectedRows.length);
     if (selectedRows.length === 1) {
-      console.log(selectedRows[0]);
       setEditData((prev: any) => {
         return { ...prev, ...selectedRows[0] };
       });
@@ -157,55 +160,74 @@ export default function UserList() {
     [
       {
         title: "用户名称",
-        key: "username",
-        width: 160,
-        fixed: "left",
+        width: 100,
         dataIndex: "username",
-        formItemProps: {
-          style: { width: 300 },
-        },
+        ellipsis: true,
         fieldProps: {
           style: { width: "100%" },
         },
       },
       {
         title: "用户昵称",
-        key: "nickname",
         width: 160,
         dataIndex: "nickname",
         search: false,
       },
       {
         title: "状态",
-        key: "status",
+        key: "status1",
         dataIndex: "status",
         width: 60,
         align: "center",
         valueType: "radio",
         fieldProps: {
-          options: RADIO_STATUS,
+          options: dict.enabled_status.options, // 状态字典
         },
-        render: (_dom: React.ReactNode, record: any) => {
-          return (
-            <Switch
-              size="small"
-              defaultChecked={record.status}
-              disabled={true}
-            />
-          );
-        },
+        render: renderStatus(),
       },
     ],
     {
-      showRemark: true,
+      showRemark: false,
+      order: { fixed: false },
       action: {
+        width: 120,
+        fixed: false,
         render: (_: any, record: any) => {
           return (
-            <ActionRender
-              values={record}
-              onDel={() => handdleDel(record)}
-              onEdit={() => handdleEdit(record)}
-            />
+            <>
+              <ActionRender
+                disableds={{
+                  edit: !!record.editable,
+                  del: !!record.editable,
+                  dropdown: !!record.editable,
+                }}
+                permissions={{
+                  edit: "sys:user:edit",
+                  del: "sys:user:del",
+                }}
+                onDel={() => handdleDel(record)}
+                onEdit={() => handdleEdit(record)}
+                menuProps={{
+                  style: { minWidth: 120 },
+                  items: [
+                    {
+                      label: "重置密码",
+                      key: 1,
+                      disabled: !hasPermissions(
+                        permissions,
+                        "sys:user:resetpwd"
+                      ),
+                    },
+                  ],
+                  onClick: ({ key }: any) => {
+                    if (key == 1) {
+                      setEditData({ ...record });
+                      onOKModify();
+                    }
+                  },
+                }}
+              ></ActionRender>
+            </>
           );
         },
       },
@@ -213,9 +235,8 @@ export default function UserList() {
   );
 
   // 搜索表单配置
-  const formColumns = columns.filter((item) => {
-    if (item.search !== false) return item;
-  });
+  const formColumns = columns.filter((item) => item.search !== false);
+
   // 弹窗props配置
   const modalProps = {
     open,
@@ -241,6 +262,12 @@ export default function UserList() {
       onEdit={() => handdleEdit(editData)}
       onDel={() => handdleDel(editData)}
       onExport={onExport}
+      permissions={{
+        add: "sys:user:add",
+        edit: "sys:user:edit",
+        del: "sys:user:del",
+        export: "sys:user:export",
+      }}
     />
   );
   const [searchValues, setSearchValues] = useState({});
@@ -256,10 +283,15 @@ export default function UserList() {
     actionRef.current?.reload();
   };
 
+  const cancelModify = () => {
+    setEditData({});
+    formRef.current?.resetFields();
+    onCancelModify();
+  };
   return (
     <Card style={{ border: "none" }}>
       <Splitter style={{ height: "100%" }}>
-        <Splitter.Panel defaultSize="20%" max="30%">
+        <Splitter.Panel defaultSize="20%" max="20%">
           <div style={{ minWidth: 100, marginRight: 16 }}>
             <TreeSearch ref={treeRef} {...treeProps} />
           </div>
@@ -274,8 +306,32 @@ export default function UserList() {
               onReset={() => handdleSearch({}, true)}
               onFinish={handdleSearch}
               submitter={{
-                searchConfig: {
-                  submitText: "搜索",
+                render: (props) => {
+                  const { form } = props;
+                  return (
+                    <Space>
+                      <PermissionButton
+                        buttonProps={{
+                          type: "primary",
+                          onClick: () => {
+                            form?.submit();
+                          },
+                        }}
+                        permission="sys:user:query"
+                        children="搜索"
+                      />
+                      <PermissionButton
+                        buttonProps={{
+                          onClick: () => {
+                            form?.resetFields();
+                          },
+                        }}
+                        permission="sys:user:query"
+                        children="重置"
+                      />
+                      {/* {defaultDoms[0]} */}
+                    </Space>
+                  );
                 },
               }}
               columns={formColumns as ProFormColumnsType[]}
@@ -286,7 +342,7 @@ export default function UserList() {
               bordered
               formRef={formRef}
               actionRef={actionRef}
-              style={{ position: "relative", zIndex: 0 }}
+              style={{ position: "relative", zIndex: 0, width: "100%" }}
               columns={columns}
               request={({ current: page, ...params }) => {
                 return fetchUserList({ page, ...params, ...searchValues });
@@ -318,6 +374,9 @@ export default function UserList() {
               rowClassName={rowClassName}
               tableAlertRender={false}
               rowSelection={{
+                getCheckboxProps: (record) => ({
+                  disabled: record.editable === 1, // 某些状态不可选
+                }),
                 onSelect,
                 onChange,
               }}
@@ -326,6 +385,21 @@ export default function UserList() {
         </Splitter.Panel>
       </Splitter>
       <UserForm {...modalProps} />
+      <Modal
+        title="修改密码"
+        open={openModify}
+        onOk={onOKModify}
+        onCancel={cancelModify}
+        width={348}
+        maskClosable={false}
+        footer={null}
+      >
+        <ModifyPassword
+          dataSource={editData}
+          style={{ width: 300, marginTop: 20 }}
+          onSubmit={cancelModify}
+        />
+      </Modal>
     </Card>
   );
 }

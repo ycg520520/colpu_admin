@@ -9,16 +9,18 @@
 
 import { BetaSchemaForm } from "@ant-design/pro-components";
 import { useEffect, useState } from "react";
-import { RADIO_STATUS } from "@/constants";
-import { formItemCol } from "@/constants/form";
+import { colProps, formItemCol } from "@/constants/form";
 import { getMenusTree } from "@/api/menus";
 import TreeExtend from "@/components/TreeExtend";
 import { App } from "antd";
+import { useAppSelector } from "@/store/hooks";
 
 const RoleForm = (props: any) => {
   const { title, open, isEdit, editData, onFinish, modalProps, formRef } =
     props;
+  const { dict } = useAppSelector((state) => state.dict);
   const [treeData, setTreeData] = useState([]);
+  const [halfCheckedKeys, setHalfCheckedKeys] = useState([]);
   useEffect(() => {
     formRef.current?.setFieldsValue({ ...editData });
   }, [editData, formRef]);
@@ -29,12 +31,10 @@ const RoleForm = (props: any) => {
       setTreeData(rows);
     });
   }, []);
-
-  // form 表单配置
   const formColumns = [
     {
       title: "ID",
-      name: "id",
+      dataIndex: "id",
       style: { display: "none" },
       fieldProps: {
         disabled: true,
@@ -44,15 +44,15 @@ const RoleForm = (props: any) => {
     },
     {
       title: "角色名称",
-      name: "name",
+      dataIndex: "name",
       formItemProps: {
         ...formItemCol(6),
         rules: [{ required: true, message: "请输入用户昵称" }],
       },
     },
     {
-      title: "权限字符",
-      name: "code",
+      title: "角色编码",
+      dataIndex: "code",
       formItemProps: {
         ...formItemCol(6),
         rules: [{ required: true, message: "请输入用户昵称" }],
@@ -60,7 +60,6 @@ const RoleForm = (props: any) => {
     },
     {
       title: "菜单权限",
-      name: "menu_ids",
       dataIndex: "menu_ids",
       valueType: "treeSelect",
       fieldProps: {
@@ -75,13 +74,16 @@ const RoleForm = (props: any) => {
       renderFormItem: () => {
         return (
           <TreeExtend
+            onHalfChange={(value) => {
+              setHalfCheckedKeys(value || []);
+            }}
             treeProps={{
               fieldNames: {
                 title: "title",
                 key: "id",
                 children: "children",
               },
-              defaultCheckedKeys: editData?.menu_ids || [],
+              checkable: true,
               treeData,
             }}
           />
@@ -90,27 +92,31 @@ const RoleForm = (props: any) => {
     },
     {
       title: "排序",
-      name: "sort_order",
+      dataIndex: "sort_order",
       valueType: "digit",
       fieldProps: {
         min: 0,
         max: 1e10,
       },
-      formItemProps: formItemCol(6),
+      colProps: colProps,
+      formItemProps: formItemCol(12),
     },
     {
       title: "状态",
-      name: "status",
+      dataIndex: "status",
       valueType: "radio",
       fieldProps: {
         defaultValue: 1,
-        options: RADIO_STATUS,
+        options: dict.enabled_status.options, // 状态字典
       },
-      formItemProps: formItemCol(6),
+      colProps: colProps,
+      formItemProps: {
+        ...formItemCol(5),
+      },
     },
     {
-      name: "remark",
       title: "备注",
+      dataIndex: "remark",
       valueType: "textarea",
       formItemProps: formItemCol(6),
     },
@@ -140,8 +146,12 @@ const RoleForm = (props: any) => {
       onReset={() => {
         console.log("reset");
       }}
-      onFinish={async (values) => {
-        await onFinish(values);
+      onFinish={async (values: any) => {
+        // 将办选加入到设置中
+        await onFinish({
+          ...values,
+          menu_ids: [...values.menu_ids, ...halfCheckedKeys],
+        });
         message.success("提交成功");
         return true;
       }}

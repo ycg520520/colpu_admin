@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-23 13:02:45
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-23 14:36:41
+ * @LastEditTime: 2025-12-01 22:37:20
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -37,7 +37,7 @@ import {
 import { dynamicIcon } from "@/utils/public";
 import Lang from "@/components/Lang";
 
-export default function MainLayout() {
+export default function BasicLayout() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAppSelector((state) => state.user);
@@ -97,20 +97,12 @@ export default function MainLayout() {
                   if (key === "account") {
                     navigate("/account");
                   }
-                  if (key === "center") {
-                    navigate("/account/settings");
-                  }
                 },
                 items: [
                   {
                     key: "account",
                     icon: dynamicIcon("UserOutlined"),
                     label: "个人中心",
-                  },
-                  {
-                    key: "center",
-                    icon: dynamicIcon("SettingOutlined"),
-                    label: "个人设置",
                   },
                   {
                     key: "logout",

@@ -2,11 +2,11 @@
  * @Author: colpu
  * @Date: 2025-11-16 00:16:50
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-23 15:37:48
+ * @LastEditTime: 2025-12-02 22:31:19
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
-import { Button, Card, Modal, Space } from "antd";
+import { Card, Modal, Space } from "antd";
 import { useEffect, useRef, useState } from "react";
 import "@/assets/styles/table.scss";
 import {
@@ -18,7 +18,7 @@ import {
 import { composeColumns } from "@/utils/columns";
 import useProTableFullscreen from "@/hooks/useProTableFullscreen";
 import useFormModal from "@/hooks/useFormModal";
-import { FULLSCREEN_ICONS, RADIO_STATUS } from "@/constants";
+import { FULLSCREEN_ICONS } from "@/constants";
 import ToolBarTitle from "@/components/ToolBarTitle";
 import { apiMenus, getMenusAll } from "@/api/menus";
 import { DownOutlined, RightOutlined } from "@ant-design/icons";
@@ -26,6 +26,8 @@ import { dynamicIcon } from "@/utils/public";
 import MenuForm from "./components/menu_form";
 import useTableColor from "@/hooks/useTableColor";
 import ActionRender from "@/components/ActionRender";
+import { renderStatus, renderWhether } from "@/constants/public";
+import { useAppSelector } from "@/store/hooks";
 
 export default function MenuList() {
   const { open, onOK, onCancel, formRef } = useFormModal();
@@ -35,6 +37,7 @@ export default function MenuList() {
   const actionRef = useRef<ActionType | null>(null);
   const [dataSource, setDataSource] = useState([]);
   const { tableStyles, rowClassName } = useTableColor();
+  const { dict } = useAppSelector((state) => state.dict);
 
   const fetchMenus = async (params: any) => {
     let res: any;
@@ -54,9 +57,16 @@ export default function MenuList() {
     };
   };
 
-  const handdleAdd = () => {
+  const handdleAdd = ({ id, menu_type }: any) => {
     setIsEdit(false);
-    setEditData({});
+    // 这里设置menu_type是为了在添加内容时，自动定位到对应的菜单类型，增加体验
+    if (menu_type === 0) {
+      menu_type = 1;
+    } else if (menu_type === 1) {
+      menu_type = 2;
+    }
+    // 这里将parent_id设置为id，是为了在添加子菜单时，将父菜单的id传递过去，并选中父菜单
+    setEditData({ parent_id: id, menu_type });
     onOK();
   };
   const handdleEdit = (record: any) => {
@@ -88,16 +98,8 @@ export default function MenuList() {
   const onFinish = async (values: any) => {
     delete values.confirm_password; // 删除确认密码
     await apiMenus(values, isEdit ? "put" : "post");
-    actionRef.current?.reload!();
     onCancel();
-  };
-
-  const render = (value: any) => {
-    return (
-      <Button color="primary" variant="link" size="small">
-        {value ? "是" : "否"}
-      </Button>
-    );
+    actionRef.current?.reload!();
   };
 
   // 表头配置
@@ -122,7 +124,7 @@ export default function MenuList() {
       },
       {
         title: "权限标识",
-        dataIndex: "permission",
+        dataIndex: "perm_code",
         search: false,
       },
       {
@@ -154,41 +156,41 @@ export default function MenuList() {
         title: "是否为首页",
         dataIndex: "index",
         search: false,
-        render,
+        render: renderWhether(),
       },
       {
         title: "是否是外链",
         dataIndex: "is_link",
         search: false,
-        render,
+        render: renderWhether(),
       },
       {
         title: "是否隐藏子菜单",
         dataIndex: "hide_child_in_menu",
         search: false,
         align: "center",
-        render,
+        render: renderWhether(),
       },
       {
         title: "是否隐藏菜单",
         dataIndex: "hide_in_menu",
         search: false,
         align: "center",
-        render,
+        render: renderWhether(),
       },
       {
         title: "是否显示标题",
         dataIndex: "hide_title",
         search: false,
         align: "center",
-        render,
+        render: renderWhether(),
       },
       {
         title: "是否缓存",
         dataIndex: "is_cache",
         search: false,
         align: "center",
-        render,
+        render: renderWhether(),
       },
       {
         title: "状态",
@@ -199,22 +201,9 @@ export default function MenuList() {
         width: 60,
         search: false,
         fieldProps: {
-          options: RADIO_STATUS,
+          options: dict.enabled_status.options,
         },
-        // 渲染表格内容
-        render: (dom: React.ReactNode, record: any) => {
-          return (
-            <Button
-              color="green"
-              variant="outlined"
-              disabled={record.status === 0}
-              style={{ fontSize: 12 }}
-              size="small"
-            >
-              {dom}
-            </Button>
-          );
-        },
+        render: renderStatus(),
       },
       {
         title: "排序",
@@ -224,16 +213,6 @@ export default function MenuList() {
         dataIndex: "sort_order",
         search: false,
       },
-      // {
-      //   title: "创建者",
-      //   dataIndex: "create_by",
-      //   search: false,
-      // },
-      // {
-      //   title: "更新者",
-      //   dataIndex: "update_by",
-      //   search: false,
-      // },
     ],
     {
       showOrder: false,
@@ -242,7 +221,17 @@ export default function MenuList() {
         render: (_: any, record: any) => {
           return (
             <ActionRender
-              values={record}
+              disableds={{
+                add: record.menu_type === 2,
+                edit: !!record.editable,
+                del: !!record.editable,
+              }}
+              permissions={{
+                add: "sys:menu:add",
+                edit: "sys:menu:edit",
+                del: "sys:menu:del",
+              }}
+              onAdd={() => handdleAdd(record)}
               onDel={() => handdleDel(record)}
               onEdit={() => handdleEdit(record)}
             />

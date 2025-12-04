@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-03-18 20:41:58
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-24 16:44:14
+ * @LastEditTime: 2025-11-25 10:49:08
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -29,6 +29,7 @@ export default {
       name: "Role Manger",
       add: "Add Role",
       edit: "Edit Role",
+      user: "Role User",
     },
     dict: {
       name: "Dict Manger",

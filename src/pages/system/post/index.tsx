@@ -2,11 +2,11 @@
  * @Author: colpu
  * @Date: 2025-11-16 00:16:50
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-22 23:30:44
+ * @LastEditTime: 2025-12-02 22:35:16
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
-import { Button, Card, Modal, Space } from "antd";
+import { Card, Modal, Space } from "antd";
 import { useRef, useState } from "react";
 import "@/assets/styles/table.scss";
 import {
@@ -18,14 +18,16 @@ import {
 import { composeColumns } from "@/utils/columns";
 import useProTableFullscreen from "@/hooks/useProTableFullscreen";
 import useFormModal from "@/hooks/useFormModal";
-import { FULLSCREEN_ICONS, RADIO_STATUS } from "@/constants";
+import { FULLSCREEN_ICONS } from "@/constants";
 import ToolBarTitle from "@/components/ToolBarTitle";
 import { apiPost, getPostList } from "@/api/post";
 import PostForm from "./components/post_form";
 import useTableColor from "@/hooks/useTableColor";
 import ActionRender from "@/components/ActionRender";
+import { useAppSelector } from "@/store/hooks";
+import { renderStatus } from "@/constants/public";
 
-export default function MenuList() {
+export default function PostList() {
   const [disabled, setDisabled] = useState(true);
   const { open, onOK, onCancel, formRef } = useFormModal();
   const { isFullscreen } = useProTableFullscreen();
@@ -33,14 +35,15 @@ export default function MenuList() {
   const [isEdit, setIsEdit] = useState(false);
   const actionRef = useRef<ActionType | null>(null);
   const { tableStyles, rowClassName } = useTableColor();
+  const { dict } = useAppSelector((state) => state.dict);
 
   const fetchPostList = async (params: any) => {
     let data = [];
     let total = 0;
     try {
-      const { rows, count }: any = await getPostList(params);
-      data = rows || [];
-      total = count;
+      const res: any = (await getPostList(params)) || {};
+      data = res.rows || [];
+      total = res.total;
       setEditData({});
     } catch (err) {
       console.log(err);
@@ -127,27 +130,13 @@ export default function MenuList() {
         title: "状态",
         dataIndex: "status",
         valueType: "radio",
-        initialValue: 1,
         align: "center",
         width: 60,
         search: false,
         fieldProps: {
-          options: RADIO_STATUS,
+          options: dict.enabled_status.options, // 状态字典
         },
-        // 渲染表格内容
-        render: (dom: React.ReactNode, record: any) => {
-          return (
-            <Button
-              color="green"
-              variant="outlined"
-              disabled={record.status === 0}
-              style={{ fontSize: 12 }}
-              size="small"
-            >
-              {dom}
-            </Button>
-          );
-        },
+        render: renderStatus(),
       },
       {
         title: "排序",
@@ -164,7 +153,14 @@ export default function MenuList() {
         render: (_: any, record: any) => {
           return (
             <ActionRender
-              values={record}
+              disableds={{
+                edit: !!record.editable,
+                del: !!record.editable,
+              }}
+              permissions={{
+                edit:'sys:post:edit',
+                del:'sys:post:del'
+              }}
               onDel={() => handdleDel(record)}
               onEdit={() => handdleEdit(record)}
             />
@@ -269,6 +265,9 @@ export default function MenuList() {
             rowClassName={rowClassName}
             tableAlertRender={false}
             rowSelection={{
+              getCheckboxProps: (record) => ({
+                disabled: record.editable === 1, // 某些状态不可选
+              }),
               onSelect,
               onChange,
             }}

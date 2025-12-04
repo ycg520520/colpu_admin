@@ -2,12 +2,13 @@
  * @Author: colpu
  * @Date: 2025-11-03 12:35:57
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-11 00:12:10
+ * @LastEditTime: 2025-11-24 17:14:25
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 
 import { ObjectMaps } from "@/types";
+import { createThunk } from "@/utils";
 import $http, { get, type RequestMethod } from "@/utils/request";
 
 export const getAllDictData = () => {
@@ -39,3 +40,5 @@ export const apiDictData = (
 export const checkDictData = (params: ObjectMaps) => {
   return get("/api/dict/data/check", { params });
 };
+
+export const getDict = createThunk("dict", () => get("/api/dict"));

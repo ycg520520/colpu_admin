@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-15 12:01:36
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-24 00:54:32
+ * @LastEditTime: 2025-12-02 21:01:46
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -159,6 +159,19 @@ export function treeToPlan(data: any, arr: any[] = []) {
   });
   return arr;
 }
+export function filterParentId(treeData: any[], ids: any[] = []) {
+  const filterIds: any[] = [];
+  treeData.forEach((item: any) => {
+    if (item.children) {
+      const childFilterIds = filterParentId(item.children, ids);
+      filterIds.push(...childFilterIds);
+    } else if(ids.includes(item.id)) {
+      filterIds.push(item.id);
+    }
+  });
+  return filterIds;
+}
+
 /**
  * 筛选出复合条件的数据，并保留其子节点
  * 用于筛选树形数据

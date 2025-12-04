@@ -10,12 +10,18 @@
 import { BetaSchemaForm } from "@ant-design/pro-components";
 import { useEffect } from "react";
 import { message } from "antd";
-import { RADIO_STATUS } from "@/constants";
-import { colProps, colPropsFull, formItemProps, formItemPropsFull } from "@/constants/form";
+import {
+  colProps,
+  colPropsFull,
+  formItemProps,
+  formItemPropsFull,
+} from "@/constants/form";
+import { useAppSelector } from "@/store/hooks";
 
 const PostForm = (props: any) => {
   const { title, open, isEdit, editData, onFinish, modalProps, formRef } =
     props;
+  const { dict } = useAppSelector((state) => state.dict);
   useEffect(() => {
     formRef.current?.setFieldsValue({ ...editData });
   }, [editData, formRef]);
@@ -66,7 +72,7 @@ const PostForm = (props: any) => {
       valueType: "radio",
       fieldProps: {
         defaultValue: 1,
-        options: RADIO_STATUS,
+        options: dict.enabled_status.options, // 状态字典
       },
       colProps,
       formItemProps,

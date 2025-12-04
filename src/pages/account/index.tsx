@@ -1,56 +1,46 @@
+import { apiUser } from "@/api/user";
+import ModifyPassword from "@/components/ModifyPassword";
 import OSSUpload from "@/components/OSSUpload";
-import { GENDER_TYPE } from "@/constants";
+import { formItemProps } from "@/constants/form";
+import { submitter } from "@/constants/public";
 import { useAppSelector } from "@/store/hooks";
 import { dynamicIcon } from "@/utils/public";
-import {
-  BetaSchemaForm,
-  ProFormInstance,
-  SubmitterProps,
-} from "@ant-design/pro-components";
-import { Col, Row, Card, Flex, Tabs, TabsProps, Form, Space, App } from "antd";
-import useMessage from "antd/lib/message/useMessage";
-import { useRef, useState } from "react";
+import { BetaSchemaForm, ProFormInstance } from "@ant-design/pro-components";
+import { Col, Row, Card, Flex, Tabs, TabsProps, App } from "antd";
+import { useEffect, useRef, useState } from "react";
 
 /*
  * @Author: colpu
  * @Date: 2025-03-16 16:44:34
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-24 15:02:06
+ * @LastEditTime: 2025-11-24 23:59:51
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
-const formItemProps = {
-  labelCol: { span: 6 },
-  wrapperCol: { span: 18 },
-};
-const submitter: SubmitterProps = {
-  render: (_, dom) => (
-    <Form.Item
-      wrapperCol={{
-        offset: 6,
-        span: 18,
-      }}
-    >
-      <Space>
-        {dom[0]}
-        {dom[1]}
-      </Space>
-    </Form.Item>
-  ),
-};
+
 const BaseInfo = () => {
   const { message } = App.useApp();
   const formRef = useRef<ProFormInstance>(null);
   const { user } = useAppSelector((state) => state.user);
-  const [formData] = useState({
-    id: user?.id,
-    nickname: user?.nickname,
-    phone: user?.phone,
-    email: user?.email,
-    gender: user?.gender,
-    remark: user?.remark,
-  });
-  formRef.current?.setFieldsValue(formData);
+  const { dict } = useAppSelector((state) => state.dict);
+  const [formData, setFormData] = useState({});
+  useEffect(() => {
+    setFormData((prev) => {
+      return {
+        ...prev,
+        id: user?.id,
+        nickname: user?.nickname,
+        phone: user?.phone,
+        email: user?.email,
+        gender: user?.gender,
+        remark: user?.remark,
+      };
+    });
+  }, [user, setFormData]);
+  useEffect(() => {
+    formRef.current?.setFieldsValue(formData);
+  }, [formData, formRef]);
+
   const columns = [
     {
       title: "用户ID",
@@ -92,9 +82,9 @@ const BaseInfo = () => {
     {
       title: "性别",
       name: "gender",
-      valueType: "radio",
+      valueType: "select",
       fieldProps: {
-        options: GENDER_TYPE,
+        options: dict.gender.options,
       },
       formItemProps,
     },
@@ -106,7 +96,10 @@ const BaseInfo = () => {
     },
   ];
   async function onFinish(values: any) {
-    console.log(values);
+    const params = { ...formData, ...values }; // 这里用户可能重置表单，导致id丢失，所以需要重新赋值
+    await apiUser(params, "put");
+    message.success("修改成功");
+    return true
   }
 
   return (
@@ -115,98 +108,11 @@ const BaseInfo = () => {
       style={{ width: 500 }}
       layout="horizontal"
       submitter={submitter}
-      onFinish={async (values) => {
-        await onFinish(values);
-        message.success("提交成功");
-        return true;
-      }}
+      onFinish={onFinish}
       columns={columns}
     />
   );
 };
-const ModifyPassword = () => {
-  const { message } = App.useApp();
-  const formRef = useRef<ProFormInstance>(null);
-  const { user } = useAppSelector((state) => state.user);
-  const [formData] = useState({
-    id: user?.id,
-  });
-  formRef.current?.setFieldsValue(formData);
-  const columns = [
-    {
-      title: "用户ID",
-      name: "id",
-      fieldProps: {
-        disabled: true,
-      },
-      formItemProps: {
-        style: { display: "none" }, // 隐藏掉不占用空间
-      },
-    },
-    {
-      name: "password",
-      title: "用户密码",
-      fieldProps: {
-        type: "password",
-        allowClear: true,
-      },
-      formItemProps: {
-        ...formItemProps,
-        hasFeedback: true,
-        rules: [{ required: true, message: "必须输入密码" }],
-      },
-    },
-    {
-      title: "确认密码",
-      name: "confirm_password",
-      fieldProps: {
-        type: "password",
-        allowClear: true,
-      },
-      formItemProps: {
-        ...formItemProps,
-        dependencies: ["password"],
-        hasFeedback: true,
-        rules: [
-          { required: true, message: "请确认用户密码" },
-          {
-            validator(_: any, value: string) {
-              if (
-                !value ||
-                formRef.current?.getFieldValue("password") === value
-              ) {
-                return Promise.resolve();
-              }
-              return Promise.reject(new Error("两次密码不一致"));
-            },
-          },
-        ],
-      },
-    },
-  ];
-  async function onFinish(values: any) {
-    console.log(values);
-  }
-
-  return (
-    <>
-      {JSON.stringify(formData)}
-      <BetaSchemaForm
-        formRef={formRef}
-        style={{ width: 500 }}
-        layout="horizontal"
-        submitter={submitter}
-        onFinish={async (values) => {
-          await onFinish(values);
-          message.success("提交成功");
-          return true;
-        }}
-        columns={columns}
-      />
-    </>
-  );
-};
-
 export default function Account() {
   const { user } = useAppSelector((state) => state.user);
   const dataSource = [
@@ -230,7 +136,7 @@ export default function Account() {
     {
       key: "2",
       label: "修改密码",
-      children: <ModifyPassword />,
+      children: <ModifyPassword dataSource={user} />,
     },
   ];
   const onChange = (key: string) => {

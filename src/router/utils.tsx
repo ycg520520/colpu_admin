@@ -2,14 +2,14 @@
  * @Author: colpu
  * @Date: 2025-06-17 09:14:12
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-20 17:06:18
+ * @LastEditTime: 2025-12-01 21:54:30
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 
 import Loading from "@/components/Loading";
 import { ComponentType, lazy, Suspense } from "react";
-import { LazyRouteFunction, RouteObject } from "react-router";
+import { LazyRouteFunction, Outlet, RouteObject } from "react-router";
 import { RouteHandle, RouteType } from ".";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { createBrowserRouter } from "react-router-dom";
@@ -156,8 +156,8 @@ export function routerToTree(data: RouteType[]) {
   };
 
   const result: RouteType[] = [];
-  for (const key in dict) {
-    const item = dict[key];
+  for (const idKey in dict) {
+    const item = dict[idKey];
     const fid = item.parentId;
 
     const fatherItem = dict[fid];
@@ -166,30 +166,44 @@ export function routerToTree(data: RouteType[]) {
         fatherItem.children = [];
       }
 
-      if (fatherItem.index) {
+      // 如果父级没有index，则添加到子集作为path为index
+      if ((fatherItem.index && fatherItem.lazy) || fatherItem.lazy) {
         const { handle } = fatherItem;
         const { hideChildrenInMenu } = handle || {};
         const newHandle = { ...handle };
+        const { children, ...rest } = fatherItem;
         const fatherItemToChildItem = {
-          ...fatherItem,
+          ...rest,
+          index: true, // 默认为重定向首页
           path: `index`,
           handle: newHandle,
         };
 
         if (hideChildrenInMenu) {
-          addRedirectIndex(fatherItemToChildItem, fatherItem.children);
+          addRedirectIndex(fatherItemToChildItem, children);
           delete newHandle.hideChildrenInMenu;
-          delete fatherItem.lazy;
         }
-        delete fatherItemToChildItem.children;
-        fatherItem.children.push(fatherItemToChildItem);
+        delete fatherItem.lazy;
+        children.push(fatherItemToChildItem);
         fatherItem.index = false;
       }
 
       const { index, handle } = item;
       const { hideChildrenInMenu } = handle || {};
       if (index && !hideChildrenInMenu) {
-        addRedirectIndex(item, fatherItem.children);
+        const firstItem = fatherItem.children[0];
+        // 处理指定重定向为最后一个子集
+        if (firstItem && firstItem.index) {
+          let path = item.path;
+          // 解决重定向时不能带参数进行重定向
+          if (/(\/)?:[^/]+\?/.test(path)) {
+            path = path.replace(/(\/)?:[^/]+\?/, "");
+          }
+          firstItem.path = path;
+          item.index = false; // 取消调重定向
+        } else {
+          addRedirectIndex(item, fatherItem.children);
+        }
       }
       fatherItem.children.push(item);
     } else {

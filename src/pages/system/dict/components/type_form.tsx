@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-10 15:20:40
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-18 00:10:19
+ * @LastEditTime: 2025-12-03 23:14:30
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -10,14 +10,11 @@ import { BetaSchemaForm } from "@ant-design/pro-components";
 import { useEffect } from "react";
 import { message } from "antd";
 import { checkDictTypes } from "@/api/dict";
-import { useDebouncedValidation } from "@/hooks/useDebounce";
-import { RADIO_STATUS } from "@/constants";
-
+import { useAppSelector } from "@/store/hooks";
 const TypeForm = (props: any) => {
   const { title, open, isEdit, editData, onFinish, modalProps, formRef } =
     props;
-  const { debouncedValidator } = useDebouncedValidation();
-
+  const { dict } = useAppSelector((state) => state.dict);
   const colProps = {
     span: 12,
   };
@@ -29,9 +26,12 @@ const TypeForm = (props: any) => {
     (key: string, msg = "数据标签已存在") =>
     async (value: string) => {
       return new Promise((resolve, reject) => {
-        const params: any = {
-          type_code: editData.type_code,
-        };
+        const initValue = formRef.current?.getFieldValue(key);
+        // 如果值没变，跳过远程验证
+        if (value === initValue) {
+          return resolve(true);
+        }
+        const params: any = {};
         params[key] = value;
         checkDictTypes(params).then((res) => {
           if (res) {
@@ -67,19 +67,20 @@ const TypeForm = (props: any) => {
       colProps,
       formItemProps: {
         ...formItemProps,
+        validateDebounce: 600,
         rules: [
-          { required: true, message: "请输入字典类型" },
-          // {
-          //   validator: debouncedValidator(
-          //     "type_code",
-          //     validateData("type_code"),
-          //     600
-          //   ),
-          // },
+          {
+            required: true,
+            message: "请输入字典类型",
+          },
+          {
+            validator: async (_: any, value: any) => {
+              return validateData("type_code")(value);
+            },
+          },
         ],
       },
     },
-
     {
       name: "status",
       title: "状态",
@@ -87,7 +88,7 @@ const TypeForm = (props: any) => {
       initialValue: 1,
       fieldProps: {
         optionType: "button",
-        options: RADIO_STATUS,
+        options: dict.enabled_status.options,
       },
       formItemProps,
       colProps,
@@ -122,7 +123,7 @@ const TypeForm = (props: any) => {
       formRef={formRef}
       title={`${isEdit ? "编辑" : "添加"}${title}`}
       rowProps={{
-        gutter: [16, 16],
+        gutter: [16, 0],
       }}
       colProps={{
         span: 12,

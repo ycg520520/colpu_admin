@@ -7,7 +7,7 @@ import { PermissionButton } from "./Permission";
  * @Author: colpu
  * @Date: 2025-11-14 12:24:53
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-16 23:12:07
+ * @LastEditTime: 2025-12-02 16:16:14
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -21,22 +21,24 @@ export default function ToolBarTitle(props: any) {
     onClose,
     onExpand,
     isExpanded,
+    addProps,
+    buttons = [],
+    permissions = {},
   } = props;
   const [isExpand, setIsExpand] = useState(false); // 是否展开
   useEffect(() => {
     setIsExpand(isExpanded);
   }, [isExpanded]);
+  const { text = "新增", ...restAddProps } = addProps || {};
+  const addBtnProps = {
+    icon: <PlusOutlined />,
+    type: "primary",
+    onClick: onAdd,
+    ...restAddProps,
+  };
   return (
     <Space>
-      <PermissionButton
-        buttonProps={{
-          icon: <PlusOutlined />,
-          type: "primary",
-          onClick: onAdd,
-        }}
-      >
-        新增
-      </PermissionButton>
+      <PermissionButton buttonProps={addBtnProps}>{text}</PermissionButton>
       {onEdit ? (
         <PermissionButton
           buttonProps={{
@@ -45,6 +47,7 @@ export default function ToolBarTitle(props: any) {
             disabled,
             onClick: onEdit,
           }}
+          permission={permissions.edit}
         >
           修改
         </PermissionButton>
@@ -57,10 +60,12 @@ export default function ToolBarTitle(props: any) {
             disabled,
             onClick: onDel,
           }}
+          permission={permissions.del}
         >
           删除
         </PermissionButton>
       ) : null}
+      {...buttons}
       {onExport ? (
         <PermissionButton
           buttonProps={{
@@ -68,6 +73,7 @@ export default function ToolBarTitle(props: any) {
             variant: "dashed",
             onClick: onExport,
           }}
+          permission={permissions.export}
         >
           导出
         </PermissionButton>

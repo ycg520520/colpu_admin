@@ -2,11 +2,11 @@
  * @Author: colpu
  * @Date: 2025-06-12 16:13:46
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-18 16:04:21
+ * @LastEditTime: 2025-12-02 23:47:15
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
-import { Card, Modal, Space, Switch } from "antd";
+import { Card, Modal, Space } from "antd";
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import "@/assets/styles/table.scss";
@@ -22,10 +22,12 @@ import { AnyObject } from "antd/es/_util/type";
 import TypeForm from "./components/type_form";
 import useProTableFullscreen from "@/hooks/useProTableFullscreen";
 import useFormModal from "@/hooks/useFormModal";
-import { FULLSCREEN_ICONS, RADIO_STATUS } from "@/constants";
+import { FULLSCREEN_ICONS } from "@/constants";
 import ToolBarTitle from "@/components/ToolBarTitle";
 import useTableColor from "@/hooks/useTableColor";
 import ActionRender from "@/components/ActionRender";
+import { renderStatus } from "@/constants/public";
+import { useAppSelector } from "@/store/hooks";
 export default function DictTypesList() {
   const [disabled, setDisabled] = useState(true);
   const { open, onOK, onCancel, formRef } = useFormModal();
@@ -34,18 +36,19 @@ export default function DictTypesList() {
   const [isEdit, setIsEdit] = useState(false);
   const actionRef = useRef<ActionType | null>(null);
   const { tableStyles, rowClassName } = useTableColor();
-
+  const { dict } = useAppSelector((state) => state.dict);
+  const [searchValues, setSearchValues] = useState({});
   const fetchDictTypes = async (params: any) => {
     let data = [];
     let total = 0;
     try {
-      const { rows, type_code }: any = await apiDictTypes(params);
-      data = rows || [];
-      total = data.length;
+      const res: any = await apiDictTypes(params);
+      data = res.rows || [];
+      total = res.total;
       setEditData((prev: any) => {
         return {
           ...prev,
-          type_code,
+          ...searchValues,
         };
       });
     } catch (err) {
@@ -152,12 +155,9 @@ export default function DictTypesList() {
         valueType: "radio",
         initialValue: 1,
         fieldProps: {
-          options: RADIO_STATUS,
+          options: dict.enabled_status.options,
         },
-        // 渲染表格内容
-        render: (value: any) => (
-          <Switch defaultChecked={value} disabled={true} size="small" />
-        ),
+        render: renderStatus(),
       },
     ],
     {
@@ -166,7 +166,14 @@ export default function DictTypesList() {
         render: (_: any, record: any) => {
           return (
             <ActionRender
-              values={record}
+              disableds={{
+                edit: !!record.editable,
+                del: !!record.editable,
+              }}
+              permissions={{
+                edit: "sys:dict:edit",
+                del: "sys:dict:del",
+              }}
               onDel={() => handdleDel(record)}
               onEdit={() => handdleEdit(record)}
             />
@@ -207,7 +214,6 @@ export default function DictTypesList() {
     />
   );
 
-  const [searchValues, setSearchValues] = useState({});
   const handdleSearch = (values = {}) => {
     setSearchValues(values);
     actionRef.current?.reload();
@@ -270,6 +276,9 @@ export default function DictTypesList() {
             rowClassName={rowClassName}
             tableAlertRender={false}
             rowSelection={{
+              getCheckboxProps: (record) => ({
+                disabled: record.editable === 1, // 某些状态不可选
+              }),
               onSelect,
               onChange,
             }}

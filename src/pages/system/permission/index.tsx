@@ -2,12 +2,12 @@
  * @Author: colpu
  * @Date: 2025-11-16 00:16:50
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-02 22:36:15
+ * @LastEditTime: 2025-12-04 17:07:35
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 import { Card, Modal, Space } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import "@/assets/styles/table.scss";
 import {
   ActionType,
@@ -20,35 +20,48 @@ import useProTableFullscreen from "@/hooks/useProTableFullscreen";
 import useFormModal from "@/hooks/useFormModal";
 import { FULLSCREEN_ICONS } from "@/constants";
 import ToolBarTitle from "@/components/ToolBarTitle";
-import { apiDepartment, getDepartmentList } from "@/api/departments";
-import { DownOutlined, RightOutlined } from "@ant-design/icons";
-import DepartmentForm from "./components/department_form";
+import { apiPermission, getPermissionList } from "@/api/permission";
+import PermForm from "./components/perm_form";
 import useTableColor from "@/hooks/useTableColor";
 import ActionRender from "@/components/ActionRender";
-import { renderStatus } from "@/constants/public";
 import { useAppSelector } from "@/store/hooks";
+import { renderStatus } from "@/constants/public";
+import { MenuInfo } from "rc-menu/lib/interface";
+import RolePermForm from "./components/role_perm_form";
 
-export default function DepartmentList() {
+export default function PermissionList() {
+  const [disabled, setDisabled] = useState(true);
   const { open, onOK, onCancel, formRef } = useFormModal();
+  const {
+    open: roleOpen,
+    onOK: roleOK,
+    onCancel: roleCancel,
+    formRef: roleFormRef,
+  } = useFormModal();
   const { isFullscreen } = useProTableFullscreen();
   const [editData, setEditData] = useState<any>({});
   const [isEdit, setIsEdit] = useState(false);
+  const [roleData, setRoleData] = useState<any>({});
+  const [isRoleEdit, setIsRoleEdit] = useState(false);
+  const [isRole, setIsRole] = useState(false);
   const actionRef = useRef<ActionType | null>(null);
-  const [dataSource, setDataSource] = useState([]);
   const { tableStyles, rowClassName } = useTableColor();
   const { dict } = useAppSelector((state) => state.dict);
 
-  const fetchDepartment = async (params: any) => {
-    let res: any;
+  const fetchPermissionList = async (params: any) => {
+    let data = [];
+    let total = 0;
     try {
-      res = await getDepartmentList(params);
+      const res: any = (await getPermissionList(params)) || {};
+      data = res.rows || [];
+      total = res.total;
       setEditData({});
     } catch (err) {
       console.log(err);
     }
-    const { total, rows: data } = res;
-    setDataSource(data);
-    setExpandedRowKeys(_keysHandle(data));
+    if (data.length === 0) {
+      setDisabled(true);
+    }
     return {
       data,
       success: true,
@@ -58,7 +71,7 @@ export default function DepartmentList() {
 
   const handdleAdd = () => {
     setIsEdit(false);
-    setEditData({});
+    setEditData(editData);
     onOK();
   };
   const handdleEdit = (record: any) => {
@@ -73,7 +86,7 @@ export default function DepartmentList() {
       content: "确定删除吗？",
       okType: "danger",
       onOk() {
-        apiDepartment({ id }, "delete").then(async () => {
+        apiPermission({ id }, "delete").then(async () => {
           actionRef.current?.reset!();
           setEditData((prev: any) => {
             return { ...prev, type_code };
@@ -86,27 +99,100 @@ export default function DepartmentList() {
     });
   };
 
+  const onSelect = (_current: any, _selected: boolean, selectedRows: any[]) => {
+    if (selectedRows.length === 1) {
+      setEditData((prev: any) => {
+        return { ...prev, ...selectedRows[0] };
+      });
+    }
+  };
+
+  const onChange = (selectedRows: any) => {
+    setDisabled(selectedRows.length !== 1);
+  };
+
+  const onExport = () => {
+    console.log("export");
+  };
+
   // 完成提交数据
   const onFinish = async (values: any) => {
     delete values.confirm_password; // 删除确认密码
-    await apiDepartment(values, isEdit ? "put" : "post");
-    actionRef.current?.reload!();
+    await apiPermission(values, isEdit ? "put" : "post");
+    actionRef.current?.reset!();
     onCancel();
+  };
+  const roleFinish = async (values: any) => {
+    console.log(values);
+    roleCancel();
+  };
+
+  const onClickOtherAction = ({ key }: MenuInfo, record: any) => {
+    console.log(key, record);
+    const { id, name, type, user_ids = [], role_ids = [] } = record;
+    const data = { id, name, type };
+    switch (key) {
+      case "user":
+        setIsRole(false);
+        setIsRoleEdit(user_ids.length > 0);
+        setRoleData({ ...data, user_ids });
+        break;
+      case "role":
+      default:
+        setIsRole(true);
+        setRoleData({ ...data, role_ids });
+        setIsRoleEdit(role_ids.length > 0);
+        break;
+    }
+    roleOK();
   };
 
   // 表头配置
   const columns = composeColumns(
     [
       {
-        title: "部门名称",
+        title: "权限名称",
         dataIndex: "name",
         fixed: true,
       },
       {
-        title: "部门编码",
-        dataIndex: "code",
+        title: "权限编码",
+        dataIndex: "perm_code",
         search: false,
         width: 120,
+      },
+      {
+        title: "类型",
+        align: "center",
+        dataIndex: "type",
+        search: false,
+        width: 120,
+      },
+      {
+        title: "请求方法",
+        dataIndex: "method",
+        search: false,
+        width: 120,
+      },
+      {
+        title: "请求路径",
+        key: "path",
+        dataIndex: "path",
+        search: false,
+        width: 120,
+      },
+      {
+        title: "排序",
+        width: 80,
+        align: "center",
+        dataIndex: "sort_order",
+        search: false,
+      },
+      {
+        title: "是否系统权限",
+        dataIndex: "is_system",
+        search: false,
+        width: 150,
       },
       {
         title: "状态",
@@ -116,22 +202,35 @@ export default function DepartmentList() {
         width: 60,
         search: false,
         fieldProps: {
-          options: dict.enabled_status.options,
+          options: dict.enabled_status.options, // 状态字典
         },
         render: renderStatus(),
       },
       {
-        title: "排序",
+        title: "创建者",
         width: 80,
         align: "center",
-        key: "sort_order",
-        dataIndex: "sort_order",
+        dataIndex: "created_by",
+        search: false,
+      },
+      {
+        title: "更新人",
+        width: 80,
+        align: "center",
+        dataIndex: "updated_by",
+        search: false,
+      },
+      {
+        title: "更新人",
+        width: 80,
+        align: "center",
+        dataIndex: "updated_by",
         search: false,
       },
     ],
     {
       showOrder: false,
-      showRemark: true,
+      showCreatedAt: false,
       action: {
         render: (_: any, record: any) => {
           return (
@@ -140,14 +239,33 @@ export default function DepartmentList() {
                 edit: !!record.editable,
                 del: !!record.editable,
               }}
+              permissions={{
+                edit: "sys:post:edit",
+                del: "sys:post:del",
+              }}
               onDel={() => handdleDel(record)}
               onEdit={() => handdleEdit(record)}
+              menuProps={{
+                style: { minWidth: 120 },
+                items: [
+                  {
+                    label: "分配角色",
+                    key: "role",
+                  },
+                  {
+                    label: "分配用户",
+                    key: "user",
+                  },
+                ],
+                onClick: (info: MenuInfo) => onClickOtherAction(info, record),
+              }}
             />
           );
         },
       },
     }
   );
+
   // 搜索表单配置
   const formColumns = columns.filter((item) => {
     if (item.search !== false) return item;
@@ -162,54 +280,45 @@ export default function DepartmentList() {
         body: { paddingTop: 10 },
       },
       maskClosable: false,
-      width: 520,
+      width: 640,
     },
     editData,
     isEdit,
     formRef,
-    title: "部门",
+    title: "权限",
     onFinish,
   };
 
-  const [searchValues, setSearchValues] = useState({});
-  const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
-  const [isExpanded, setIsExpanded] = useState(false);
-  useEffect(() => {
-    setIsExpanded(expandedRowKeys.length > 0);
-  }, [expandedRowKeys]);
-
-  const _keysHandle = (data: any[]): number[] => {
-    const keys = [];
-    for (let index = 0; index < data.length; index++) {
-      const item = data[index];
-      keys.push(item.id);
-      if (item.children) {
-        keys.push(..._keysHandle(item.children));
-      }
-    }
-    return keys;
-  };
-  const setKeys = (dataSource: any[]) => {
-    const expandedKeys = _keysHandle(dataSource);
-    if (expandedRowKeys.length === 0) {
-      setExpandedRowKeys(expandedKeys);
-    } else {
-      setExpandedRowKeys([]);
-    }
-  };
-
-  const onExpand = () => {
-    setKeys(dataSource);
+  const roleModalProps = {
+    open: roleOpen,
+    modalProps: {
+      onOK: roleOK,
+      onCancel: roleCancel,
+      styles: {
+        body: { paddingTop: 10 },
+      },
+      maskClosable: false,
+      width: 480,
+    },
+    editData: roleData,
+    isEdit: isRoleEdit,
+    isRole,
+    formRef: roleFormRef,
+    title: isRole ? "角色" : "用户",
+    onFinish: roleFinish,
   };
 
   const toolbarTitle = (
     <ToolBarTitle
-      isExpanded={isExpanded}
+      disabled={disabled}
       onAdd={handdleAdd}
-      onExpand={onExpand}
+      onEdit={() => handdleEdit(editData)}
+      onDel={() => handdleDel(editData)}
+      onExport={onExport}
     />
   );
 
+  const [searchValues, setSearchValues] = useState({});
   const handdleSearch = (values = {}) => {
     setSearchValues(values);
     actionRef.current?.reload();
@@ -217,7 +326,7 @@ export default function DepartmentList() {
 
   return (
     <>
-      <Space size={10} direction="vertical" style={{ display: "flex" }}>
+      <Space direction="vertical" style={{ display: "flex" }}>
         {/* 自定义搜索表单，解决ProTable自带搜索表单搜索布局不能满足所需 */}
         <Card style={{ border: "none" }}>
           <BetaSchemaForm
@@ -238,13 +347,13 @@ export default function DepartmentList() {
           <ProTable
             rowKey="id"
             scroll={{ x: "max-content" }}
+            bordered
             formRef={formRef}
             actionRef={actionRef}
             style={{ position: "relative", zIndex: 0 }}
             columns={columns}
-            pagination={false}
-            request={() => {
-              return fetchDepartment(searchValues);
+            request={({ current: page, ...params }) => {
+              return fetchPermissionList({ page, ...params, ...searchValues });
             }}
             search={false}
             toolbar={
@@ -252,7 +361,7 @@ export default function DepartmentList() {
                 ? { title: toolbarTitle, settings: [] }
                 : { title: toolbarTitle }
             }
-            toolBarRender={(action: any) => {
+            toolBarRender={(action) => {
               const ScreenIcon =
                 FULLSCREEN_ICONS[
                   isFullscreen ? "fullscreen" : "exitFullScreen"
@@ -271,48 +380,18 @@ export default function DepartmentList() {
             }}
             rowClassName={rowClassName}
             tableAlertRender={false}
-            rowSelection={false}
-            expandable={{
-              expandedRowKeys,
-              expandRowByClick: true,
-              expandIcon: ({ expanded, onExpand, record }) => {
-                if (record.children && record.children.length > 0) {
-                  return expanded ? (
-                    <DownOutlined
-                      key={record.id}
-                      style={{ fontSize: 12, marginRight: 5, color: "#ccc" }}
-                      onClick={(e) => {
-                        setExpandedRowKeys((prev) => {
-                          return prev.filter((item) => item !== record.id);
-                        });
-                        onExpand(record, e);
-                      }}
-                    />
-                  ) : (
-                    <RightOutlined
-                      key={record.id}
-                      style={{ fontSize: 12, marginRight: 5, color: "#ccc" }}
-                      onClick={(e) => {
-                        setExpandedRowKeys((prev) => {
-                          return [...prev, record.id];
-                        });
-                        onExpand(record, e);
-                      }}
-                    />
-                  );
-                } else {
-                  return (
-                    <span
-                      style={{ width: "1em", display: "inline-block" }}
-                    ></span>
-                  );
-                }
-              },
+            rowSelection={{
+              getCheckboxProps: (record) => ({
+                disabled: record.editable === 1, // 某些状态不可选
+              }),
+              onSelect,
+              onChange,
             }}
           />
         </div>
       </Space>
-      <DepartmentForm {...modalProps} />
+      <PermForm {...modalProps} />
+      <RolePermForm {...roleModalProps} />
     </>
   );
 }

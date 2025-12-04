@@ -4,7 +4,7 @@
  * @Author: colpu
  * @Date: 2025-03-18 21:23:51
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-23 14:35:04
+ * @LastEditTime: 2025-12-01 22:50:09
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -57,50 +57,50 @@ export const baseRouter: RouteType[] = [
 ];
 
 export const asyncRouter: RouteType[] = [
-  // {
-  //   index: true,
-  //   path: "dashboard",
-  // },
-  // {
-  //   path: "dashboard",
-  //   handle: {
-  //     layout: 'MainLayout',
-  //     name: "dashboard",
-  //     icon: "SpotifyOutlined",
-  //     translationKey: "menu.dashboard.name",
-  //   },
-  //   children: [
-  //     {
-  //       index: true,
-  //       path: "desk",
-  //     },
-  //     {
-  //       path: "desk",
-  //       handle: {
-  //         name: "desk",
-  //         translationKey: "menu.dashboard.desk",
-  //         roles: ["admin", "editor"],
-  //       },
-  //       lazy: "dashboard/desk",
-  //     },
-  //     {
-  //       path: "analysis",
-  //       handle: {
-  //         name: "analysis",
-  //         translationKey: "menu.dashboard.analysis",
-  //         roles: ["admin","editor"],
-  //       },
-  //       lazy: "dashboard/analysis",
-  //     },
-  //     {
-  //       path: "monitor",
-  //       handle: {
-  //         name: "monitor",
-  //         translationKey: "menu.dashboard.monitor",
-  //         roles: ["admin"],
-  //       },
-  //       lazy: "dashboard/monitor",
-  //     },
-  //   ],
-  // },
+  {
+    index: true,
+    path: "dashboard",
+  },
+  {
+    path: "dashboard",
+    handle: {
+      layout: 'BasicLayout',
+      name: "dashboard",
+      icon: "SpotifyOutlined",
+      translationKey: "menu.dashboard.name",
+    },
+    children: [
+      {
+        index: true,
+        path: "desk",
+      },
+      {
+        path: "desk",
+        handle: {
+          name: "desk",
+          translationKey: "menu.dashboard.desk",
+          roles: ["admin", "editor"],
+        },
+        lazy: "dashboard/desk",
+      },
+      {
+        path: "analysis",
+        handle: {
+          name: "analysis",
+          translationKey: "menu.dashboard.analysis",
+          roles: ["admin","editor"],
+        },
+        lazy: "dashboard/analysis",
+      },
+      {
+        path: "monitor",
+        handle: {
+          name: "monitor",
+          translationKey: "menu.dashboard.monitor",
+          roles: ["admin"],
+        },
+        lazy: "dashboard/monitor",
+      },
+    ],
+  },
 ];

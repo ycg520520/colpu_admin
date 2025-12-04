@@ -8,7 +8,7 @@
  */
 import { Navigate, useLocation } from "react-router-dom";
 import { useAppSelector } from "@/store/hooks";
-import { checkPermissions, checkRoles } from "@/utils/permissions";
+import { hasPermissions, checkRoles } from "@/utils/permissions";
 import { memo } from "react";
 
 interface ProtectedRouteProps {
@@ -31,7 +31,7 @@ const ProtectedRoute = memo(({
   const hasRole = roles && checkRoles(userStore.user?.roles || [], roles);
   const hasPermissions =
     permissions &&
-    !checkPermissions(userStore.user?.permissions || [], permissions);
+    !hasPermissions(userStore.user?.permissions || [], permissions);
   if (!hasRole || hasPermissions) {
     return <Navigate to="/403" replace />;
   }

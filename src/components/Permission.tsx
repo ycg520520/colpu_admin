@@ -2,51 +2,45 @@
  * @Author: colpu
  * @Date: 2025-07-11 10:59:40
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-16 23:21:57
+ * @LastEditTime: 2025-12-02 22:12:09
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 import { useAppSelector } from "@/store/hooks";
-import { checkPermissions } from "@/utils/permissions";
-import { Button, type ButtonProps } from "antd";
+import { hasPermissions } from "@/utils/permissions";
+import { Button, Tooltip, type ButtonProps } from "antd";
 
 export function Permission({
   children,
-  permissions = ["*:*:*"],
+  permission,
 }: {
   children?: React.ReactNode;
-  permissions?: string[];
+  permission?: string;
 }) {
   const userStore = useAppSelector((state) => state.user);
-  const hasPermission = checkPermissions(
-    userStore.user?.permissions || ["*:*:*"],
-    permissions
-  );
-  return hasPermission ? children : undefined;
+  const flag = hasPermissions(userStore.user?.permissions || [], permission);
+  return flag ? children : undefined;
 }
+
 export function PermissionButton({
   children,
-  showChildren = true,
-  permissions = ["*:*:*"],
+  show = true,
+  permission,
   buttonProps = {},
 }: {
   children?: React.ReactNode;
-  showChildren?: boolean;
-  permissions?: string[];
+  show?: boolean; // 是否显示按钮，默认显示
+  permission?: string;
   buttonProps?: ButtonProps;
 }) {
-  const userStore = useAppSelector((state) => state.user);
-  const hasPermission = checkPermissions(
-    userStore.user?.permissions || ["*:*:*"],
-    permissions
-  );
-  let disabled: boolean | undefined = false;
-  if (hasPermission) {
-    disabled = buttonProps.disabled;
-  } else {
+  const { user } = useAppSelector((state) => state.user);
+
+  const flag = hasPermissions(user?.permissions || [], permission);
+  let disabled = buttonProps.disabled;
+  if (!flag) {
     disabled = true;
   }
-  return hasPermission || showChildren ? (
+  const buttonNode = (
     <Button
       {...{
         ...buttonProps,
@@ -55,5 +49,12 @@ export function PermissionButton({
     >
       {children}
     </Button>
+  );
+  return flag || show ? (
+    flag ? (
+      buttonNode
+    ) : (
+      <Tooltip title="暂无权限">{buttonNode}</Tooltip>
+    )
   ) : null;
 }

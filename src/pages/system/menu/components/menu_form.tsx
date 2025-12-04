@@ -10,15 +10,6 @@
 import { BetaSchemaForm } from "@ant-design/pro-components";
 import { useCallback, useEffect, useState } from "react";
 import { message } from "antd";
-import {
-  LAYOUT_OPTIONS,
-  RADIO_MENU_TYPE,
-  RADIO_STATUS,
-  RADIO_STATUS_CACHE,
-  RADIO_STATUS_HIDE,
-  RADIO_STATUS_SHOW,
-  RADIO_STATUS_YES_NO,
-} from "@/constants";
 import IconPicker from "@/components/IconPicker";
 import { getMenusTree } from "@/api/menus";
 import {
@@ -27,6 +18,7 @@ import {
   formItemProps,
   formItemPropsFull,
 } from "@/constants/form";
+import { useAppSelector } from "@/store/hooks";
 
 const DIR_MENU = [0, 1];
 const DIR = 0;
@@ -36,6 +28,7 @@ const MenuForm = (props: any) => {
     props;
   const [menuType, setMenuType] = useState(editData.menu_type || 0); // 0布局，1目录，2菜单，3按钮
   const [isLink, setIsLink] = useState(false); // 是否是外链
+  const { dict } = useAppSelector((state) => state.dict);
 
   useEffect(() => {
     const menu_type = editData.menu_type || 0;
@@ -64,8 +57,12 @@ const MenuForm = (props: any) => {
         item.disabled = true;
       }
       // 目录时，菜单和按钮不可选
-      if (menuType == 0 && [1, 2].includes(item.menu_type)) {
-        item.disabled = true;
+      if (menuType == 0) {
+        if ([1, 2].includes(item.menu_type)) {
+          item.disabled = true;
+        } else {
+          item.disabled = false;
+        }
       }
 
       if (item.children) {
@@ -98,7 +95,7 @@ const MenuForm = (props: any) => {
       fieldProps: {
         optionType: "button",
         defaultValue: menuType,
-        options: RADIO_MENU_TYPE,
+        options: dict.menu_type.options,
         onChange: (e: any) => {
           const value = e.target.value;
           formRef.current?.setFieldValue("menu_type", value);
@@ -121,30 +118,31 @@ const MenuForm = (props: any) => {
           formItemProps,
           colProps,
           fieldProps: {
-            options: LAYOUT_OPTIONS,
+            options: dict.layout.options.map((item: any) => ({
+              label: item.label,
+              value: item.code,
+            })),
           },
         }
       : undefined,
-    DIR != menuType
-      ? {
-          title: "上级菜单",
-          dataIndex: "parent_id",
-          valueType: "treeSelect",
-          formItemProps: formItemPropsFull,
-          colProps: colPropsFull,
-          treeData,
-          fieldProps: {
-            showSearch: true,
-            placeholder: "请选择上级菜单",
-            fieldNames: {
-              label: "title",
-              value: "id",
-              children: "children",
-            },
-            treeData,
-          },
-        }
-      : undefined,
+    {
+      title: "上级菜单",
+      dataIndex: "parent_id",
+      valueType: "treeSelect",
+      formItemProps: formItemPropsFull,
+      colProps: colPropsFull,
+      treeData,
+      fieldProps: {
+        showSearch: true,
+        placeholder: "请选择上级菜单",
+        fieldNames: {
+          label: "title",
+          value: "id",
+          children: "children",
+        },
+        treeData,
+      },
+    },
     {
       title: "菜单名称",
       name: "title",
@@ -190,11 +188,11 @@ const MenuForm = (props: any) => {
       : undefined,
     {
       title: "权限码",
-      name: "permission",
+      name: "perm_code",
       tooltip: (
         <div style={{ fontSize: 12 }}>
           控制器中定义的权限字符，如：
-          {`@PreAuthorize(@ss.hasPermission('system:user:list'))`}
+          {`hasPermission('system:user:list'))`}
         </div>
       ),
       formItemProps,
@@ -207,7 +205,7 @@ const MenuForm = (props: any) => {
           name: "is_link",
           fieldProps: {
             defaultValue: 0,
-            options: RADIO_STATUS_YES_NO,
+            options: dict.link_status.options,
             onChange: (evt: any) => {
               setIsLink(evt.target.value);
             },
@@ -254,9 +252,6 @@ const MenuForm = (props: any) => {
     {
       title: "菜单图标",
       name: "icon",
-      fieldProps: {
-        options: RADIO_STATUS_YES_NO,
-      },
       formItemProps,
       colProps,
       renderFormItem: () => {
@@ -282,7 +277,7 @@ const MenuForm = (props: any) => {
       valueType: "radio",
       fieldProps: {
         defaultValue: 1,
-        options: RADIO_STATUS,
+        options: dict.enabled_status.options,
       },
       formItemProps,
       colProps,
@@ -297,7 +292,7 @@ const MenuForm = (props: any) => {
           valueType: "radio",
           fieldProps: {
             defaultValue: 1,
-            options: RADIO_STATUS_HIDE,
+            options: dict.hide_status.options,
           },
           formItemProps,
           colProps,
@@ -316,7 +311,7 @@ const MenuForm = (props: any) => {
           ),
           fieldProps: {
             defaultValue: 1,
-            options: RADIO_STATUS_HIDE,
+            options: dict.show_status.options,
           },
           formItemProps,
           colProps,
@@ -335,7 +330,7 @@ const MenuForm = (props: any) => {
           ),
           fieldProps: {
             defaultValue: 0,
-            options: RADIO_STATUS_SHOW,
+            options: dict.hide_status.options,
           },
           formItemProps,
           colProps,
@@ -353,7 +348,7 @@ const MenuForm = (props: any) => {
           ),
           fieldProps: {
             defaultValue: 1,
-            options: RADIO_STATUS_CACHE,
+            options: dict.cache_status.options,
           },
           formItemProps,
           colProps,
@@ -366,7 +361,7 @@ const MenuForm = (props: any) => {
           valueType: "radio",
           fieldProps: {
             defaultValue: 0,
-            options: RADIO_STATUS_YES_NO,
+            options: dict.whether_status.options,
           },
           formItemProps,
           colProps,

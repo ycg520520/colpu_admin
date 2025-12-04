@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-03-18 20:41:58
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-24 16:44:04
+ * @LastEditTime: 2025-11-25 10:50:00
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -29,6 +29,7 @@ export default {
       name: "角色管理",
       add: "添加角色",
       edit: "编辑角色",
+      user: "分配用户",
     },
     dict: {
       name: "字典管理",

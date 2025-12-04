@@ -2,11 +2,11 @@
  * @Author: colpu
  * @Date: 2025-11-03 17:24:11
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-18 00:14:43
+ * @LastEditTime: 2025-12-03 20:40:56
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
-import { Button, Modal, Space, Switch } from "antd";
+import { Modal } from "antd";
 import { useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "@/assets/styles/table.scss";
@@ -19,6 +19,9 @@ import useProTableFullscreen from "@/hooks/useProTableFullscreen";
 import { FULLSCREEN_ICONS } from "@/constants";
 import ToolBarTitle from "@/components/ToolBarTitle";
 import useTableColor from "@/hooks/useTableColor";
+import { renderStatus } from "@/constants/public";
+import { useAppSelector } from "@/store/hooks";
+import ActionRender from "@/components/ActionRender";
 
 export default function DictDataList() {
   const navigate = useNavigate();
@@ -31,6 +34,7 @@ export default function DictDataList() {
   const [isEdit, setIsEdit] = useState(false);
   const actionRef = useRef<ActionType | null>(null);
   const { tableStyles, rowClassName } = useTableColor();
+  const { dict } = useAppSelector((state) => state.dict);
 
   const fetchDictData = async (id: string | null) => {
     let data = [];
@@ -119,7 +123,6 @@ export default function DictDataList() {
         title: "排序",
         width: 80,
         align: "center",
-        key: "sort_order",
         dataIndex: "sort_order",
         search: false,
       },
@@ -127,27 +130,23 @@ export default function DictDataList() {
         title: "字典编号",
         width: 100,
         align: "center",
-        key: "id",
         dataIndex: "id",
         search: false,
       },
       {
         title: "字典标签",
         width: 160,
-        key: "label",
         dataIndex: "label",
       },
       {
         title: "字典键值",
         width: 120,
-        key: "value",
         dataIndex: "value",
         search: false,
       },
       {
         title: "数据编码",
-        key: "data_code",
-        dataIndex: "data_code",
+        dataIndex: "code",
         fieldProps: {
           rules: [{ required: true, message: "请输入数据名称" }],
         },
@@ -158,50 +157,39 @@ export default function DictDataList() {
       {
         title: "回显样式",
         width: 120,
-        key: "css_class",
         dataIndex: "css_class",
         search: false,
       },
       {
         title: "状态",
-        key: "status",
         dataIndex: "status",
+        valueType: "radio",
         width: 60,
         align: "center",
         search: false,
-        render: (value: any) => {
-          return <Switch size="small" defaultChecked={value} disabled={true} />;
+        fieldProps: {
+          options: dict.enabled_status.options,
         },
+        render: renderStatus(),
       },
     ],
     {
       showRemark: true,
       action: {
-        width: 110,
         render: (_: any, record: any) => {
           return (
-            <Space
-              align="start"
-              split={<span style={{ color: "#eee" }}>|</span>}
-              size={0}
-            >
-              <Button
-                size="small"
-                color="primary"
-                variant="link"
-                onClick={() => handdleEdit(record)}
-              >
-                编辑
-              </Button>
-              <Button
-                size="small"
-                color="primary"
-                variant="link"
-                onClick={() => handdleDel(record)}
-              >
-                删除
-              </Button>
-            </Space>
+            <ActionRender
+              disableds={{
+                edit: !!record.editable,
+                del: !!record.editable,
+              }}
+              permissions={{
+                edit: "sys:dictdata:edit",
+                del: "sys:dictdata:del",
+              }}
+              onDel={() => handdleDel(record)}
+              onEdit={() => handdleEdit(record)}
+            />
           );
         },
       },
@@ -274,10 +262,12 @@ export default function DictDataList() {
             />,
           ];
         }}
-        rowKey={(record: any) => [record.id, record.status].toString()}
         rowClassName={rowClassName}
         tableAlertRender={false}
         rowSelection={{
+          getCheckboxProps: (record) => ({
+            disabled: record.editable === 1, // 某些状态不可选
+          }),
           onSelect,
           onChange,
         }}

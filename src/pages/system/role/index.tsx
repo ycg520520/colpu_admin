@@ -2,11 +2,11 @@
  * @Author: colpu
  * @Date: 2025-06-12 16:13:46
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-22 18:12:04
+ * @LastEditTime: 2025-12-04 21:51:26
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
-import { Card, Modal, Space, Switch } from "antd";
+import { Card, Modal, Space } from "antd";
 import { useRef, useState } from "react";
 import {
   ActionType,
@@ -16,29 +16,42 @@ import {
 } from "@ant-design/pro-components";
 import useTableColor from "@/hooks/useTableColor";
 import { composeColumns } from "@/utils/columns";
-import { FULLSCREEN_ICONS, RADIO_STATUS } from "@/constants";
+import { FULLSCREEN_ICONS } from "@/constants";
 import ToolBarTitle from "@/components/ToolBarTitle";
 import RoleForm from "./components/role_form";
 import useProTableFullscreen from "@/hooks/useProTableFullscreen";
 import useFormModal from "@/hooks/useFormModal";
 import ActionRender from "@/components/ActionRender";
-import { apiRole, getRoleList } from "@/api/roles";
+import { apiDataScope, apiRole, getRoleList } from "@/api/roles";
+import { useNavigate } from "react-router";
+import { useAppSelector } from "@/store/hooks";
+import { renderStatus } from "@/constants/public";
+import PremForm from "./components/data_prem_form";
+import { MenuInfo } from "rc-menu/lib/interface";
 export default function RoleList() {
   const [disabled, setDisabled] = useState(true);
   const { open, onOK, onCancel, formRef } = useFormModal();
+  const {
+    open: openPrem,
+    onOK: onOKPrem,
+    onCancel: onCancelPrem,
+    formRef: formRefPrem,
+  } = useFormModal();
   const { isFullscreen } = useProTableFullscreen();
   const [editData, setEditData] = useState<any>({});
   const [isEdit, setIsEdit] = useState(false);
   const actionRef = useRef<ActionType | null>(null);
   const { tableStyles, rowClassName } = useTableColor();
+  const navigate = useNavigate();
+  const { dict } = useAppSelector((state) => state.dict);
 
   const fetchRoleList = async (params: any) => {
     let data = [];
     let total = 0;
     try {
-      const { rows, count }: any = await getRoleList(params);
-      data = rows || [];
-      total = count;
+      const res: any = (await getRoleList(params)) || {};
+      data = res.rows || [];
+      total = res.total;
       setEditData({});
     } catch (err) {
       console.log(err);
@@ -107,26 +120,42 @@ export default function RoleList() {
     onCancel();
   };
 
+  const onFinishPrem = async ({ role_id, scope_type, config }: any) => {
+    await apiDataScope({ role_id, scope_type, config });
+    actionRef.current?.reset!();
+    onCancelPrem();
+  };
+  const onClickOtherAction = ({ key }: MenuInfo, row: any) => {
+    switch (key) {
+      case "1":
+        navigate(`/system/role/user/${row.id}`);
+        break;
+      case "2":
+        onOKPrem();
+        setEditData({ ...row });
+        break;
+      default:
+        break;
+    }
+  };
+
   // 表头配置
   const columns = composeColumns(
     [
       {
         title: "角色名称",
-        key: "name",
         width: 160,
         fixed: "left",
         dataIndex: "name",
       },
       {
-        title: "权限标识",
-        key: "code",
+        title: "角色编码",
         width: 100,
         dataIndex: "code",
         search: false,
       },
       {
         title: "角色描述",
-        key: "description",
         dataIndex: "description",
         search: false,
       },
@@ -134,59 +163,53 @@ export default function RoleList() {
         title: "排序",
         width: 80,
         align: "center",
-        key: "sort_order",
         dataIndex: "sort_order",
         search: false,
       },
       {
         title: "状态",
-        key: "status",
         dataIndex: "status",
-        search: false,
-        width: 60,
-        align: "center",
         valueType: "radio",
+        align: "center",
+        width: 60,
+        search: false,
         fieldProps: {
-          options: RADIO_STATUS,
+          options: dict.enabled_status.options, // 状态字典
         },
-        render: (_dom: React.ReactNode, record: any) => {
-          return (
-            <Switch
-              size="small"
-              defaultChecked={record.status}
-              disabled={true}
-            />
-          );
-        },
+        render: renderStatus(),
       },
     ],
     {
       searchCreatedAt: true,
       action: {
+        width: 120,
         render: (_: React.ReactNode, record: any) => {
           return (
             <ActionRender
-              values={record}
+              disableds={{
+                edit: !!record.editable,
+                del: !!record.editable,
+                dropdown: !!record.editable,
+              }}
+              permissions={{
+                edit:'sys:role:edit',
+                del:'sys:role:del'
+              }}
               onDel={() => handdleDel(record)}
               onEdit={() => handdleEdit(record)}
               menuProps={{
+                style: { minWidth: 120 },
                 items: [
                   {
                     label: "分配用户",
                     key: 1,
                   },
                   {
-                    label: "角色权限",
+                    label: "分配权限",
                     key: 2,
                   },
-                  {
-                    label: "部门权限",
-                    key: 3,
-                  },
                 ],
-                onClick: (value: any) => {
-                  console.log("click", value);
-                },
+                onClick: (info: MenuInfo) => onClickOtherAction(info, record),
               }}
             />
           );
@@ -200,6 +223,26 @@ export default function RoleList() {
     if (item.search !== false) return item;
   });
   // 弹窗props配置
+  const premModalProps = {
+    open: openPrem,
+    modalProps: {
+      onOK: onOKPrem,
+      onCancel: onCancelPrem,
+      styles: {
+        body: { paddingTop: 10 },
+      },
+      maskClosable: false,
+      width: 480,
+    },
+    editData: {
+      role_id: editData.id,
+      name: editData.name,
+      code: editData.code,
+      ...editData.data_scope,
+    },
+    formRef: formRefPrem,
+    onFinish: onFinishPrem,
+  };
   const modalProps = {
     open,
     modalProps: {
@@ -217,7 +260,6 @@ export default function RoleList() {
     title: "角色",
     onFinish,
   };
-
   const toolbarTitle = (
     <ToolBarTitle
       disabled={disabled}
@@ -225,6 +267,12 @@ export default function RoleList() {
       onEdit={() => handdleEdit(editData)}
       onDel={() => handdleDel(editData)}
       onExport={onExport}
+      permissions={{
+        add:'sys:role:add',
+        edit:'sys:role:edit',
+        del:'sys:role:del',
+        export:'sys:role:export'
+      }}
     />
   );
   const [searchValues, setSearchValues] = useState({});
@@ -289,6 +337,9 @@ export default function RoleList() {
             rowClassName={rowClassName}
             tableAlertRender={false}
             rowSelection={{
+              getCheckboxProps: (record) => ({
+                disabled: record.editable === 1, // 某些状态不可选
+              }),
               onSelect,
               onChange,
             }}
@@ -296,6 +347,7 @@ export default function RoleList() {
         </div>
       </Space>
       <RoleForm {...modalProps} />
+      <PremForm {...premModalProps} />
     </>
   );
 }
