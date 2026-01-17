@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-03-21 23:33:14
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-03 08:22:33
+ * @LastEditTime: 2026-01-17 13:40:04
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -30,12 +30,15 @@ export default function AppMain() {
   const locale = useAppSelector((state: RootState) => state.locale);
   const { status } = useAppSelector((state) => state.routes);
   const { routes } = useAppSelector((state) => state.routes);
+  const { isAuthenticated } = useAppSelector((state) => state.user);
   const [router, setRouter] = useState(createRouter(generatorAllRouter()));
   useEffect(() => {
-    dispatch(getRoutes(undefined));
-    dispatch(getDict(undefined));
-    dispatch(getDepartmentTree(undefined));
-  }, [dispatch]);
+    if (isAuthenticated) {
+      dispatch(getRoutes(undefined));
+      dispatch(getDict(undefined));
+      dispatch(getDepartmentTree(undefined));
+    }
+  }, [dispatch, isAuthenticated]);
   useEffect(() => {
     setRouter(createRouter(generatorAllRouter(cloneDeep(routes))));
   }, [routes]);
@@ -61,13 +64,7 @@ export default function AppMain() {
         >
           {/* App 解决message等弹窗全局问题 */}
           <AliveScope>
-            <RouterProvider
-              future={{
-                v7_startTransition: true,
-              }}
-              router={router}
-              fallbackElement={<Loading />}
-            />
+            <RouterProvider router={router} />
           </AliveScope>
         </ConfigProvider>
       </ProConfigProvider>

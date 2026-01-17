@@ -2,14 +2,14 @@
  * @Author: colpu
  * @Date: 2025-06-17 09:14:12
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-01 21:54:30
+ * @LastEditTime: 2025-12-10 09:14:50
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 
 import Loading from "@/components/Loading";
 import { ComponentType, lazy, Suspense } from "react";
-import { LazyRouteFunction, Outlet, RouteObject } from "react-router";
+import { LazyRouteFunction, RouteObject } from "react-router";
 import { RouteHandle, RouteType } from ".";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { createBrowserRouter } from "react-router-dom";
@@ -75,8 +75,8 @@ export const lazyElement = <T extends ComponentType<any>>(
   return (props: React.ComponentProps<T>) => {
     return (
       <Suspense fallback={handle.fallback || <Loading />}>
-        {handle.roles || handle.permissions ? (
-          <ProtectedRoute roles={handle.roles} permissions={handle.permissions}>
+        {handle.roles || handle.permission ? (
+          <ProtectedRoute roles={handle.roles} permission={handle.permission}>
             {_keepAliveComponent(<LazyComponent {...props} />, handle.isCache)}
           </ProtectedRoute>
         ) : (
@@ -120,8 +120,8 @@ export function lazyRouteObject(
     const routeObject = {
       ...res,
       element:
-        handle.roles || handle.permissions ? (
-          <ProtectedRoute roles={handle.roles} permissions={handle.permissions}>
+        handle.roles || handle.permission ? (
+          <ProtectedRoute roles={handle.roles} permission={handle.permission}>
             {element}
           </ProtectedRoute>
         ) : (
@@ -175,7 +175,7 @@ export function routerToTree(data: RouteType[]) {
         const fatherItemToChildItem = {
           ...rest,
           index: true, // 默认为重定向首页
-          path: `index`,
+          path: "index",
           handle: newHandle,
         };
 
@@ -196,8 +196,8 @@ export function routerToTree(data: RouteType[]) {
         if (firstItem && firstItem.index) {
           let path = item.path;
           // 解决重定向时不能带参数进行重定向
-          if (/(\/)?:[^/]+\?/.test(path)) {
-            path = path.replace(/(\/)?:[^/]+\?/, "");
+          if (/(\/)?:[^/]+\?$/.test(path)) {
+            path = path.replace(/(\/)?:[^/]+\?$/, "");
           }
           firstItem.path = path;
           item.index = false; // 取消调重定向
@@ -210,6 +210,12 @@ export function routerToTree(data: RouteType[]) {
       addRedirectIndex(item, result);
       result.push(item);
     }
+  }
+  // 解决第一个不是重定向时，添加重定向
+  const firstItem: any = result[0];
+  if (firstItem && !firstItem.index) {
+    firstItem.index = true;
+    addRedirectIndex(firstItem, result, true);
   }
   return result;
 }
@@ -225,4 +231,25 @@ export function createRouter(routes: RouteObject[]) {
       v7_relativeSplatPath: true,
     },
   });
+}
+
+export function flatMenu(menus: any[], fatherPath?: string): any[] {
+  let result: any[] = [];
+  menus.forEach((item) => {
+    const { name, path, children } = item;
+    if (/https?:\/\//.test(path)) {
+      return; // 跳过外链
+    }
+    const fullPath = [fatherPath, path.replace(/\/:\w+\?/, "")]
+      .filter(Boolean)
+      .join("/")
+      .replace(/\/\//, "/");
+    if (path)
+      result.push({
+        name,
+        path: fullPath,
+      });
+    if (children) result = result.concat(flatMenu(children, fullPath));
+  });
+  return result;
 }

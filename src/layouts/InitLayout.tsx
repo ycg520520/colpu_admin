@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-12-01 22:36:44
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-03 08:23:01
+ * @LastEditTime: 2025-12-08 22:21:09
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -16,12 +16,11 @@
  */
 import { Navigate, Outlet, useLocation } from "react-router";
 import { useAppSelector } from "@/store/hooks";
-import { StatusEnum } from "@/types";
 export default function InitLayout() {
   const location = useLocation();
-  const { status } = useAppSelector((state) => state.routes);
+  const { isAuthenticated } = useAppSelector((state) => state.user);
   const login = "/login";
-  if (status === StatusEnum.FAILED && location.pathname !== login) {
+  if (!isAuthenticated && location.pathname !== login) {
     return <Navigate to={login} replace />;
   }
   return <Outlet />;

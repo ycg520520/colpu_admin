@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-10 15:20:40
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-03 23:14:30
+ * @LastEditTime: 2026-01-17 15:44:37
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -23,10 +23,10 @@ const TypeForm = (props: any) => {
     wrapperCol: { span: 16 },
   };
   const validateData =
-    (key: string, msg = "数据标签已存在") =>
+    (key: string, initData: any, msg = "数据标签已存在") =>
     async (value: string) => {
       return new Promise((resolve, reject) => {
-        const initValue = formRef.current?.getFieldValue(key);
+        const initValue = initData[key];
         // 如果值没变，跳过远程验证
         if (value === initValue) {
           return resolve(true);
@@ -75,7 +75,7 @@ const TypeForm = (props: any) => {
           },
           {
             validator: async (_: any, value: any) => {
-              return validateData("type_code")(value);
+              return validateData("type_code", editData)(value);
             },
           },
         ],

@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-15 12:01:36
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-02 21:01:46
+ * @LastEditTime: 2026-01-06 17:03:42
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -10,6 +10,7 @@
 import { RouteType } from "@/router";
 import { MenuDataItem } from "@ant-design/pro-components";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { UploadFile } from "antd";
 import { TFunction } from "i18next";
 export type IconFunction = (icon: string) => React.ReactNode;
 export function composeMenu(
@@ -33,7 +34,6 @@ export function composeMenu(
       target,
     } = handle;
     if ((index || !path) && !handle.layout) continue;
-
     const item: MenuDataItem = {
       path,
       icon: icon && iconFunction ? iconFunction(icon) : undefined,
@@ -51,7 +51,9 @@ export function composeMenu(
     if (translation && translationKey) {
       item.name = translation(translationKey, { ns });
     }
-    menuList.push(item);
+    if (!hideInMenu) {
+      menuList.push(item);
+    }
   }
   return menuList;
 }
@@ -85,6 +87,7 @@ export function installTree(
     mode?: string;
     key_id?: string;
     key_fid?: string;
+    handdle?: (item: any) => void;
   } = {}
 ) {
   const {
@@ -92,6 +95,7 @@ export function installTree(
     mode = "tree", // mode: tree, object, array
     key_id = "id",
     key_fid = "fid",
+    handdle,
   } = options;
   if (id === 0 && mode === "array") {
     return data;
@@ -101,6 +105,9 @@ export function installTree(
 
   // 组装到字典
   data.forEach((item) => {
+    if (handdle) {
+      handdle(item);
+    }
     dict[item[key_id]] = item;
   });
   if (id === 0 && mode === "object") {
@@ -159,14 +166,14 @@ export function treeToPlan(data: any, arr: any[] = []) {
   });
   return arr;
 }
-export function filterParentId(treeData: any[], ids: any[] = []) {
+export function filterParentId(treeData: any[], ids: any[] = [], key = "key") {
   const filterIds: any[] = [];
   treeData.forEach((item: any) => {
     if (item.children) {
-      const childFilterIds = filterParentId(item.children, ids);
+      const childFilterIds = filterParentId(item.children, ids, key);
       filterIds.push(...childFilterIds);
-    } else if(ids.includes(item.id)) {
-      filterIds.push(item.id);
+    } else if (ids.includes(item[key])) {
+      filterIds.push(item[key]);
     }
   });
   return filterIds;
@@ -282,4 +289,17 @@ export function filterValues(data: any) {
     }
   });
   return result;
+}
+// 工具函数：URL→UploadFile
+export function urlToFileList(options: any = {}): UploadFile[] {
+  const { url, uid = "-1", name, status = "done" } = options;
+  if (!url) return [];
+  return [
+    {
+      uid, // 必须有uid
+      name: name ? name : url.substring(url.lastIndexOf("/") + 1),
+      status, // 必须是'done'才会显示为已上传
+      url,
+    },
+  ];
 }

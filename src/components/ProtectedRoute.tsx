@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-18 08:18:40
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-07-11 10:57:45
+ * @LastEditTime: 2025-12-08 17:41:48
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -14,28 +14,26 @@ import { memo } from "react";
 interface ProtectedRouteProps {
   children: JSX.Element;
   roles?: string[];
-  permissions?: string[];
+  permission?: string;
 }
 
-const ProtectedRoute = memo(({
-  children,
-  roles,
-  permissions,
-}: ProtectedRouteProps) => {
-  const location = useLocation();
-  const userStore = useAppSelector((state) => state.user);
-  const isAuthenticated = userStore.isAuthenticated;
-  if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+const ProtectedRoute = memo(
+  ({ children, roles, permission }: ProtectedRouteProps) => {
+    const location = useLocation();
+    const userStore = useAppSelector((state) => state.user);
+    const isAuthenticated = userStore.isAuthenticated;
+    if (!isAuthenticated) {
+      return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+    const hasRole = roles && checkRoles(userStore.user?.roles || [], roles);
+    const hasPerms =
+      permission &&
+      !hasPermissions(userStore.user?.permissions || [], permission);
+    if (!hasRole || hasPerms) {
+      return <Navigate to="/403" replace />;
+    }
+    return children;
   }
-  const hasRole = roles && checkRoles(userStore.user?.roles || [], roles);
-  const hasPermissions =
-    permissions &&
-    !hasPermissions(userStore.user?.permissions || [], permissions);
-  if (!hasRole || hasPermissions) {
-    return <Navigate to="/403" replace />;
-  }
-  return children;
-});
+);
 
 export default ProtectedRoute;

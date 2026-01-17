@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-16 00:16:50
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-04 17:07:35
+ * @LastEditTime: 2025-12-10 22:44:32
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -20,14 +20,19 @@ import useProTableFullscreen from "@/hooks/useProTableFullscreen";
 import useFormModal from "@/hooks/useFormModal";
 import { FULLSCREEN_ICONS } from "@/constants";
 import ToolBarTitle from "@/components/ToolBarTitle";
-import { apiPermission, getPermissionList } from "@/api/permission";
-import PermForm from "./components/perm_form";
+import {
+  apiPermission,
+  apiPermissionGive,
+  getPermissionList,
+} from "@/api/permission";
+
+import AddPermForm from "./components/add_perm_form";
 import useTableColor from "@/hooks/useTableColor";
 import ActionRender from "@/components/ActionRender";
 import { useAppSelector } from "@/store/hooks";
 import { renderStatus } from "@/constants/public";
 import { MenuInfo } from "rc-menu/lib/interface";
-import RolePermForm from "./components/role_perm_form";
+import GivePermForm from "./components/give_perm_form";
 
 export default function PermissionList() {
   const [disabled, setDisabled] = useState(true);
@@ -122,9 +127,9 @@ export default function PermissionList() {
     actionRef.current?.reset!();
     onCancel();
   };
-  const roleFinish = async (values: any) => {
-    console.log(values);
-    roleCancel();
+  const finishGive = async (values: any) => {
+    await apiPermissionGive(values);
+    roleCancel(); // 关闭弹窗
   };
 
   const onClickOtherAction = ({ key }: MenuInfo, record: any) => {
@@ -189,12 +194,6 @@ export default function PermissionList() {
         search: false,
       },
       {
-        title: "是否系统权限",
-        dataIndex: "is_system",
-        search: false,
-        width: 150,
-      },
-      {
         title: "状态",
         dataIndex: "status",
         valueType: "radio",
@@ -233,11 +232,13 @@ export default function PermissionList() {
       showCreatedAt: false,
       action: {
         render: (_: any, record: any) => {
+          const editable = !!record.editable;
           return (
             <ActionRender
               disableds={{
-                edit: !!record.editable,
-                del: !!record.editable,
+                edit: editable,
+                del: editable,
+                dropdown: editable,
               }}
               permissions={{
                 edit: "sys:post:edit",
@@ -280,7 +281,7 @@ export default function PermissionList() {
         body: { paddingTop: 10 },
       },
       maskClosable: false,
-      width: 640,
+      width: 580,
     },
     editData,
     isEdit,
@@ -298,14 +299,14 @@ export default function PermissionList() {
         body: { paddingTop: 10 },
       },
       maskClosable: false,
-      width: 480,
+      width: 560,
     },
     editData: roleData,
     isEdit: isRoleEdit,
     isRole,
     formRef: roleFormRef,
     title: isRole ? "角色" : "用户",
-    onFinish: roleFinish,
+    onFinish: finishGive,
   };
 
   const toolbarTitle = (
@@ -390,8 +391,8 @@ export default function PermissionList() {
           />
         </div>
       </Space>
-      <PermForm {...modalProps} />
-      <RolePermForm {...roleModalProps} />
+      <AddPermForm {...modalProps} />
+      <GivePermForm {...roleModalProps} />
     </>
   );
 }

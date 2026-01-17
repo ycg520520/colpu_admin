@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-12 16:13:46
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-04 21:51:26
+ * @LastEditTime: 2025-12-16 23:33:42
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -22,12 +22,12 @@ import RoleForm from "./components/role_form";
 import useProTableFullscreen from "@/hooks/useProTableFullscreen";
 import useFormModal from "@/hooks/useFormModal";
 import ActionRender from "@/components/ActionRender";
-import { apiDataScope, apiRole, getRoleList } from "@/api/roles";
+import { apiRole, apiRolePermission, getRoleList } from "@/api/roles";
 import { useNavigate } from "react-router";
 import { useAppSelector } from "@/store/hooks";
 import { renderStatus } from "@/constants/public";
-import PremForm from "./components/data_prem_form";
-import { MenuInfo } from "rc-menu/lib/interface";
+import PremForm from "./components/prem_form";
+import { MenuInfo } from "@rc-component/menu/lib/interface";
 export default function RoleList() {
   const [disabled, setDisabled] = useState(true);
   const { open, onOK, onCancel, formRef } = useFormModal();
@@ -120,8 +120,8 @@ export default function RoleList() {
     onCancel();
   };
 
-  const onFinishPrem = async ({ role_id, scope_type, config }: any) => {
-    await apiDataScope({ role_id, scope_type, config });
+  const onFinishPerm = async ({ perm_ids, role_id }: any) => {
+    await apiRolePermission({ role_id, perm_ids });
     actionRef.current?.reset!();
     onCancelPrem();
   };
@@ -156,7 +156,7 @@ export default function RoleList() {
       },
       {
         title: "角色描述",
-        dataIndex: "description",
+        dataIndex: "remark",
         search: false,
       },
       {
@@ -192,8 +192,8 @@ export default function RoleList() {
                 dropdown: !!record.editable,
               }}
               permissions={{
-                edit:'sys:role:edit',
-                del:'sys:role:del'
+                edit: "sys:role:edit",
+                del: "sys:role:del",
               }}
               onDel={() => handdleDel(record)}
               onEdit={() => handdleEdit(record)}
@@ -238,10 +238,10 @@ export default function RoleList() {
       role_id: editData.id,
       name: editData.name,
       code: editData.code,
-      ...editData.data_scope,
+      perm_ids: editData.perm_ids,
     },
     formRef: formRefPrem,
-    onFinish: onFinishPrem,
+    onFinish: onFinishPerm,
   };
   const modalProps = {
     open,
@@ -268,10 +268,10 @@ export default function RoleList() {
       onDel={() => handdleDel(editData)}
       onExport={onExport}
       permissions={{
-        add:'sys:role:add',
-        edit:'sys:role:edit',
-        del:'sys:role:del',
-        export:'sys:role:export'
+        add: "sys:role:add",
+        edit: "sys:role:edit",
+        del: "sys:role:del",
+        export: "sys:role:export",
       }}
     />
   );

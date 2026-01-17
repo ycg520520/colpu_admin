@@ -5,7 +5,7 @@ import {
   TaobaoOutlined,
   WeiboOutlined,
 } from "@ant-design/icons";
-import { LoginFormPage, ProConfigProvider } from "@ant-design/pro-components";
+import { LoginFormPage } from "@ant-design/pro-components";
 import { Divider, Space, Tabs, theme, message } from "antd";
 import { createStyles } from "antd-style";
 import type { CSSProperties } from "react";
@@ -16,8 +16,6 @@ import PhoneForm from "./components/PhoneForm";
 import Lang from "@/components/Lang";
 import { useTranslation } from "react-i18next";
 import { ObjectMaps } from "@/types";
-import { getRoutes } from "@/api/menus";
-
 type LoginType = "phone" | "account";
 
 const iconStyles: CSSProperties = {
@@ -87,6 +85,7 @@ const Page = () => {
       //有token但没有用户信息时，自动获取用户信息
       dispatch(getUserInfo(undefined));
     }
+    console.log("login page", isAuthenticated);
     if (isAuthenticated) {
       navigate("/");
     }
@@ -205,7 +204,6 @@ const Page = () => {
             })
           );
         });
-        dispatch(getRoutes(undefined));
         msg.success(
           t("pages.login.success", {
             defaultMessage: "登录成功！",
@@ -248,10 +246,10 @@ const Page = () => {
 const LoginPage = () => {
   const { styles } = useStyles();
   return (
-    <ProConfigProvider>
+    <>
       <Lang className={styles.lang} hasButton />
       <Page />
-    </ProConfigProvider>
+    </>
   );
 };
 

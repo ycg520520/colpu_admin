@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-03 01:15:16
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-03 01:45:45
+ * @LastEditTime: 2025-12-28 20:21:58
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -45,7 +45,7 @@ class FileHashCalculator {
   }
 
   // 分片计算 MD5（适合大文件）
-  async calculateMD5InChunks(file: File, onProgress?: any) {
+  async calculateMD5InChunks(file: File) {
     return new Promise((resolve, reject) => {
       const spark = new SparkMD5.ArrayBuffer();
       const fileReader = new FileReader();
@@ -62,12 +62,6 @@ class FileHashCalculator {
       fileReader.onload = function (e: any) {
         spark.append(e.target.result);
         currentChunk++;
-
-        // 进度回调
-        if (onProgress) {
-          onProgress(currentChunk / chunks);
-        }
-
         if (currentChunk < chunks) {
           loadNext();
         } else {
@@ -77,7 +71,6 @@ class FileHashCalculator {
       };
 
       fileReader.onerror = reject;
-
       loadNext();
     });
   }

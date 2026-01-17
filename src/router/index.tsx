@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-03-18 21:46:37
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-02 16:27:08
+ * @LastEditTime: 2025-12-09 16:35:53
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -20,7 +20,7 @@ export type MetaType = {
 export type RouteHandle = {
   name?: string; // 菜单名称
   meta?: MetaType; // 页面meta属性
-  permissions?: string[]; // 权限列表
+  permission?: string; // 权限编码
   roles?: string[]; // 角色列表
   icon?: string; // 图标
   danger?: boolean; // 是否危险操作
@@ -158,7 +158,9 @@ export function generatorAllRouter(routes: RouteType[] = []): RouteObject[] {
   const noMatchRouters: RouteObject[] = generatorRouter([noMatchRouter]);
   // 解决没有index路由时，默认跳转第一个路由，不然会出现空白页面
   // setRouteIndex(routes);
-  const asyncRouterRoot: RouteObject[] = generatorRouter(routes);
+  const asyncRouterRoot: RouteObject[] = generatorRouter([
+    ...asyncRouter,
+    ...routes]);
   const routers = [...baseRoutes, ...asyncRouterRoot, ...noMatchRouters];
   return [
     {

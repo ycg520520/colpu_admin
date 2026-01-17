@@ -8,10 +8,8 @@
  */
 
 import { BetaSchemaForm } from "@ant-design/pro-components";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { colProps, formItemCol } from "@/constants/form";
-import { getMenusTree } from "@/api/menus";
-import TreeExtend from "@/components/TreeExtend";
 import { App } from "antd";
 import { useAppSelector } from "@/store/hooks";
 
@@ -19,18 +17,11 @@ const RoleForm = (props: any) => {
   const { title, open, isEdit, editData, onFinish, modalProps, formRef } =
     props;
   const { dict } = useAppSelector((state) => state.dict);
-  const [treeData, setTreeData] = useState([]);
-  const [halfCheckedKeys, setHalfCheckedKeys] = useState([]);
   useEffect(() => {
     formRef.current?.setFieldsValue({ ...editData });
   }, [editData, formRef]);
   const { message } = App.useApp();
 
-  useEffect(() => {
-    getMenusTree().then((rows) => {
-      setTreeData(rows);
-    });
-  }, []);
   const formColumns = [
     {
       title: "ID",
@@ -56,38 +47,6 @@ const RoleForm = (props: any) => {
       formItemProps: {
         ...formItemCol(6),
         rules: [{ required: true, message: "请输入用户昵称" }],
-      },
-    },
-    {
-      title: "菜单权限",
-      dataIndex: "menu_ids",
-      valueType: "treeSelect",
-      fieldProps: {
-        showSearch: true,
-        fieldNames: {
-          label: "title",
-          value: "id",
-          children: "children",
-        },
-      },
-      formItemProps: formItemCol(6),
-      renderFormItem: () => {
-        return (
-          <TreeExtend
-            onHalfChange={(value) => {
-              setHalfCheckedKeys(value || []);
-            }}
-            treeProps={{
-              fieldNames: {
-                title: "title",
-                key: "id",
-                children: "children",
-              },
-              checkable: true,
-              treeData,
-            }}
-          />
-        );
       },
     },
     {
@@ -148,10 +107,7 @@ const RoleForm = (props: any) => {
       }}
       onFinish={async (values: any) => {
         // 将办选加入到设置中
-        await onFinish({
-          ...values,
-          menu_ids: [...values.menu_ids, ...halfCheckedKeys],
-        });
+        await onFinish(values);
         message.success("提交成功");
         return true;
       }}

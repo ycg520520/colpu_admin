@@ -7,7 +7,7 @@
  * Copyright (c) 2025 by error: git config user.name & please set dead value or install git, All Rights Reserved.
  */
 import path from "path";
-import { viteMockServe } from "vite-plugin-mock";
+// import { viteMockServe } from "vite-plugin-mock";
 import vitePluginDynamicImport from "vite-plugin-dynamic-import";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";

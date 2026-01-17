@@ -21,7 +21,7 @@ import TreeExtend from "@/components/TreeExtend";
 import { getMenusTree } from "@/api/menus";
 import { cloneDeep } from "lodash";
 
-const PermForm = (props: any) => {
+const AddPermForm = (props: any) => {
   const { title, open, isEdit, editData, onFinish, modalProps, formRef } =
     props;
   const { dict } = useAppSelector((state) => state.dict);
@@ -31,12 +31,18 @@ const PermForm = (props: any) => {
   const [menuTreeData, setMenuTreeData] = useState([]);
   useEffect(() => {
     formRef.current?.setFieldsValue({ ...editData });
+    setType(editData?.type || "api");
   }, [editData, formRef]);
   useEffect(() => {
     getMenusTree().then((rows) => {
       setMenuTreeData(rows);
     });
   }, []);
+
+  const [halfMenus, setHalfMenus] = useState([]);
+  const onHalfChange = (value: any) => {
+    setHalfMenus(value);
+  };
 
   const formColumns = [
     {
@@ -52,9 +58,9 @@ const PermForm = (props: any) => {
       title: "权限类型",
       dataIndex: "type",
       valueType: "select",
-      colProps,
+      colProps: type === "menu" ? colProps : colPropsFull,
       formItemProps: {
-        ...formItemProps,
+        ...(type === "menu" ? formItemProps : formItemPropsFull),
         rules: [{ required: true, message: "请选择权限类型" }],
       },
       fieldProps: {
@@ -79,19 +85,19 @@ const PermForm = (props: any) => {
         rules: [{ required: true, message: "请输入权限名称" }],
       },
     },
-    {
-      title: "分配角色",
-      dataIndex: "role_ids",
-      colProps,
-      formItemProps,
-    },
-    {
-      title: "分配用户",
-      dataIndex: "user_ids",
-      colProps,
-      formItemProps,
-    },
-    ...(type === 'menu'
+    // {
+    //   title: "分配角色",
+    //   dataIndex: "role_ids",
+    //   colProps,
+    //   formItemProps,
+    // },
+    // {
+    //   title: "分配用户",
+    //   dataIndex: "user_ids",
+    //   colProps,
+    //   formItemProps,
+    // },
+    ...(type === "menu"
       ? [
           {
             title: "菜单权限",
@@ -110,6 +116,7 @@ const PermForm = (props: any) => {
             renderFormItem: () => {
               return (
                 <TreeExtend
+                  onHalfChange={onHalfChange}
                   treeProps={{
                     fieldNames: {
                       title: "title",
@@ -125,7 +132,7 @@ const PermForm = (props: any) => {
           },
         ]
       : []),
-    ...(type === 'api'
+    ...(type === "api"
       ? [
           {
             title: "权限编码",
@@ -155,15 +162,15 @@ const PermForm = (props: any) => {
           {
             title: "接口地址",
             dataIndex: "path",
-            colProps: colPropsFull,
+            colProps,
             formItemProps: {
-              ...formItemPropsFull,
+              ...formItemProps,
               rules: [{ required: true, message: "请输入接口地址" }],
             },
           },
         ]
       : []),
-    ...(type === 'scope'
+    ...(type === "scope"
       ? [
           {
             title: "权限范围",
@@ -177,8 +184,8 @@ const PermForm = (props: any) => {
                 setShowDept(value === 4);
               },
             },
-            colProps: colPropsFull,
-            formItemProps: formItemPropsFull,
+            colProps,
+            formItemProps,
           },
           ...(showDept
             ? [
@@ -272,8 +279,11 @@ const PermForm = (props: any) => {
       onReset={() => {
         console.log("reset");
       }}
-      onFinish={async (values) => {
+      onFinish={async (values: any) => {
         debugger
+        if (halfMenus.length && values.menu_ids) {
+          values.menu_ids.push(...halfMenus);
+        }
         await onFinish(values);
         message.success("提交成功");
         return true;
@@ -283,4 +293,4 @@ const PermForm = (props: any) => {
   );
 };
 
-export default PermForm;
+export default AddPermForm;

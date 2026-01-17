@@ -20,28 +20,28 @@ import {
   formItemPropsFull,
 } from "@/constants/form";
 import { cloneDeep } from "lodash";
+import { emailReg, phoneReg } from "@/constants/regex";
 
 const UserForm = (props: any) => {
   const { title, open, isEdit, editData, onFinish, modalProps, formRef } =
     props;
   const { dict } = useAppSelector((state) => state.dict);
-  const treeData = useAppSelector((state) => cloneDeep(state.dept.treeData));
+  const treeData = useAppSelector((state) => state.dept.treeData);
   const { message } = App.useApp();
   const [userPart, setUserPart] = useState({ depts: [], roles: [], posts: [] });
-  useEffect(() => {
-    fetchUserPart();
-  }, []);
   const fetchUserPart = async () => {
     apiUserParty().then((data: any) => {
       setUserPart(data);
     });
   };
-
+  useEffect(() => {
+    fetchUserPart();
+  }, []);
   const validateData =
-    (key: string, msg = "注册用户名已存在") =>
+    (key: string, initData: any, msg = "注册用户名已存在") =>
     async (value: string) => {
       return new Promise((resolve, reject) => {
-        const initValue = formRef.current?.getFieldsValue(key);
+        const initValue = initData[key];
         // 如果值没变，跳过远程验证
         if (value === initValue) {
           return resolve(true);
@@ -64,14 +64,13 @@ const UserForm = (props: any) => {
   if (!isEdit) {
     usernameRules.push({
       validator: (_: any, value: any) => {
-        return validateData("username", "用户名已存在")(value);
+        return validateData("username", editData, "用户名已存在")(value);
       },
     });
   }
   const columns = [
     {
       title: "用户ID",
-      name: "id",
       dataIndex: "id",
       fieldProps: {
         disabled: true,
@@ -83,7 +82,6 @@ const UserForm = (props: any) => {
     },
     {
       title: "用户名",
-      name: "username",
       dataIndex: "username",
       colProps,
       fieldProps: {
@@ -97,26 +95,25 @@ const UserForm = (props: any) => {
     },
     {
       title: "手机号",
-      name: "phone",
       dataIndex: "phone",
       formItemProps: {
         ...formItemProps,
-        rules: [{ required: true, message: "请输入用户手机号" }],
+        rules: [{ required: true, message: "请输入用户手机号", pattern: phoneReg }],
       },
     },
     {
       title: "用户邮箱",
-      name: "email",
       dataIndex: "email",
       formItemProps: {
         ...formItemProps,
-        rules: [{ required: true, message: "请输入用户邮箱" }],
+        rules: [
+          { required: true, message: "请输入用户邮箱", pattern: emailReg },
+        ],
       },
     },
     isEdit
       ? undefined
       : {
-          name: "password",
           dataIndex: "password",
           title: "用户密码",
           colProps,
@@ -132,7 +129,6 @@ const UserForm = (props: any) => {
         },
     {
       title: "性别",
-      name: "gender",
       dataIndex: "gender",
       valueType: "select",
       fieldProps: {
@@ -141,7 +137,6 @@ const UserForm = (props: any) => {
       formItemProps,
     },
     {
-      name: "status",
       dataIndex: "status",
       title: "状态",
       valueType: "radio",
@@ -155,14 +150,13 @@ const UserForm = (props: any) => {
     },
     {
       title: "归属部门",
-      name: "dept_ids",
       dataIndex: "dept_ids",
       valueType: "treeSelect",
       fieldProps: {
         multiple: true,
         maxCount: 5,
         maxTagCount: 3,
-        treeData,
+        treeData: cloneDeep(treeData),
         fieldNames: {
           label: "name",
           value: "id",
@@ -174,7 +168,6 @@ const UserForm = (props: any) => {
     },
     {
       title: "岗位",
-      name: "post_ids",
       dataIndex: "post_ids",
       valueType: "select",
       fieldProps: {
@@ -192,7 +185,6 @@ const UserForm = (props: any) => {
     },
     {
       title: "角色",
-      name: "role_ids",
       dataIndex: "role_ids",
       valueType: "select",
       fieldProps: {
@@ -209,7 +201,6 @@ const UserForm = (props: any) => {
       formItemProps,
     },
     {
-      name: "remark",
       dataIndex: "remark",
       title: "备注",
       valueType: "textarea",

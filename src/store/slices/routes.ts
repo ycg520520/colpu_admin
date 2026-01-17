@@ -2,29 +2,38 @@
  * @Author: colpu
  * @Date: 2025-07-02 08:48:54
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-10-27 11:59:56
+ * @LastEditTime: 2026-01-17 13:38:43
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 import { getRoutes } from "@/api/menus";
 import { RouteType } from "@/router";
 import { StatusEnum, Status } from "@/types";
+import { MenuDataItem } from "@ant-design/pro-components";
 import { createSlice } from "@reduxjs/toolkit";
 
 interface RoutesState {
   routes: RouteType[];
+  flatMenus: MenuDataItem[];
   status: Status;
   error?: string;
 }
 const initialState: RoutesState = {
   routes: [],
+  flatMenus: [],
   status: StatusEnum.IDLE,
   error: undefined,
 };
 const routesSlice = createSlice({
   name: "routes",
   initialState,
-  reducers: {},
+  reducers: {
+    setFlatMenus(state, action) {
+      if (action.payload && action.payload.length > 0) {
+        state.flatMenus.push(...action.payload);
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getRoutes.pending, (state) => {
@@ -37,6 +46,7 @@ const routesSlice = createSlice({
         state.status = StatusEnum.SUCCEEDED;
       })
       .addCase(getRoutes.rejected, (state, action) => {
+        console.log("addCase", action.payload);
         state.error =
           typeof action.payload === "string"
             ? action.payload
@@ -45,5 +55,5 @@ const routesSlice = createSlice({
       });
   },
 });
-
+export const { setFlatMenus } = routesSlice.actions;
 export default routesSlice.reducer;

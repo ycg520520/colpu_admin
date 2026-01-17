@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-16 23:07:18
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-02 22:35:35
+ * @LastEditTime: 2025-12-18 21:09:17
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -38,7 +38,7 @@ export default function RoleUserList() {
   const [userIds, setUserIds] = useState<any>([]);
   const actionRef = useRef<ActionType | null>(null);
   const { tableStyles, rowClassName } = useTableColor();
-  const formSearchRef = useRef<ProFormInstance>();
+  const formSearchRef = useRef<ProFormInstance>(undefined);
   const { dict } = useAppSelector((state) => state.dict);
   const { id } = useParams();
 

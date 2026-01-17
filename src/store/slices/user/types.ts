@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-17 23:31:43
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-24 15:40:25
+ * @LastEditTime: 2025-12-30 21:59:13
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -12,7 +12,7 @@ export interface User {
   nickname?: string;
   phone?: string;
   email?: string;
-  src?: string;
+  avatar?: string;
   gender?: number;
   remark?: string;
   created_at?: string;

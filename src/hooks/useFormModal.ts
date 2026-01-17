@@ -2,16 +2,16 @@
  * @Author: colpu
  * @Date: 2025-11-06 16:34:14
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-25 16:39:19
+ * @LastEditTime: 2026-01-04 17:13:17
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 
 import { useState, useCallback, useRef } from "react";
 import { ProFormInstance } from "@ant-design/pro-components";
-export default function useModal() {
+export default function useFormModal() {
   const [open, setOpen] = useState(false);
-  const formRef = useRef<ProFormInstance>();
+  const formRef = useRef<ProFormInstance>(undefined);
 
   // 打开弹窗
   const onOK = useCallback(() => {

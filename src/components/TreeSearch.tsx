@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-23 16:44:31
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-24 12:59:02
+ * @LastEditTime: 2025-12-04 23:39:48
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -11,7 +11,6 @@ import React, {
   useCallback,
   useEffect,
   useImperativeHandle,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -20,6 +19,7 @@ import type { InputRef, TreeProps } from "antd";
 import { filterTree, treeToPlan } from "@/utils";
 import debounce from "lodash/debounce";
 import { SearchProps } from "antd/es/input";
+import { composeTreeFieldNames } from "@/utils/public";
 const { Search } = Input;
 type TreeSearchProps = {
   treeProps: TreeProps;
@@ -29,7 +29,10 @@ type TreeSearchProps = {
 };
 
 // 处理筛选出来的节点
-function predicateFilter(item: any, keyword: string, titleKey = "title") {
+function predicateFilter(item: any, keyword: string, fieldNames: any) {
+  const disabledKey = fieldNames.disabled;
+  if (item[disabledKey]) return false; // 如果节点禁用，则不显示
+  const titleKey = fieldNames.title;
   const strTitle = item[titleKey] || "";
   const index = strTitle.indexOf(keyword);
   const beforeStr = strTitle.substring(0, index);
@@ -54,6 +57,7 @@ function predicateFilter(item: any, keyword: string, titleKey = "title") {
 export interface TreeSearchRef {
   clear: () => void;
 }
+
 const TreeSearch = forwardRef<TreeSearchRef, TreeSearchProps>((props, ref) => {
   const { treeProps, style, searchProps = {}, showSearch = true } = props || {};
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
@@ -70,19 +74,25 @@ const TreeSearch = forwardRef<TreeSearchRef, TreeSearchProps>((props, ref) => {
     (value: string) => {
       let data = treeProps.treeData || [];
       if (data.length) {
+        const fieldNames = composeTreeFieldNames(treeProps.fieldNames);
         const keyword = value.trim();
         if (keyword !== "") {
           data = filterTree(data, (item: any) =>
-            predicateFilter(item, keyword, treeProps.fieldNames?.title)
+            predicateFilter(item, keyword, fieldNames)
           );
         }
-        const allKey = treeToPlan(data).map((item: any) => item.id);
+        const allKey = treeToPlan(data)
+          .map((item: any) => {
+            if (item[fieldNames.disabled]) return undefined;
+            return item[fieldNames.key];
+          })
+          .filter(Boolean);
         setExpandedKeys(allKey);
         setTreeData(data);
       }
       setAutoExpandParent(true);
     },
-    [treeProps.treeData, treeProps.fieldNames?.title]
+    [treeProps]
   );
   const debounceChange = debounce(
     (value: string) => changeTreeData(value),

@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-03-18 21:23:51
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-09-17 08:15:26
+ * @LastEditTime: 2025-12-09 22:03:14
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -21,7 +21,7 @@ const Settings: ProLayoutProps & {
   fixedHeader: false,
   fixSiderbar: true,
   colorWeak: false,
-  title: "印点信息后台",
+  title: false,
   pwa: true,
   logo,
   iconfontUrl: "",

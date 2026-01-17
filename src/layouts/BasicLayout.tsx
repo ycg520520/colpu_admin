@@ -2,13 +2,14 @@
  * @Author: colpu
  * @Date: 2025-11-23 13:02:45
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-01 22:37:20
+ * @LastEditTime: 2026-01-04 14:53:22
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
-import type { MenuDataItem, ProSettings } from "@ant-design/pro-components";
+import type { ProSettings } from "@ant-design/pro-components";
 import {
   PageContainer,
+  ProBreadcrumb,
   ProLayout,
   SettingDrawer,
 } from "@ant-design/pro-components";
@@ -36,7 +37,9 @@ import {
 } from "@ant-design/icons";
 import { dynamicIcon } from "@/utils/public";
 import Lang from "@/components/Lang";
-
+// import PageTabs from "@/components/PageTabs";
+import { setFlatMenus } from "@/store/slices/routes";
+import { flatMenu } from "@/router/utils";
 export default function BasicLayout() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -44,7 +47,11 @@ export default function BasicLayout() {
   // 获取路由信息
   const matches = useMatches();
   const routeHandle = (matches.at(-1)?.handle || {}) as RouteHandle;
-  const containerHeader = routeHandle.hideTitle ? { title: false } : undefined;
+  const containerHeader = {
+    // title: false,
+    title: routeHandle.meta?.title,
+    // breadcrumb: undefined,
+  };
 
   // 设置当前pathname
   const location = useLocation();
@@ -65,12 +72,14 @@ export default function BasicLayout() {
   const { t } = useTranslation(["common", "example"]);
 
   // 获取菜单
-  const routes = useAppSelector((state) => state.routes.routes);
-  const [menus, setMenus] = useState<MenuDataItem[]>([]);
+  const { routes } = useAppSelector((state) => state.routes);
+  const [menus, setMenus] = useState<any>([]);
   useEffect(() => {
     const _menus = composeMenu(routes, t, dynamicIcon);
-    setMenus([{ path: "/", children: _menus }]);
-  }, [t, routes, _pathname]);
+    const composeMenus = [{ path: "/", name: "首页", children: _menus }];
+    setMenus(composeMenus);
+    dispatch(setFlatMenus(flatMenu(composeMenus)));
+  }, [t, routes, dispatch]);
 
   // 判断是否登录
   if (!isAuthenticated) {
@@ -187,22 +196,25 @@ export default function BasicLayout() {
         height: "100%",
         minHeight: "100vh",
       }}
-      contentStyle={{
-        height: "100%",
-        padding: 0,
-        margin: 0,
-      }}
     >
       <PageContainer
         header={containerHeader}
+        // pageHeaderRender={() => {
+        //   return (
+        //     <div style={{ padding: "10px 20px 0 20px" }}>
+        //       <ProBreadcrumb style={{ marginBottom: 10 }} />
+        //       <PageTabs />
+        //     </div>
+        //   );
+        // }}
         token={{
           paddingInlinePageContainerContent: 20,
           paddingBlockPageContainerContent: 10,
         }}
-        // waterMarkProps={{
-        //   fontColor: "rgba(0,0,0,0.1)",
-        //   content: defaultSettings.title || "Water",
-        // }}
+        waterMarkProps={{
+          fontColor: "rgba(0,0,0,0.1)",
+          content: defaultSettings.title || "Water",
+        }}
         style={{ display: "flex", flexDirection: "column", flex: 1 }}
         childrenContentStyle={{ flex: 1 }}
       >

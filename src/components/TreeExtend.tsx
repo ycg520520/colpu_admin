@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-18 21:59:07
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-02 21:00:03
+ * @LastEditTime: 2025-12-06 23:45:36
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -12,6 +12,7 @@ import { GroupProps, ProFormCheckbox } from "@ant-design/pro-components";
 import { Card, CardProps, TreeProps } from "antd";
 import React, { useEffect, useState } from "react";
 import TreeSearch from "./TreeSearch";
+import { composeTreeFieldNames } from "@/utils/public";
 
 type TreeExtendProps = {
   cardProps?: CardProps;
@@ -30,7 +31,6 @@ const OPTIONS = [
 ];
 const TreeExtend: React.FC<TreeExtendProps> = (props: TreeExtendProps) => {
   const treeStyles = useTreeStyle();
-
   const {
     onChange,
     onHalfChange,
@@ -48,7 +48,6 @@ const TreeExtend: React.FC<TreeExtendProps> = (props: TreeExtendProps) => {
   const [allKey, setAllKey] = useState<any[]>([]);
   const [checkboxValue, setCheckboxValue] =
     useState<number[]>(initCheckboxValue);
-
   const onChangeCheckBox = (value: number[]) => {
     console.log("prev", checkboxValue, "new", value);
     // 当折叠时，将折叠Keys置空
@@ -110,10 +109,20 @@ const TreeExtend: React.FC<TreeExtendProps> = (props: TreeExtendProps) => {
   };
   // 1、初始化值
   useEffect(() => {
-    const allIds = treeToPlan(treeProps.treeData).map((item: any) => item.id);
+    const fieldNames = composeTreeFieldNames(treeProps.fieldNames);
+    const allIds = treeToPlan(treeProps.treeData)
+      .map((item: any) => {
+        if (item[fieldNames.disabled]) return undefined;
+        return item[fieldNames.key];
+      })
+      .filter(Boolean);
     setAllKey(allIds);
     setCheckedboxSelected(value || [], allIds);
-    const filterKeys = filterParentId(treeProps.treeData || [], value || []);
+    const filterKeys = filterParentId(
+      treeProps.treeData || [],
+      value || [],
+      fieldNames.key
+    );
     setCheckedKeys(filterKeys);
     if (checkboxValue.includes(0)) {
       setExpandedKeys(allIds);
@@ -121,7 +130,7 @@ const TreeExtend: React.FC<TreeExtendProps> = (props: TreeExtendProps) => {
     if (checkboxValue.includes(2)) {
       setCheckStrictly(false);
     }
-  }, [checkboxValue, treeProps.treeData, value]);
+  }, [checkboxValue, treeProps, value]);
 
   const onExpand: TreeProps["onExpand"] = (expandedKeysValue) => {
     setExpandedKeys(expandedKeysValue);
@@ -138,8 +147,12 @@ const TreeExtend: React.FC<TreeExtendProps> = (props: TreeExtendProps) => {
       : checkedKeysValue.checked;
     setCheckedboxSelected(checkedKeys, allKey);
     setCheckedKeys(checkedKeys);
-    onChange!(checkedKeys);
-    onHalfChange!(halfCheckedKeys);
+    if (onChange) {
+      onChange(checkedKeys);
+    }
+    if (onHalfChange) {
+      onHalfChange(halfCheckedKeys);
+    }
   };
 
   const composeCardProps: CardProps = {

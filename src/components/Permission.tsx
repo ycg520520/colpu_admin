@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-07-11 10:59:40
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-02 22:12:09
+ * @LastEditTime: 2025-12-07 18:29:25
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -34,7 +34,6 @@ export function PermissionButton({
   buttonProps?: ButtonProps;
 }) {
   const { user } = useAppSelector((state) => state.user);
-
   const flag = hasPermissions(user?.permissions || [], permission);
   let disabled = buttonProps.disabled;
   if (!flag) {

@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-17 22:13:52
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-02 12:53:17
+ * @LastEditTime: 2026-01-05 15:44:46
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -10,6 +10,7 @@ import { Button, Dropdown, MenuProps, Space } from "antd";
 import { PermissionButton } from "./Permission";
 import { MouseEventHandler } from "react";
 import { EllipsisOutlined } from "@ant-design/icons";
+import { useAppSelector } from "@/store/hooks";
 export interface ActionPermissions {
   add?: string; // 添加权限
   edit?: string; // 编辑权限
@@ -39,6 +40,13 @@ export default function ActionRender({
   permissions = {},
   children,
 }: ActionRenderProps) {
+  const { user } = useAppSelector((state) => state.user);
+  const userPermissions = user?.permissions || [];
+  // 登陆时超级管理员，不做禁用
+  let isDropdown: boolean = disableds.dropdown || true;
+  if (userPermissions.includes("*:*:*")) {
+    isDropdown = false;
+  }
   return (
     <Space
       align="start"
@@ -86,7 +94,7 @@ export default function ActionRender({
       {children}
       {menuProps ? (
         <Dropdown
-          disabled={disableds.dropdown}
+          disabled={isDropdown}
           menu={menuProps}
           placement="bottomRight"
           arrow

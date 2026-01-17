@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-03 10:36:35
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-03 23:18:21
+ * @LastEditTime: 2026-01-17 15:44:34
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -25,16 +25,16 @@ const DataForm = (props: any) => {
     wrapperCol: { span: 16 },
   };
   const validateData =
-    (key: string, msg = "数据标签已存在") =>
+    (key: string, initData: any, msg = "数据标签已存在") =>
     async (value: string) => {
       return new Promise((resolve, reject) => {
-        const initValue = formRef.current?.getFieldValue(key);
+        const initValue = initData[key];
         // 如果值没变，跳过远程验证
         if (value === initValue) {
           return resolve(true);
         }
         const params: any = {
-          type_code: editData.type_code,
+          type_code: initData.type_code,
         };
         params[key] = value;
         checkDictData(params).then((res) => {
@@ -79,7 +79,7 @@ const DataForm = (props: any) => {
             : [
                 {
                   validator: (_: any, value: any) => {
-                    return validateData("label")(value);
+                    return validateData("label", editData)(value);
                   },
                 },
               ]),
@@ -103,7 +103,7 @@ const DataForm = (props: any) => {
             : [
                 {
                   validator: (_: any, value: any) => {
-                    return validateData("value")(value);
+                    return validateData("value", editData)(value);
                   },
                 },
               ]),

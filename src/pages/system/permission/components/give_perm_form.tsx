@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-12-04 08:53:02
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-04 16:48:50
+ * @LastEditTime: 2025-12-07 23:50:03
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -14,9 +14,16 @@ import { useAppSelector } from "@/store/hooks";
 import { apiRoleSelect } from "@/api/roles";
 import { apiUserSearch } from "@/api/user";
 import { debounce } from "lodash";
-import { colProps, formItemProps } from "@/constants/form";
+import {
+  colProps,
+  colPropsFull,
+  formItemProps,
+  formItemPropsFull,
+} from "@/constants/form";
+import { apiPermissionUsers } from "@/api/permission";
+import { useQuery } from "@tanstack/react-query";
 
-const RolePermForm = (props: any) => {
+const GivePermForm = (props: any) => {
   const {
     title,
     open,
@@ -30,8 +37,24 @@ const RolePermForm = (props: any) => {
   const { dict } = useAppSelector((state) => state.dict);
   const [roleOptions, setRoleOptions] = useState<any>([]);
   const [userOptions, setUserOptions] = useState<any>([]);
+  // 解决多次请求问题
+  const { data: initUserOptions, isLoading } = useQuery({
+    queryKey: [
+      "apiPermissionUsers",
+      { user_ids: editData.user_ids, perm_id: editData.id },
+    ],
+    queryFn: () => apiPermissionUsers({ perm_id: editData.id }),
+    enabled: !!editData.id && !isRole,
+  });
+
   useEffect(() => {
-    formRef.current?.setFieldsValue({ ...editData });
+    if (!isLoading && initUserOptions) {
+      setUserOptions(initUserOptions);
+    }
+  }, [isLoading, initUserOptions]);
+
+  useEffect(() => {
+    formRef.current.setFieldsValue({ ...editData });
   }, [editData, formRef]);
   useEffect(() => {
     apiRoleSelect().then((data) => {
@@ -87,6 +110,8 @@ const RolePermForm = (props: any) => {
           title: "分配角色",
           dataIndex: "role_ids",
           valueType: "select",
+          colProps: colPropsFull,
+          formItemProps: formItemPropsFull,
           fieldProps: {
             mode: "multiple",
             maxCount: 5,
@@ -101,9 +126,15 @@ const RolePermForm = (props: any) => {
           title: "分配用户",
           dataIndex: "user_ids",
           valueType: "select",
+          tooltip: (
+            <div style={{ fontSize: 12 }}>
+              给用户单独制定权限，在不分配角色的情况下生效，如果角色中已经分配了此权限，两权限会合并为一。
+            </div>
+          ),
+          colProps: colPropsFull,
+          formItemProps: formItemPropsFull,
           fieldProps: {
             mode: "multiple",
-            maxCount: 5,
             maxTagCount: 3,
             placeholder: "请输入用户名电话邮箱搜索",
             options: userOptions,
@@ -112,7 +143,7 @@ const RolePermForm = (props: any) => {
           },
         }
       : undefined,
-  ].filter(Boolean);
+  ].filter((item) => item !== undefined);
 
   return (
     <BetaSchemaForm
@@ -148,4 +179,4 @@ const RolePermForm = (props: any) => {
   );
 };
 
-export default RolePermForm;
+export default GivePermForm;

@@ -1,9 +1,10 @@
 import { apiUser } from "@/api/user";
 import ModifyPassword from "@/components/ModifyPassword";
-import OSSUpload from "@/components/OSSUpload";
+import CustomUpload from "@/components/Upload";
 import { formItemProps } from "@/constants/form";
 import { submitter } from "@/constants/public";
 import { useAppSelector } from "@/store/hooks";
+import { urlToFileList } from "@/utils";
 import { dynamicIcon } from "@/utils/public";
 import { BetaSchemaForm, ProFormInstance } from "@ant-design/pro-components";
 import { Col, Row, Card, Flex, Tabs, TabsProps, App } from "antd";
@@ -99,7 +100,7 @@ const BaseInfo = () => {
     const params = { ...formData, ...values }; // 这里用户可能重置表单，导致id丢失，所以需要重新赋值
     await apiUser(params, "put");
     message.success("修改成功");
-    return true
+    return true;
   }
 
   return (
@@ -127,6 +128,14 @@ export default function Account() {
     { icon: "TeamOutlined", label: "所属角色", value: "超级管理员" },
     { icon: "FieldTimeOutlined", label: "创建日期", value: user?.created_at },
   ];
+  const [avatar, setAvatar] = useState<any>([]);
+  useEffect(() => {
+    if (user?.avatar) {
+      setAvatar(
+        urlToFileList({ url: user?.avatar, uid: "-1", status: "done" })
+      );
+    }
+  }, [user]);
   const items: TabsProps["items"] = [
     {
       key: "1",
@@ -154,7 +163,18 @@ export default function Account() {
           }}
         >
           <Flex justify="center" style={{ marginBottom: 16 }}>
-            <OSSUpload isAvatar returnType="url" style={{ margin: "0 auto" }} />
+            <CustomUpload
+              isAvatar
+              fileList={avatar}
+              onChange={({ fileList }) => {
+                setAvatar(fileList);
+              }}
+              uploadProps={{
+                listType: "picture-circle",
+                style: { width: 100, height: 100  },
+              }}
+              uploadType="single"
+            />
           </Flex>
           {...dataSource.map((item, index) => (
             <Flex

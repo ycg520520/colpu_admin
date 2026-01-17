@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-20 11:59:18
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-04 15:13:05
+ * @LastEditTime: 2025-12-06 13:01:08
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -30,3 +30,6 @@ export const apiRoleUser = (
 export const apiDataScope = (params: any) =>
   post("/api/role/data_scope", params);
 export const apiRoleSelect = () => get("/api/role/select");
+
+export const apiRolePermission = (params: any) =>
+  post("/api/role/permission", params);

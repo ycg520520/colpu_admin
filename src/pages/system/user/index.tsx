@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-16 23:07:18
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-02 23:03:21
+ * @LastEditTime: 2026-01-04 14:58:59
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -50,23 +50,24 @@ export default function UserList() {
   const [isEdit, setIsEdit] = useState(false);
   const actionRef = useRef<ActionType | null>(null);
   const { tableStyles, rowClassName } = useTableColor();
-  const formSearchRef = useRef<ProFormInstance>();
+  const formSearchRef = useRef<ProFormInstance>(null);
   const treeStyles = useTreeStyle();
   const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
   const treeRef = useRef<TreeSearchRef>(null); // 树形控件ref
   const { dict } = useAppSelector((state) => state.dict);
-  const treeData = useAppSelector((state) => cloneDeep(state.dept.treeData));
+  const treeData = useAppSelector((state) => state.dept.treeData);
   const onSelectTree: TreeProps["onSelect"] = (keys: any[]) => {
     handdleSearch({
       dept_id: keys.join(","),
     });
     setSelectedKeys(keys);
   };
+
   const treeProps = {
     style: { minWidth: 200 },
     treeProps: {
       className: treeStyles,
-      treeData,
+      treeData: cloneDeep(treeData),
       fieldNames: {
         title: "name",
         key: "id",
@@ -175,7 +176,6 @@ export default function UserList() {
       },
       {
         title: "状态",
-        key: "status1",
         dataIndex: "status",
         width: 60,
         align: "center",
@@ -288,6 +288,7 @@ export default function UserList() {
     formRef.current?.resetFields();
     onCancelModify();
   };
+
   return (
     <Card style={{ border: "none" }}>
       <Splitter style={{ height: "100%" }}>

@@ -46,30 +46,33 @@ const MenuForm = (props: any) => {
   }, []);
 
   const setDisabled = useCallback((data: any[], menuType: number) => {
-    data.forEach((item: any) => {
-      item.disabled = false;
-      // 按钮时，目录不可选
-      if (menuType == 2 && item.menu_type === 0) {
-        item.disabled = true;
-      }
-      // 菜单时，菜单不可选
-      if (menuType == 1 && item.menu_type === 1) {
-        item.disabled = true;
-      }
-      // 目录时，菜单和按钮不可选
-      if (menuType == 0) {
-        if ([1, 2].includes(item.menu_type)) {
+    const loopFn = (data: any[], menuType: number) => {
+      data.forEach((item: any) => {
+        item.disabled = false;
+        // 按钮时，目录不可选
+        if (menuType == 2 && item.menu_type === 0) {
           item.disabled = true;
-        } else {
-          item.disabled = false;
         }
-      }
+        // 菜单时，菜单不可选
+        if (menuType == 1 && item.menu_type === 1) {
+          item.disabled = true;
+        }
+        // 目录时，菜单和按钮不可选
+        if (menuType == 0) {
+          if ([1, 2].includes(item.menu_type)) {
+            item.disabled = true;
+          } else {
+            item.disabled = false;
+          }
+        }
 
-      if (item.children) {
-        setDisabled(item.children, menuType);
-      }
-    });
-    return data;
+        if (item.children) {
+          loopFn(item.children, menuType);
+        }
+      });
+      return data;
+    };
+    return loopFn(data, menuType);
   }, []);
   useEffect(() => {
     setTreeData((prev) =>

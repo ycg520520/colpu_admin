@@ -2,51 +2,24 @@
  * @Author: colpu
  * @Date: 2023-02-08 19:25:01
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-12 21:43:17
+ * @LastEditTime: 2025-12-29 09:01:18
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 import { getAliyunSTS } from "@/api/aliyun";
 import OSS from "ali-oss";
-import filehash from "./filehash";
-
-export const generateFilename = async (file: File, options: any = {}) => {
-  const { rename = false, filepath, onMD5Calculated } = options;
-  // 计算 MD5
-  if (onMD5Calculated) {
-    onMD5Calculated("calculating", 0);
-  }
-  const md5 = await filehash.calculateMD5InChunks(file);
-  if (onMD5Calculated) {
-    onMD5Calculated("completed", md5);
-  }
-  let filename = file.name;
-  // 生成文件名
-  if (rename) {
-    const fileExt = filename.split(".").pop();
-    filename = [md5, fileExt].join(".");
-  }
-  return [filepath, filename].join("/");
-};
+import { generateFilename } from "./utils";
 // 阿里云上传
 export async function ossUpload(options: any) {
-  const { file, query, onSuccess, onProgress, onError, onMD5Calculated } =
-    options;
+  const { file, query, onSuccess, onProgress, onError } = options;
   let sign = options.sign;
   if (!sign) {
     throw new Error("没有配置签名");
   }
 
   // 阿里云的OSS上传
-  const { credentials, bucket, filepath } = sign;
+  const { credentials, bucket } = sign;
   let filename = sign.filename;
-  if (!filename) {
-    filename = await generateFilename(file, {
-      rename: true,
-      filepath,
-      onMD5Calculated,
-    });
-  }
   if (/^\//.test(filename)) {
     filename = filename.substring(1);
   }
@@ -96,8 +69,18 @@ export async function ossUpload(options: any) {
 }
 
 export default async function upload(options: any = {}) {
-  const { query } = options;
-  const sign = await getAliyunSTS(query);
+  const { query, file } = options;
+  const md5name = await generateFilename(file, {
+    rename: true,
+  });
+  // md5重命名
+  if (!query.ismd5) {
+    query.filename = md5name;
+  }
+  const sign: any = await getAliyunSTS(query);
+  if (!sign.filename) {
+    sign.filename = md5name;
+  }
   return ossUpload({
     ...options,
     sign,

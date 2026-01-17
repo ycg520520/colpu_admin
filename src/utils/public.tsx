@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-30 16:16:16
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-15 12:33:58
+ * @LastEditTime: 2025-12-04 23:28:26
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -42,3 +42,13 @@ export const suspenseDynamicIcon = ({ iconName, props }: any) => {
     </Suspense>
   );
 };
+
+export const composeTreeFieldNames = (fieldNames: any = {}) =>
+  Object.assign(
+    {
+      key: "key",
+      title: "title",
+      disabled: "disabled",
+    },
+    fieldNames
+  );

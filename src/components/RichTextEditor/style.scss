@@ -1,0 +1,21 @@
+.tiptap-rich-text-editor {
+  legend {
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.4375em;
+    letter-spacing: 0.00938em;
+    color: rgba(0, 0, 0, 0.87);
+    cursor: text;
+    float: unset;
+    width: auto;
+    overflow: hidden;
+    padding: 0;
+    line-height: 11px;
+    transition: width 150ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+  }
+}
+.tox-tinymce {
+  border-width: 1px !important;
+  border-radius: 6px !important;
+}
