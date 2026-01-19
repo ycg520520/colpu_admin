@@ -2,11 +2,11 @@
  * @Author: colpu
  * @Date: 2025-11-19 17:36:23
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-23 14:11:26
+ * @LastEditTime: 2026-01-17 16:39:38
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Button, Layout, Menu, MenuProps, theme } from "antd";
 import { Outlet, useNavigate } from "react-router";
@@ -67,10 +67,8 @@ const App: React.FC = () => {
 
   // 获取菜单
   const routes = useAppSelector((state) => state.routes.routes);
-  const [menus, setMenus] = useState<MenuItem[]>([]);
-  useEffect(() => {
-    const _menus = composeMenu(routes, t, dynamicIcon);
-    setMenus(_menus);
+  const menus = useMemo(() => {
+    return composeMenu(routes, t, dynamicIcon);
   }, [t, routes]);
 
   // 设置当前pathname
@@ -84,16 +82,11 @@ const App: React.FC = () => {
           mode="inline"
           items={menus}
           onClick={({ key, keyPath }) => {
-            const isBlank = "_blank";
-            if (isBlank && /(https?:)?\/\//.test(key)) {
+            if (/(https?:)?\/\//.test(key)) {
               window.location.href = key;
             } else {
               const path = "/" + keyPath.reverse().join("/");
-              if (isBlank) {
-                window.open(path, "_blank");
-              } else {
-                navigate(path);
-              }
+              navigate(path);
             }
           }}
         />

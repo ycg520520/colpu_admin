@@ -2,14 +2,13 @@
  * @Author: colpu
  * @Date: 2025-11-23 13:02:45
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-04 14:53:22
+ * @LastEditTime: 2026-01-17 16:33:03
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 import type { ProSettings } from "@ant-design/pro-components";
 import {
   PageContainer,
-  ProBreadcrumb,
   ProLayout,
   SettingDrawer,
 } from "@ant-design/pro-components";
@@ -92,7 +91,7 @@ export default function BasicLayout() {
         pathname,
       }}
       avatarProps={{
-        src: user?.src,
+        src: user?.avatar,
         size: "small",
         title: user?.nickname,
         render: (_props, dom) => {

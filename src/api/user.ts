@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-15 14:30:04
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-07 21:42:47
+ * @LastEditTime: 2026-01-18 16:46:29
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -41,10 +41,9 @@ export const apiUser = (params: ObjectMaps, method: RequestMethod = "get") => {
 export const getRoleList = (params: any) => {
   return get("/api/role/list", { params });
 };
-export const postLogout = () => {
-  return new Promise((resolve) => {
-    resolve({ status: 0, message: "登出成功" });
-  });
+
+export const apiLogout = () => {
+  return post("/api/logout");
 };
 
 export const apiUserSearch = (params: any) =>

@@ -2,12 +2,12 @@
  * @Author: colpu
  * @Date: 2025-06-14 16:05:55
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-03 15:59:48
+ * @LastEditTime: 2026-01-18 17:00:46
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 import { createSelector, createSlice } from "@reduxjs/toolkit";
-import { getUserToken, getUserInfo } from "@/api/user";
+import { getUserToken, getUserInfo, apiLogout } from "@/api/user";
 import { StatusEnum, Status } from "@/types";
 import { getItem, removeItem, setItem } from "@/utils/storage";
 import { TOKEN, USER } from "@/constants";
@@ -33,6 +33,8 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
+      if (!state.isAuthenticated) return;
+      apiLogout();
       removeItem(TOKEN);
       removeItem(USER);
       state.user = undefined;
