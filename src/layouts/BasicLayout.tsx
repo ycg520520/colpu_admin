@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-23 13:02:45
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-31 16:51:53
+ * @LastEditTime: 2026-01-31 20:25:56
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -128,17 +128,17 @@ export default function BasicLayout() {
       }}
       headerTitleRender={(_logo, title, _) => {
         const defaultDom = (
-          <a>
+          <>
             <img src={settings.logo} alt="logo" width={40} />
             {title}
-          </a>
+          </>
         );
         if (typeof window === "undefined") return defaultDom;
         if (document.body.clientWidth < 1400) {
           return defaultDom;
         }
         if (_.isMobile) return defaultDom;
-        return <>{defaultDom}</>;
+        return defaultDom;
       }}
       menuFooterRender={(props) => <MenuFooter {...props} />}
       menuItemRender={(item, dom) => {
@@ -212,7 +212,7 @@ export default function BasicLayout() {
         onSettingChange={(set) => {
           dispatch(setSettings(set));
         }}
-        disableUrlParams={false}
+        disableUrlParams={true}
       />
     </ProLayout>
   );

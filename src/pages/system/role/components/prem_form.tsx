@@ -23,7 +23,6 @@ const PremForm = (props: any) => {
 
   useEffect(() => {
     formRef.current?.setFieldsValue(editData);
-    console.log(editData);
   }, [editData, formRef]);
   useEffect(() => {
     fetchPermssionGroup();

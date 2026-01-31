@@ -1,0 +1,13 @@
+{
+  "example": {
+    "name": "列子",
+    "mock": "Mock数据获取",
+    "search": "搜索列表",
+    "redux": {
+      "name": "redux列子",
+      "sub": "redux-sub列子",
+      "subIndex": "redux-sub列子-index"
+    }
+  },
+  "nochild": "列子NoChild"
+}

@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-14 16:05:55
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-31 11:18:09
+ * @LastEditTime: 2026-01-31 19:56:28
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -13,15 +13,17 @@ import { getItem, removeItem, setItem } from "@/utils/storage";
 import { TOKEN, USER } from "@/constants";
 import { User } from "./types";
 import { RootState } from "@/store";
+import { isTokenExpire } from "@/utils/permissions";
 interface UserState {
   user?: User;
   userToken?: UserToken;
   status?: Status;
   error?: string;
 }
+const userToken: UserToken = getItem(TOKEN);
 const initialState: UserState = {
   user: getItem(USER),
-  userToken: getItem(TOKEN),
+  userToken: isTokenExpire() ? undefined : userToken,
   status: StatusEnum.IDLE,
 };
 const userSlice = createSlice({

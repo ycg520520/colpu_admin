@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-03-21 23:33:14
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-31 16:41:43
+ * @LastEditTime: 2026-01-31 19:57:05
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -23,7 +23,6 @@ import { getRoutes } from "./api/menus";
 import { getDict } from "@/api/dict";
 import { getDepartmentTree } from "./api/departments";
 import { cloneDeep } from "lodash";
-import { isTokenExpire } from "@/utils/permissions";
 import { getUserInfo } from "./api/user";
 const initRouter = createRouter(generatorAllRouter());
 export default function AppMain() {
@@ -33,7 +32,7 @@ export default function AppMain() {
   const { userToken } = useAppSelector((state: RootState) => state.user);
   const [router, setRouter] = useState(initRouter);
   useEffect(() => {
-    if (!isTokenExpire()) {
+    if (userToken) {
       dispatch(getRoutes()).then(({ payload }) => {
         setRouter(
           createRouter(generatorAllRouter(cloneDeep(payload as RouteType[]))),

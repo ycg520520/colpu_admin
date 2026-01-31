@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-03-18 20:41:58
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-09-17 08:16:00
+ * @LastEditTime: 2026-01-31 20:23:04
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -12,6 +12,7 @@ import pages from "./zh-CN/pages";
 import pwa from "./zh-CN/pwa";
 import settingDrawer from "./zh-CN/settingDrawer";
 import settings from "./zh-CN/settings";
+// import example from "./zh-CN/example";
 import { CustomLocale } from "./types";
 
 const zhCN: CustomLocale = {
@@ -27,6 +28,7 @@ const zhCN: CustomLocale = {
   settingDrawer,
   settings,
   pwa,
+  // example,
 };
 
 export default zhCN;

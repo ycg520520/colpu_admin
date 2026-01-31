@@ -1,5 +1,5 @@
 import { getUserToken } from "@/api/user";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   AlipayOutlined,
   TaobaoOutlined,
@@ -16,7 +16,6 @@ import PhoneForm from "./components/PhoneForm";
 import Lang from "@/components/Lang";
 import { useTranslation } from "react-i18next";
 import { ObjectMaps } from "@/types";
-import { isTokenExpire } from "@/utils/permissions";
 type LoginType = "phone" | "account";
 
 const iconStyles: CSSProperties = {
@@ -74,7 +73,8 @@ const Page = () => {
   const [loginType, setLoginType] = useState<LoginType>("account");
   const { token } = theme.useToken();
   const { styles } = useStyles();
-  if (!isTokenExpire()) {
+  const { userToken } = useAppSelector((state) => state.user);
+  if (userToken) {
     return <Navigate to={searchParams.get("redirect") || "/"} replace />;
   }
   return (

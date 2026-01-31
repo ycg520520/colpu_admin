@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-18 14:13:06
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-30 22:51:56
+ * @LastEditTime: 2026-01-31 20:10:33
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -46,7 +46,12 @@ function consoleLog(
  * @description 设置认证拦截器和日志拦截器
  */
 function authInterceptor(instance: AxiosInstance) {
+  // 是否弹出过期对话框
+  let isJumpExpire = false;
+
+  // 是否刷新token
   let isRefreshing = false;
+  // 刷新token时，请求失败队列
   const failedQueue: any[] = [];
   const processQueue = ({
     error,
@@ -82,6 +87,7 @@ function authInterceptor(instance: AxiosInstance) {
   };
 
   const jumpLogin = () => {
+    isJumpExpire = false;
     const location = window.location;
     removeItem(TOKEN);
     location.replace(
@@ -91,7 +97,8 @@ function authInterceptor(instance: AxiosInstance) {
     );
   };
   const redirectToLogin = () => {
-    Modal.destroyAll();
+    if(isJumpExpire) return;
+    isJumpExpire = true;
     // 刷新失败，跳转到登录页
     Modal.error({
       title: "登录已过期",
@@ -102,7 +109,6 @@ function authInterceptor(instance: AxiosInstance) {
       keyboard: false,
       onOk: jumpLogin,
     });
-    // jumpLogin();
   };
 
   // 请求拦截器

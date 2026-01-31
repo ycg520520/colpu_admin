@@ -1,0 +1,13 @@
+{
+  "example": {
+    "name": "Example",
+    "mock": "Mock Data",
+    "search": "Search List",
+    "redux": {
+      "name": "Redux Example",
+      "sub": "Redux Sub",
+      "subIndex": "Redux Sub Index"
+    }
+  },
+  "nochild": "Example No Child"
+}

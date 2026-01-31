@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-03-18 21:23:51
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-31 16:28:04
+ * @LastEditTime: 2026-01-31 19:51:24
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -18,7 +18,7 @@ const settings = {
   fixedHeader: false,
   fixSiderbar: true,
   colorWeak: false,
-  title: false,
+  title: 'Colpu Admin',
   pwa: true,
   logo,
   iconfontUrl: "",

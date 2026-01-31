@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-03-26 15:51:31
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-30 18:22:42
+ * @LastEditTime: 2026-01-31 20:43:24
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -77,7 +77,7 @@ i18n
       },
     },
     // 远程加载空间名称
-    // ns: ["example"], // 指定支持的命名空间
+    ns: ["example"], // 指定支持的命名空间
     detection: {
       order: [
         "querystring", // 首先检查URL参数
@@ -112,7 +112,7 @@ i18n
       escapeValue: false,
     },
     // backend: {
-    //   loadPath: "https://file.nadu8.com/locales/{{lng}}/{{ns}}.json", // 远程加载路径
+      // loadPath: "https://file.nadu8.com/locales/{{lng}}/{{ns}}.json", // 远程加载路径
     // },
   });
 // 开发环境调试
