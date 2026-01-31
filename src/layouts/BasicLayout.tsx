@@ -2,11 +2,12 @@
  * @Author: colpu
  * @Date: 2025-11-23 13:02:45
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-31 20:25:56
+ * @LastEditTime: 2026-01-31 22:31:15
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 import {
+  MenuDataItem,
   PageContainer,
   ProLayout,
   SettingDrawer,
@@ -61,7 +62,10 @@ export default function BasicLayout() {
   const { routes } = useAppSelector((state) => state.routes);
   const [menus, setMenus] = useState<any>([]);
   useEffect(() => {
-    const _menus = composeMenu(routes, t, dynamicIcon);
+    const _menus = composeMenu<MenuDataItem>(routes, {
+      t,
+      dynamicIcon,
+    });
     const composeMenus = [{ path: "/", name: "首页", children: _menus }];
     setMenus(composeMenus);
     dispatch(setFlatMenus(flatMenu(composeMenus)));

@@ -2,24 +2,26 @@
  * @Author: colpu
  * @Date: 2025-06-15 12:01:36
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-29 16:28:10
+ * @LastEditTime: 2026-01-31 22:34:17
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 
 import { RouteType } from "@/router";
-import { MenuDataItem } from "@ant-design/pro-components";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { UploadFile } from "antd";
 import { TFunction } from "i18next";
-export type IconFunction = (icon: string) => React.ReactNode;
-export function composeMenu(
+export function composeMenu<T>(
   routes: RouteType[],
-  translation?: TFunction,
-  iconFunction?: IconFunction,
-): MenuDataItem[] {
+  options: {
+    t?: TFunction;
+    dynamicIcon?: (icon: string) => React.ReactNode;
+    convert?: (item: any) => T;
+  } = {},
+): T[] {
   if (!routes.length) return [];
-  const menuList: MenuDataItem[] = [];
+  const menuList: T[] = [];
+  const { t, dynamicIcon, convert } = options;
   for (let idx = 0; idx < routes.length; idx++) {
     const route: RouteType = routes[idx];
     const { index, children = [], path, handle = {} } = route;
@@ -34,9 +36,9 @@ export function composeMenu(
       target,
     } = handle;
     if ((index || !path) && !handle.layout) continue;
-    const item: MenuDataItem = {
+    let item: any = {
       path,
-      icon: icon && iconFunction ? iconFunction(icon) : undefined,
+      icon: icon && dynamicIcon ? dynamicIcon(icon) : undefined,
       name,
       hideChildrenInMenu,
       hideInMenu,
@@ -45,14 +47,19 @@ export function composeMenu(
     };
 
     if (children.length) {
-      item.children = composeMenu(children, translation, iconFunction);
+      item.children = composeMenu<T>(children, options);
     }
 
-    if (translation && translationKey) {
-      item.name = translation(translationKey, { ns });
+    if (t && translationKey) {
+      item.name = t(translationKey, { ns });
     }
+
+    if (convert) {
+      item = convert(item);
+    }
+
     if (!hideInMenu) {
-      menuList.push(item);
+      menuList.push(item as T);
     }
   }
   return menuList;
@@ -66,7 +73,6 @@ export function createThunk<T>(
     typePrefix,
     async (params: T, thunkAPI): Promise<unknown> => {
       try {
-        // 模拟登录API请求
         return callback(params);
       } catch (err: any) {
         return thunkAPI.rejectWithValue(err);
@@ -303,4 +309,3 @@ export function urlToFileList(options: any = {}): UploadFile[] {
     },
   ];
 }
-
