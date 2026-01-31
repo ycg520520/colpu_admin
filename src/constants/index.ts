@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-25 15:37:27
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-25 14:15:20
+ * @LastEditTime: 2026-01-31 10:09:57
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -21,6 +21,7 @@ export const CONFIG = "@CONFIG"; // 全局配置
 export const USER = "@USER_INFO"; // 用户信息
 export const TOKEN = "@USER_TOKEN"; // 用户TOKEN
 export const I18NEXTLNG = "@I18NEXTLNG"; // 用户刷新
+export const LAYOUT_SETTINGS = "@LAYOUT_SETTINGS"; // 布局设置
 
 export const FILE_TYPE_CODE = {
   0: "dir",

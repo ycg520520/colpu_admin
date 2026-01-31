@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-15 12:01:36
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-06 17:03:42
+ * @LastEditTime: 2026-01-29 16:28:10
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -16,7 +16,7 @@ export type IconFunction = (icon: string) => React.ReactNode;
 export function composeMenu(
   routes: RouteType[],
   translation?: TFunction,
-  iconFunction?: IconFunction
+  iconFunction?: IconFunction,
 ): MenuDataItem[] {
   if (!routes.length) return [];
   const menuList: MenuDataItem[] = [];
@@ -60,7 +60,7 @@ export function composeMenu(
 
 export function createThunk<T>(
   typePrefix: string,
-  callback: (params: T) => Promise<unknown>
+  callback: (params: T) => Promise<unknown>,
 ) {
   return createAsyncThunk(
     typePrefix,
@@ -71,7 +71,7 @@ export function createThunk<T>(
       } catch (err: any) {
         return thunkAPI.rejectWithValue(err);
       }
-    }
+    },
   );
 }
 
@@ -88,7 +88,7 @@ export function installTree(
     key_id?: string;
     key_fid?: string;
     handdle?: (item: any) => void;
-  } = {}
+  } = {},
 ) {
   const {
     id = 0,
@@ -191,7 +191,7 @@ export function filterParentId(treeData: any[], ids: any[] = [], key = "key") {
 export function filterTree(
   tree: any[],
   predicate: (item: any) => any,
-  childrenKey: string = "children"
+  childrenKey: string = "children",
 ) {
   return tree
     .map((item) => ({ ...item }))
@@ -237,7 +237,7 @@ export function pagination(pages: any, options?: any): any {
  */
 export function getOffsetTop(
   element: HTMLElement | null,
-  includeMargin: boolean = false
+  includeMargin: boolean = false,
 ): number {
   if (!element) return 0;
 
@@ -303,3 +303,4 @@ export function urlToFileList(options: any = {}): UploadFile[] {
     },
   ];
 }
+

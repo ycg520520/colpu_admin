@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-15 14:30:04
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-18 16:46:29
+ * @LastEditTime: 2026-01-29 22:15:42
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -15,8 +15,8 @@ export const getUserToken = createThunk("token", (data: ObjectMaps) => {
   return post("/api/token", { grant_type: "password", ...data });
 });
 
-export const getUserInfo = createThunk("user/info", () =>
-  get("/api/user/info")
+export const getUserInfo = createThunk<void>("user/info", () =>
+  get("/api/user/info"),
 );
 
 export const getUserList = (params: any) => {
@@ -34,7 +34,7 @@ export const getCheckUser = (params: ObjectMaps) => {
 export const apiUser = (params: ObjectMaps, method: RequestMethod = "get") => {
   return ($http as any)[method](
     "/api/user",
-    ["get", "delete"].includes(method) ? { params } : params
+    ["get", "delete"].includes(method) ? { params } : params,
   );
 };
 

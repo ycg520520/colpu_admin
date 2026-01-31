@@ -24,23 +24,17 @@ const BaseInfo = () => {
   const formRef = useRef<ProFormInstance>(null);
   const { user } = useAppSelector((state) => state.user);
   const { dict } = useAppSelector((state) => state.dict);
-  const [formData, setFormData] = useState({});
-  useEffect(() => {
-    setFormData((prev) => {
-      return {
-        ...prev,
-        id: user?.id,
-        nickname: user?.nickname,
-        phone: user?.phone,
-        email: user?.email,
-        gender: user?.gender,
-        remark: user?.remark,
-      };
-    });
-  }, [user, setFormData]);
+  const [formData] = useState({
+    id: user?.id,
+    nickname: user?.nickname,
+    phone: user?.phone,
+    email: user?.email,
+    gender: user?.gender,
+    remark: user?.remark,
+  });
   useEffect(() => {
     formRef.current?.setFieldsValue(formData);
-  }, [formData, formRef]);
+  }, [formRef, formData]);
 
   const columns = [
     {
@@ -132,7 +126,7 @@ export default function Account() {
   useEffect(() => {
     if (user?.avatar) {
       setAvatar(
-        urlToFileList({ url: user?.avatar, uid: "-1", status: "done" })
+        urlToFileList({ url: user?.avatar, uid: "-1", status: "done" }),
       );
     }
   }, [user]);
@@ -171,7 +165,7 @@ export default function Account() {
               }}
               uploadProps={{
                 listType: "picture-circle",
-                style: { width: 100, height: 100  },
+                style: { width: 100, height: 100 },
               }}
               uploadType="single"
             />

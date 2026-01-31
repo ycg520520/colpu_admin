@@ -1,5 +1,5 @@
-import { getUserToken, getUserInfo } from "@/api/user";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { getUserToken } from "@/api/user";
+import { useAppDispatch } from "@/store/hooks";
 import {
   AlipayOutlined,
   TaobaoOutlined,
@@ -9,13 +9,14 @@ import { LoginFormPage } from "@ant-design/pro-components";
 import { Divider, Space, Tabs, theme, message } from "antd";
 import { createStyles } from "antd-style";
 import type { CSSProperties } from "react";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useState } from "react";
+import { Navigate, useSearchParams } from "react-router";
 import UserForm from "./components/UserForm";
 import PhoneForm from "./components/PhoneForm";
 import Lang from "@/components/Lang";
 import { useTranslation } from "react-i18next";
 import { ObjectMaps } from "@/types";
+import { isTokenExpire } from "@/utils/permissions";
 type LoginType = "phone" | "account";
 
 const iconStyles: CSSProperties = {
@@ -67,39 +68,24 @@ const useStyles = createStyles(({ token }) => {
 });
 
 const Page = () => {
-  const [msg] = message.useMessage();
   const { t } = useTranslation();
-  const { userToken, user, isAuthenticated, status, error } = useAppSelector(
-    (state) => state.user
-  );
   const dispatch = useAppDispatch();
+  const [searchParams] = useSearchParams();
   const [loginType, setLoginType] = useState<LoginType>("account");
   const { token } = theme.useToken();
   const { styles } = useStyles();
-  const navigate = useNavigate();
-
-  console.log(status, error);
-  // 监听登录成功，自动获取用户信息
-  useEffect(() => {
-    if (userToken && !user) {
-      //有token但没有用户信息时，自动获取用户信息
-      dispatch(getUserInfo(undefined));
-    }
-    console.log("login page", isAuthenticated);
-    if (isAuthenticated) {
-      navigate("/");
-    }
-  }, [userToken, user, isAuthenticated, dispatch, navigate]);
-
+  if (!isTokenExpire()) {
+    return <Navigate to={searchParams.get("redirect") || "/"} replace />;
+  }
   return (
     <LoginFormPage
       // backgroundImageUrl="https://mdn.alipayobjects.com/huamei_gcee1x/afts/img/A*y0ZTS6WLwvgAAAAAAAAAAAAADml6AQ/fmt.webp"
       logo="https://github.githubassets.com/favicons/favicon.png"
       backgroundVideoUrl="https://res.creatiai.ai/web/creatiai/stuido-landing-top-video-202509041951.webm"
       title="Github"
-      style={{
-        backgroundColor: "rgba(0,0,0,.75)",
-      }}
+      // style={{
+      //   backgroundColor: "rgba(0,0,0,.75)",
+      // }}
       containerStyle={{
         backdropFilter: "blur(4px)",
       }}
@@ -196,19 +182,22 @@ const Page = () => {
           submitText: t("pages.login.submit", { defaultValue: "去登录" }),
         },
       }}
-      onFinish={async (values) => {
-        await dispatch(getUserToken(values as ObjectMaps)).catch(() => {
-          msg.error(
-            t("pages.login.failure", {
-              defaultMessage: "登录失败，请重试！",
-            })
-          );
-        });
-        msg.success(
-          t("pages.login.success", {
-            defaultMessage: "登录成功！",
+      onFinish={(values) => {
+        dispatch(getUserToken(values as ObjectMaps))
+          .then(() => {
+            message.success(
+              t("pages.login.success", {
+                defaultMessage: "登录成功！",
+              }),
+            );
           })
-        );
+          .catch(() => {
+            message.error(
+              t("pages.login.failure", {
+                defaultMessage: "登录失败，请重试！",
+              }),
+            );
+          });
       }}
     >
       <Tabs

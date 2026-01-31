@@ -2,11 +2,10 @@
  * @Author: colpu
  * @Date: 2025-11-23 13:02:45
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-17 16:33:03
+ * @LastEditTime: 2026-01-31 16:51:53
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
-import type { ProSettings } from "@ant-design/pro-components";
 import {
   PageContainer,
   ProLayout,
@@ -17,15 +16,8 @@ import { useEffect, useState } from "react";
 import SearchInput from "@/components/Search";
 import { useTranslation } from "react-i18next";
 import { RouteHandle } from "@/router";
-import {
-  Navigate,
-  Outlet,
-  useLocation,
-  useMatches,
-  useNavigate,
-} from "react-router";
+import { Outlet, useLocation, useMatches, useNavigate } from "react-router";
 import { composeMenu } from "@/utils";
-import defaultSettings from "@/config/settings";
 import MenuFooter from "@/components/MenuFooter";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { logout } from "@/store/slices/user";
@@ -36,13 +28,13 @@ import {
 } from "@ant-design/icons";
 import { dynamicIcon } from "@/utils/public";
 import Lang from "@/components/Lang";
-// import PageTabs from "@/components/PageTabs";
 import { setFlatMenus } from "@/store/slices/routes";
 import { flatMenu } from "@/router/utils";
+import { setSettings } from "@/store/slices/settings";
 export default function BasicLayout() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useAppSelector((state) => state.user);
+  const { user } = useAppSelector((state) => state.user);
   // 获取路由信息
   const matches = useMatches();
   const routeHandle = (matches.at(-1)?.handle || {}) as RouteHandle;
@@ -61,12 +53,7 @@ export default function BasicLayout() {
   }, [_pathname]);
 
   // 设置settings
-  const [settings, setSetting] = useState<Partial<ProSettings> | undefined>({
-    fixSiderbar: defaultSettings.fixSiderbar || true,
-    layout: defaultSettings.layout || "mix",
-    splitMenus: defaultSettings.splitMenus || false,
-  });
-
+  const settings = useAppSelector((state) => state.settings);
   // 加载翻译
   const { t } = useTranslation(["common", "example"]);
 
@@ -79,11 +66,6 @@ export default function BasicLayout() {
     setMenus(composeMenus);
     dispatch(setFlatMenus(flatMenu(composeMenus)));
   }, [t, routes, dispatch]);
-
-  // 判断是否登录
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
   return (
     <ProLayout
       route={menus[0]}
@@ -101,6 +83,7 @@ export default function BasicLayout() {
                 onClick: ({ key }) => {
                   if (key === "logout") {
                     dispatch(logout());
+                    navigate("/login", { replace: true });
                   }
                   if (key === "account") {
                     navigate("/account");
@@ -146,7 +129,7 @@ export default function BasicLayout() {
       headerTitleRender={(_logo, title, _) => {
         const defaultDom = (
           <a>
-            <img src={defaultSettings.logo} alt="logo" width={40} />
+            <img src={settings.logo} alt="logo" width={40} />
             {title}
           </a>
         );
@@ -174,7 +157,7 @@ export default function BasicLayout() {
         }
         return (
           <div
-            onClick={() => {
+            onClick={async () => {
               const path = item.path || "";
               setPathname(path);
               if (isBlank) {
@@ -188,7 +171,6 @@ export default function BasicLayout() {
           </div>
         );
       }}
-      {...defaultSettings}
       {...settings}
       // 关键配置
       style={{
@@ -212,7 +194,7 @@ export default function BasicLayout() {
         }}
         waterMarkProps={{
           fontColor: "rgba(0,0,0,0.1)",
-          content: defaultSettings.title || "Water",
+          content: settings.title || "Water",
         }}
         style={{ display: "flex", flexDirection: "column", flex: 1 }}
         childrenContentStyle={{ flex: 1 }}
@@ -227,7 +209,9 @@ export default function BasicLayout() {
           return document.getElementById("test-pro-layout");
         }}
         settings={settings}
-        onSettingChange={setSetting}
+        onSettingChange={(set) => {
+          dispatch(setSettings(set));
+        }}
         disableUrlParams={false}
       />
     </ProLayout>

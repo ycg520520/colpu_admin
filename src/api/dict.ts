@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-03 12:35:57
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-24 17:14:25
+ * @LastEditTime: 2026-01-29 21:04:14
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -41,4 +41,4 @@ export const checkDictData = (params: ObjectMaps) => {
   return get("/api/dict/data/check", { params });
 };
 
-export const getDict = createThunk("dict", () => get("/api/dict"));
+export const getDict = createThunk<void>("dict", () => get("/api/dict"));

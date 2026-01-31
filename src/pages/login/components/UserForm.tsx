@@ -2,11 +2,11 @@
  * @Author: colpu
  * @Date: 2025-06-26 16:52:43
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-06 23:25:21
+ * @LastEditTime: 2026-01-31 09:39:54
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { EllipsisOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 import { ProFormText } from "@ant-design/pro-components";
 import { useTranslation } from "react-i18next";
 export default function UserForm({ token }: { token: any }) {
@@ -29,7 +29,7 @@ export default function UserForm({ token }: { token: any }) {
         placeholder={t("pages.login.username.placeholder", {
           defaultValue: "用户名: admin or manager or editor",
         })}
-        initialValue='superadmin'
+        initialValue="superadmin"
         rules={[
           {
             required: true,
@@ -41,7 +41,7 @@ export default function UserForm({ token }: { token: any }) {
       />
       <ProFormText.Password
         name="password"
-        initialValue='admin'
+        initialValue="admin"
         fieldProps={{
           size: "large",
           prefix: (

@@ -1,8 +1,8 @@
 /*
  * @Author: colpu
  * @Date: 2025-03-26 15:51:31
- * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @LastEditTime: 2025-07-08 08:55:02
+ * @LastEditors: colpu ycg520520@qq.com
+ * @LastEditTime: 2026-01-30 18:22:42
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -77,7 +77,7 @@ i18n
       },
     },
     // 远程加载空间名称
-    ns: ["example"], // 指定支持的命名空间
+    // ns: ["example"], // 指定支持的命名空间
     detection: {
       order: [
         "querystring", // 首先检查URL参数
@@ -111,9 +111,9 @@ i18n
     interpolation: {
       escapeValue: false,
     },
-    backend: {
-      loadPath: "https://file.nadu8.com/locales/{{lng}}/{{ns}}.json", // 远程加载路径
-    },
+    // backend: {
+    //   loadPath: "https://file.nadu8.com/locales/{{lng}}/{{ns}}.json", // 远程加载路径
+    // },
   });
 // 开发环境调试
 if (process.env.NODE_ENV === "development") {

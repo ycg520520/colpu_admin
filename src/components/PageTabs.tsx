@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-12-08 22:43:28
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-10 09:17:39
+ * @LastEditTime: 2026-01-31 11:04:39
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -11,7 +11,7 @@ import { Tabs } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addTab, removeTab, TabItem, setHasTab } from "@/store/slices/tabs";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAppSelector } from "@/store/hooks";
 
 const PageTabs = () => {
@@ -21,21 +21,17 @@ const PageTabs = () => {
   const { tabs, hasTab } = useAppSelector((state) => state.tabs);
   const { flatMenus } = useAppSelector((state) => state.routes);
 
-  const [pathname, setPathname] = useState<string>("");
   useEffect(() => {
     let currentPath = location.pathname;
     if (currentPath.endsWith("/index")) {
       currentPath = currentPath.replace("/index", "");
     }
-    setPathname(currentPath);
-  }, [location.pathname]);
-  useEffect(() => {
-    const menu = flatMenus.find((m) => m.path === pathname);
+    const menu = flatMenus.find((m) => m.path === currentPath);
     if (menu) {
       dispatch(addTab(menu));
     }
     dispatch(setHasTab(!!menu));
-  }, [pathname, flatMenus, dispatch]);
+  }, [location.pathname, flatMenus, dispatch]);
 
   const onChange = (key: string) => {
     navigate(key);
@@ -60,7 +56,7 @@ const PageTabs = () => {
       <Tabs
         hideAdd
         type="editable-card"
-        activeKey={pathname}
+        activeKey={location.pathname}
         onChange={onChange}
         onEdit={onEdit}
         size="small"

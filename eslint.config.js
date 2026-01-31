@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2024-11-04 20:44:03
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-06-22 09:54:36
+ * @LastEditTime: 2026-01-29 21:05:10
  * @
  * @Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -32,6 +32,14 @@ export default tseslint.config(
         "warn",
         { allowConstantExport: true },
       ],
+      // "@typescript-eslint/no-unused-vars": [
+      //   "error",
+      //   {
+      //     "argsIgnorePattern": "^_",  // 允许以 _ 开头的参数
+      //     "varsIgnorePattern": "^_",  // 允许以 _ 开头的变量
+      //     "caughtErrorsIgnorePattern": "^_"  // 允许以 _ 开头的错误变量
+      //   }
+      // ]
     },
   }
 );

@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-20 19:17:17
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-30 17:11:29
+ * @LastEditTime: 2026-01-29 21:04:38
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -10,7 +10,7 @@ import $http, { get, type RequestMethod } from "@/utils/request";
 import { ObjectMaps } from "@/types";
 import { createThunk, installTree } from "@/utils";
 
-export const getDepartmentTree = createThunk(
+export const getDepartmentTree = createThunk<void>(
   "department/tree",
   (): Promise<any> =>
     get("/api/department/tree").then((res: any) =>

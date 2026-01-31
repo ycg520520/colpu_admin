@@ -1,8 +1,8 @@
 /*
  * @Author: colpu
- * @Date: 2026-01-04 14:38:43
+ * @Date: 2026-01-27 16:34:25
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-27 16:34:25
+ * @LastEditTime: 2026-01-27 17:17:41
  *
  * Copyright (c) 2026 by colpu, All Rights Reserved.
  */
@@ -20,7 +20,7 @@ import { colProps, formItemCol, formItemProps } from "@/constants/form";
 import RichTextEditor from "@/components/RichTextEditor";
 import { useAppSelector } from "@/store/hooks";
 import dayjs from "dayjs";
-const NoticeForm = (props: any) => {
+const FragsForm = (props: any) => {
   const { title, open, isEdit, editData, modalProps, formRef } = props;
   const { dict } = useAppSelector((state) => state.dict);
 
@@ -56,14 +56,29 @@ const NoticeForm = (props: any) => {
     >
       <ProFormText
         name="id"
-        label="通知ID"
+        label="碎片ID"
         formItemProps={{ style: { display: "none" } }}
         fieldProps={{ disabled: true }}
       />
 
       <ProFormText
         name="title"
-        label="通知标题"
+        label="碎片标题"
+        colProps={colProps}
+        formItemProps={{
+          ...formItemProps,
+          rules: [{ required: true, message: "必须输入标签名称" }],
+        }}
+      />
+      <ProFormText
+        name="subtitle"
+        label="碎片小标题"
+        colProps={colProps}
+        formItemProps={formItemProps}
+      />
+      <ProFormText
+        name="code"
+        label="碎片标识"
         colProps={colProps}
         formItemProps={{
           ...formItemProps,
@@ -72,16 +87,13 @@ const NoticeForm = (props: any) => {
       />
       <ProFormSelect
         name="type"
-        label="公告类型"
+        label="碎片类型"
         colProps={colProps}
-        formItemProps={{
-          ...formItemProps,
-          rules: [{ required: true, message: "必须选择公告类型" }],
-        }}
+        formItemProps={formItemProps}
         initialValue={1}
         fieldProps={{
           placeholder: "请选择栏目类型",
-          options: dict.notice_type ? dict.notice_type.options : [],
+          options: dict.frag_type ? dict.frag_type.options : [],
         }}
       />
       <ProFormDateTimePicker
@@ -103,7 +115,7 @@ const NoticeForm = (props: any) => {
         }}
       />
       <Col span={24}>
-        <ProForm.Item name="content" label="通知内容" {...formItemCol(4)}>
+        <ProForm.Item name="content" label="碎片内容" {...formItemCol(4)}>
           <RichTextEditor />
         </ProForm.Item>
       </Col>
@@ -111,4 +123,4 @@ const NoticeForm = (props: any) => {
   );
 };
 
-export default NoticeForm;
+export default FragsForm;

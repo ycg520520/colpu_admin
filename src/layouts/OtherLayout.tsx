@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-19 17:36:23
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-17 16:39:38
+ * @LastEditTime: 2026-01-31 16:36:56
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -23,7 +23,7 @@ type MenuItem = Required<MenuProps>["items"][number];
 function composeMenu(
   routes: RouteType[],
   translation?: TFunction,
-  iconFunction?: IconFunction
+  iconFunction?: IconFunction,
 ): MenuItem[] {
   if (!routes.length) return [];
   const menuList: MenuItem[] = [];
@@ -78,7 +78,11 @@ const App: React.FC = () => {
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical" />
         <Menu
-          theme="dark"
+          style={{
+            height: "100%", // 填满父容器
+            overflowY: "auto", // Y轴滚动
+            maxHeight: "100%",
+          }}
           mode="inline"
           items={menus}
           onClick={({ key, keyPath }) => {
