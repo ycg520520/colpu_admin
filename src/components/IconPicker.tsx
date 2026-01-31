@@ -2,12 +2,12 @@
  * @Author: colpu
  * @Date: 2025-11-15 11:28:21
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-24 15:27:26
+ * @LastEditTime: 2026-01-31 23:14:16
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 import React, { useState, useMemo, useEffect } from "react";
-import { Input, Card, Button, Row, Col, Dropdown, Empty, App } from "antd";
+import { Input, Card, Button, Row, Col, Dropdown, Empty, message } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import * as AntdIcons from "@ant-design/icons";
 import { dynamicIcon } from "@/utils/public";
@@ -86,7 +86,6 @@ const IconPicker: React.FC<IconPickerProps> = (props) => {
     isCopy = false,
   } = props || {};
   const [, token] = useToken();
- const { message } = App.useApp();
 
   const [searchText, setSearchText] = useState("");
   const [selectedIcon, setSelectedIcon] = useState<string>("");
@@ -97,7 +96,7 @@ const IconPicker: React.FC<IconPickerProps> = (props) => {
     return allIcons.filter(
       (icon) =>
         icon.displayName.toLowerCase().includes(searchText.toLowerCase()) ||
-        icon.name.toLowerCase().includes(searchText.toLowerCase())
+        icon.name.toLowerCase().includes(searchText.toLowerCase()),
     );
   }, [searchText]);
 
@@ -191,7 +190,7 @@ const IconPicker: React.FC<IconPickerProps> = (props) => {
   }));
 
   const [prefixIxon, setPrefixIcon] = useState<React.ReactNode>(
-    <SearchOutlined />
+    <SearchOutlined />,
   );
   useEffect(() => {
     if (selectedIcon) {

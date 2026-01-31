@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-03-18 21:23:51
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-31 19:51:24
+ * @LastEditTime: 2026-01-31 23:18:43
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -18,7 +18,8 @@ const settings = {
   fixedHeader: false,
   fixSiderbar: true,
   colorWeak: false,
-  title: 'Colpu Admin',
+  title: '印点CMS',
+  slogan: '技术驱动创新，服务创造价值',
   pwa: true,
   logo,
   iconfontUrl: "",

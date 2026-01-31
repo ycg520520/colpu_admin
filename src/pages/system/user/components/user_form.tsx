@@ -10,7 +10,7 @@
 import { BetaSchemaForm } from "@ant-design/pro-components";
 import { useEffect, useState } from "react";
 import { getCheckUser } from "@/api/user";
-import { App } from "antd";
+import { message } from "antd";
 import { useAppSelector } from "@/store/hooks";
 import { apiUserParty } from "@/api/common";
 import {
@@ -27,7 +27,6 @@ const UserForm = (props: any) => {
     props;
   const { dict } = useAppSelector((state) => state.dict);
   const treeData = useAppSelector((state) => state.dept.treeData);
-  const { message } = App.useApp();
   const [userPart, setUserPart] = useState({ depts: [], roles: [], posts: [] });
   const fetchUserPart = async () => {
     apiUserParty().then((data: any) => {
@@ -98,7 +97,9 @@ const UserForm = (props: any) => {
       dataIndex: "phone",
       formItemProps: {
         ...formItemProps,
-        rules: [{ required: true, message: "请输入用户手机号", pattern: phoneReg }],
+        rules: [
+          { required: true, message: "请输入用户手机号", pattern: phoneReg },
+        ],
       },
     },
     {

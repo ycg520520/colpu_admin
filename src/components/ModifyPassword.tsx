@@ -2,21 +2,20 @@ import { apiUser } from "@/api/user";
 import { formItemProps } from "@/constants/form";
 import { submitter } from "@/constants/public";
 import { BetaSchemaForm, ProFormInstance } from "@ant-design/pro-components";
-import { App } from "antd";
+import { message } from "antd";
 import { useEffect, useRef, useState } from "react";
 
 /*
  * @Author: colpu
  * @Date: 2025-11-24 22:57:22
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-25 08:45:52
+ * @LastEditTime: 2026-01-31 23:14:20
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 
 const ModifyPassword = (props: any) => {
   const { dataSource, style, onSubmit } = props;
-  const { message } = App.useApp();
   const formRef = useRef<ProFormInstance>(null);
   const [formData, setFormData] = useState({});
   useEffect(() => {

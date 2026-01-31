@@ -10,8 +10,8 @@
 import { BetaSchemaForm } from "@ant-design/pro-components";
 import { useEffect } from "react";
 import { colProps, formItemCol } from "@/constants/form";
-import { App } from "antd";
 import { useAppSelector } from "@/store/hooks";
+import { message } from "antd";
 
 const RoleForm = (props: any) => {
   const { title, open, isEdit, editData, onFinish, modalProps, formRef } =
@@ -20,8 +20,6 @@ const RoleForm = (props: any) => {
   useEffect(() => {
     formRef.current?.setFieldsValue({ ...editData });
   }, [editData, formRef]);
-  const { message } = App.useApp();
-
   const formColumns = [
     {
       title: "ID",

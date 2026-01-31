@@ -11,12 +11,11 @@ import { BetaSchemaForm } from "@ant-design/pro-components";
 import { useEffect, useState } from "react";
 import { formItemCol } from "@/constants/form";
 import TreeExtend from "@/components/TreeExtend";
-import { App } from "antd";
 import { getPermissionGroup } from "@/api/permission";
+import { message } from "antd";
 const PremForm = (props: any) => {
   const { open, editData, onFinish, modalProps, formRef } = props;
   const [treeData, setTreeData] = useState([]);
-  const { message } = App.useApp();
   const fetchPermssionGroup = async () => {
     getPermissionGroup().then((data: any) => setTreeData(data));
   };

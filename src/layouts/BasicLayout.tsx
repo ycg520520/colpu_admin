@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-23 13:02:45
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-31 22:31:15
+ * @LastEditTime: 2026-01-31 23:20:55
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -12,7 +12,7 @@ import {
   ProLayout,
   SettingDrawer,
 } from "@ant-design/pro-components";
-import { Dropdown } from "antd";
+import { Dropdown, theme } from "antd";
 import { useEffect, useState } from "react";
 import SearchInput from "@/components/Search";
 import { useTranslation } from "react-i18next";
@@ -33,6 +33,7 @@ import { setFlatMenus } from "@/store/slices/routes";
 import { flatMenu } from "@/router/utils";
 import { setSettings } from "@/store/slices/settings";
 export default function BasicLayout() {
+  const { token } = theme.useToken();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.user);
@@ -130,18 +131,50 @@ export default function BasicLayout() {
           <Lang theme="dark" />,
         ];
       }}
-      headerTitleRender={(_logo, title, _) => {
+      headerTitleRender={(_logo, _title, props: any) => {
         const defaultDom = (
           <>
-            <img src={settings.logo} alt="logo" width={40} />
-            {title}
+            <img
+              src={props.logo}
+              alt="logo"
+              style={{
+                width: 32,
+              }}
+            />
+            <div
+              style={{
+                marginLeft: 5,
+              }}
+            >
+              <div
+                style={{
+                  marginTop: 2,
+                  marginBottom: 3,
+                  fontSize: 14,
+                  lineHeight: 1,
+                  fontWeight: 600,
+                  color: token.colorTextBase,
+                }}
+              >
+                {props.title}
+              </div>
+              <div
+                style={{
+                  fontSize: 8,
+                  lineHeight: 1,
+                  color: token.colorTextDescription,
+                }}
+              >
+                {props.slogan}
+              </div>
+            </div>
           </>
         );
         if (typeof window === "undefined") return defaultDom;
         if (document.body.clientWidth < 1400) {
           return defaultDom;
         }
-        if (_.isMobile) return defaultDom;
+        if (props.isMobile) return defaultDom;
         return defaultDom;
       }}
       menuFooterRender={(props) => <MenuFooter {...props} />}

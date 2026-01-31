@@ -1,3 +1,11 @@
+/*
+ * @Author: colpu
+ * @Date: 2025-03-16 16:44:34
+ * @LastEditors: colpu ycg520520@qq.com
+ * @LastEditTime: 2026-01-31 23:13:19
+ *
+ * Copyright (c) 2025 by colpu, All Rights Reserved.
+ */
 import { apiUser } from "@/api/user";
 import ModifyPassword from "@/components/ModifyPassword";
 import CustomUpload from "@/components/Upload";
@@ -7,20 +15,10 @@ import { useAppSelector } from "@/store/hooks";
 import { urlToFileList } from "@/utils";
 import { dynamicIcon } from "@/utils/public";
 import { BetaSchemaForm, ProFormInstance } from "@ant-design/pro-components";
-import { Col, Row, Card, Flex, Tabs, TabsProps, App } from "antd";
+import { Col, Row, Card, Flex, Tabs, TabsProps, message } from "antd";
 import { useEffect, useRef, useState } from "react";
 
-/*
- * @Author: colpu
- * @Date: 2025-03-16 16:44:34
- * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-24 23:59:51
- *
- * Copyright (c) 2025 by colpu, All Rights Reserved.
- */
-
 const BaseInfo = () => {
-  const { message } = App.useApp();
   const formRef = useRef<ProFormInstance>(null);
   const { user } = useAppSelector((state) => state.user);
   const { dict } = useAppSelector((state) => state.dict);
@@ -96,6 +94,9 @@ const BaseInfo = () => {
     message.success("修改成功");
     return true;
   }
+  async function onReset() {
+    formRef.current?.setFieldsValue(formData);
+  }
 
   return (
     <BetaSchemaForm
@@ -104,6 +105,7 @@ const BaseInfo = () => {
       layout="horizontal"
       submitter={submitter}
       onFinish={onFinish}
+      onReset={onReset}
       columns={columns}
     />
   );
