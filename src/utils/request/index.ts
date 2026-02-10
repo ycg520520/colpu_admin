@@ -2,13 +2,12 @@
  * @Author: colpu
  * @Date: 2025-06-18 14:13:06
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-29 16:16:21
+ * @LastEditTime: 2026-02-08 16:48:19
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 import axios, { AxiosInstance } from "axios";
 import { setupInterceptors } from "./interceptors";
-
 const $http: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
@@ -16,7 +15,7 @@ const $http: AxiosInstance = axios.create({
   },
 });
 
-setupInterceptors($http)
+setupInterceptors($http);
 export default $http;
 export const get = $http.get;
 export const post = $http.post;

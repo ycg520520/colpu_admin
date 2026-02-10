@@ -10,23 +10,23 @@ import $http, { get, post, type RequestMethod } from "@/utils/request";
 import { ObjectMaps } from "@/types";
 
 export const getPermissionList = (params: any) =>
-  get("/api/permission/list", { params });
-export const getPermissionGroup = () => get("/api/permission/tree");
+  get("permission/list", { params });
+export const getPermissionGroup = () => get("permission/tree");
 
 // 权限分配
 export const apiPermissionGive = (params: any) =>
-  post("/api/permission/give", params);
+  post("permission/give", params);
 
 export const apiPermission = (
   params: ObjectMaps,
   method: RequestMethod = "get"
 ) => {
   return ($http as any)[method](
-    "/api/permission",
+    "permission",
     ["get", "delete"].includes(method) ? { params } : params
   );
 };
 
 export const apiPermissionUsers = (params: any) =>
-  get("/api/permission/users", { params });
+  get("permission/users", { params });
 

@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-15 14:30:04
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-29 22:15:42
+ * @LastEditTime: 2026-02-08 16:11:19
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -12,39 +12,39 @@ import { createThunk } from "@/utils";
 import $http, { get, post, RequestMethod } from "@/utils/request";
 
 export const getUserToken = createThunk("token", (data: ObjectMaps) => {
-  return post("/api/token", { grant_type: "password", ...data });
+  return post("token", { grant_type: "password", ...data });
 });
 
 export const getUserInfo = createThunk<void>("user/info", () =>
-  get("/api/user/info"),
+  get("user/info"),
 );
 
 export const getUserList = (params: any) => {
-  return get("/api/user/list", { params });
+  return get("user/list", { params });
 };
 
 export const getUserById = (id: any) => {
-  return get("/api/user", { params: { id } });
+  return get("user", { params: { id } });
 };
 
 export const getCheckUser = (params: ObjectMaps) => {
-  return get("/api/user/check", { params, extra: { original: true } });
+  return get("user/check", { params, extra: { original: true } });
 };
 
 export const apiUser = (params: ObjectMaps, method: RequestMethod = "get") => {
   return ($http as any)[method](
-    "/api/user",
+    "user",
     ["get", "delete"].includes(method) ? { params } : params,
   );
 };
 
 export const getRoleList = (params: any) => {
-  return get("/api/role/list", { params });
+  return get("role/list", { params });
 };
 
 export const apiLogout = () => {
-  return post("/api/logout");
+  return post("logout");
 };
 
 export const apiUserSearch = (params: any) =>
-  get("/api/user/search", { params });
+  get("user/search", { params });

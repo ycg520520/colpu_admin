@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-18 14:13:06
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-31 20:10:33
+ * @LastEditTime: 2026-02-08 16:32:14
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -97,7 +97,7 @@ function authInterceptor(instance: AxiosInstance) {
     );
   };
   const redirectToLogin = () => {
-    if(isJumpExpire) return;
+    if (isJumpExpire) return;
     isJumpExpire = true;
     // 刷新失败，跳转到登录页
     Modal.error({

@@ -9,11 +9,11 @@
 import $http, { get, type RequestMethod } from "@/utils/request";
 import { ObjectMaps } from "@/types";
 
-export const getPostList = (params: any) => get("/api/post/list", { params });
+export const getPostList = (params: any) => get("post/list", { params });
 
 export const apiPost = (params: ObjectMaps, method: RequestMethod = "get") => {
   return ($http as any)[method](
-    "/api/post",
-    ["get", "delete"].includes(method) ? { params } : params
+    "post",
+    ["get", "delete"].includes(method) ? { params } : params,
   );
 };

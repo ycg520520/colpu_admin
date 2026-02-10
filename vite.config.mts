@@ -2,7 +2,7 @@
  * @Author: error: git config user.name & please set dead value or install git
  * @Date: 2024-11-04 20:44:03
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-01 21:14:27
+ * @LastEditTime: 2026-02-08 16:20:58
  *
  * Copyright (c) 2025 by error: git config user.name & please set dead value or install git, All Rights Reserved.
  */
@@ -60,24 +60,25 @@ export default defineConfig({
     host: "0.0.0.0", // 允许所有IP访问，包括localhost和127.0.0.1
     proxy: {
       // 代理配置 - 优先走代理
-      "/api": {
-        target: "http://localhost:8610",
-        changeOrigin: true,
-        configure: (proxy, _options) => {
-          // 代理请求前的钩子
-          proxy.on("proxyReq", (_proxyReq: any, _req: any, _res) => {
-            // 添加必要的 CORS 头
-            // console.log(`[PROXY] 代理请求: ${req.method} ${req.url}`);
-          });
-          // 代理响应处理
-          // proxy.on("proxyRes", (proxyRes, req, res) => {
-          //   console.log(
-          //     `[PROXY] 代理响应: ${proxyRes.statusCode} ${req.url}`,
-          //     res.statusCode
-          //   );
-          // });
-        },
-      },
+      // "/api": {
+      //   target: "http://localhost:8610",
+      //   changeOrigin: true,
+      //   rewrite: (path) => path.replace(/^\/api/, "/api/"),
+      //   configure: (proxy, _options) => {
+      //     // 代理请求前的钩子
+      //     proxy.on("proxyReq", (_proxyReq: any, _req: any, _res) => {
+      //       // 添加必要的 CORS 头
+      //       // console.log(`[PROXY] 代理请求: ${req.method} ${req.url}`);
+      //     });
+      //     // 代理响应处理
+      //     // proxy.on("proxyRes", (proxyRes, req, res) => {
+      //     //   console.log(
+      //     //     `[PROXY] 代理响应: ${proxyRes.statusCode} ${req.url}`,
+      //     //     res.statusCode
+      //     //   );
+      //     // });
+      //   },
+      // },
       "/oss": {
         target: "https://foindia.oss-cn-hangzhou.aliyuncs.com",
         changeOrigin: true,

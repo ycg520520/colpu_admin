@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-16 00:16:50
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-02-02 20:46:43
+ * @LastEditTime: 2026-02-09 12:04:28
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -19,12 +19,15 @@ import { composeColumns } from "@/utils/columns";
 import useProTableFullscreen from "@/hooks/useProTableFullscreen";
 import { FULLSCREEN_ICONS } from "@/constants";
 import ToolBarTitle from "@/components/ToolBarTitle";
-import { apiSlider, getSliderList } from "@/api/cms/slider";
+import { apiSpider, getSpiderList } from "@/api/cms/spider";
 import useTableColor from "@/hooks/useTableColor";
 import ActionRender from "@/components/ActionRender";
 import { useNavigate } from "react-router";
-
-export default function SliderList() {
+import { PermissionButton } from "@/components/Permission";
+import { renderStatus } from "@/constants/public";
+import { useAppSelector } from "@/store/hooks";
+export default function SpiderList() {
+  const { dict } = useAppSelector((state) => state.dict);
   const [disabled, setDisabled] = useState(true);
   const { isFullscreen } = useProTableFullscreen();
   const [editData, setEditData] = useState<any>({});
@@ -36,7 +39,7 @@ export default function SliderList() {
     let data = [];
     let total = 0;
     try {
-      const res: any = (await getSliderList(params)) || {};
+      const res: any = (await getSpiderList(params)) || {};
       data = res.rows || [];
       total = res.total;
       setEditData({});
@@ -59,7 +62,7 @@ export default function SliderList() {
       content: "确定删除吗？",
       okType: "danger",
       onOk() {
-        apiSlider({ id }, "delete").then(async () => {
+        apiSpider({ id }, "delete").then(async () => {
           actionRef.current?.reset!();
           setEditData((prev: any) => {
             return { ...prev, type_code };
@@ -85,13 +88,10 @@ export default function SliderList() {
   };
 
   const handdleAdd = () => {
-    navigate(`/cms/slider/add`);
+    navigate(`/fun/spider/form`);
   };
   const handdleEdit = (record: any) => {
-    navigate(`/cms/slider/edit/${record.id}`);
-  };
-  const onExport = () => {
-    console.log("export");
+    navigate(`/fun/spider/form/${record.id}`);
   };
   // 表头配置
   const columns = composeColumns(
@@ -106,6 +106,18 @@ export default function SliderList() {
         dataIndex: "url",
         search: false,
         width: 120,
+      },
+      {
+        title: "状态",
+        dataIndex: "status",
+        valueType: "radio",
+        align: "center",
+        width: 60,
+        search: false,
+        fieldProps: {
+          options: dict.spider_status.options,
+        },
+        render: renderStatus(),
       },
       {
         title: "排序",
@@ -135,7 +147,7 @@ export default function SliderList() {
           );
         },
       },
-    }
+    },
   );
 
   // 搜索表单配置
@@ -149,7 +161,6 @@ export default function SliderList() {
       onAdd={handdleAdd}
       onEdit={() => handdleEdit(editData)}
       onDel={() => handdleDel(editData)}
-      onExport={onExport}
     />
   );
 

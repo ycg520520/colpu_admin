@@ -2,11 +2,11 @@
  * @Author: colpu
  * @Date: 2025-11-15 11:28:21
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-31 23:14:16
+ * @LastEditTime: 2026-02-02 22:10:43
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { Input, Card, Button, Row, Col, Dropdown, Empty, message } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import * as AntdIcons from "@ant-design/icons";
@@ -75,6 +75,7 @@ interface IconPickerProps {
   styles?: any;
   copyType?: "text" | "component" | "none";
   onChange?: (value: string, evt: any) => void;
+  value?: string;
   isCopy?: boolean;
 }
 const IconPicker: React.FC<IconPickerProps> = (props) => {
@@ -82,14 +83,14 @@ const IconPicker: React.FC<IconPickerProps> = (props) => {
     style = {},
     styles = {},
     onChange,
+    value,
     copyType = "text",
     isCopy = false,
   } = props || {};
   const [, token] = useToken();
-
-  const [searchText, setSearchText] = useState("");
-  const [selectedIcon, setSelectedIcon] = useState<string>("");
-
+  const [searchText, setSearchText] = useState<string>("");
+  const [selectedIcon, setSelectedIcon] = useState<string>(value || "");
+  console.log("selectedIcon", value, searchText);
   // 过滤图标
   const filteredIcons = useMemo(() => {
     if (!searchText) return allIcons;
@@ -152,6 +153,7 @@ const IconPicker: React.FC<IconPickerProps> = (props) => {
 
   const onClick = (iconName: string, _evt: any) => {
     setSelectedIcon(iconName);
+    setSearchText(iconName);
     if (isCopy) copyIconCode(iconName);
     if (onChange) onChange(iconName, _evt);
   };
@@ -188,17 +190,12 @@ const IconPicker: React.FC<IconPickerProps> = (props) => {
       </>
     ),
   }));
-
-  const [prefixIxon, setPrefixIcon] = useState<React.ReactNode>(
-    <SearchOutlined />,
-  );
-  useEffect(() => {
+  const prefixIcon = useMemo(() => {
+    console.log("prefixIcon", selectedIcon);
     if (selectedIcon) {
-      const IconCompoment = dynamicIcon(selectedIcon);
-      setPrefixIcon(IconCompoment);
-    } else {
-      setPrefixIcon(<SearchOutlined />);
+      return dynamicIcon(selectedIcon);
     }
+    return <SearchOutlined />;
   }, [selectedIcon]);
 
   const [activeTabKey, setActiveTabKey] = useState<string>("all");
@@ -245,6 +242,7 @@ const IconPicker: React.FC<IconPickerProps> = (props) => {
               prefix={<SearchOutlined style={{ color: "#ddd" }} />}
               value={searchText}
               onChange={onChangeHanddle}
+              allowClear
             />
           }
           tabList={items.map((item) => ({ key: item.key, label: item.label }))}
@@ -256,7 +254,7 @@ const IconPicker: React.FC<IconPickerProps> = (props) => {
       )}
     >
       <Input
-        prefix={prefixIxon}
+        prefix={prefixIcon}
         value={selectedIcon}
         placeholder="点击选择图标"
         style={{ color: selectedIcon ? token.colorPrimary : "#ddd" }}

@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-18 16:15:05
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-29 21:03:38
+ * @LastEditTime: 2026-02-08 16:11:47
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -12,7 +12,7 @@ import { routerToTree } from "@/router/utils";
 import { ObjectMaps } from "@/types";
 import { asyncRouter } from "@/router/routes";
 export const getRoutes = createThunk<void>("routes/get", () =>
-  get("/api/routes").then((data: any) => {
+  get("routes").then((data: any) => {
     if (data.length) return routerToTree(data);
     else return asyncRouter;
   }),
@@ -25,7 +25,7 @@ export const getRoutes = createThunk<void>("routes/get", () =>
  */
 export const getMenusAll = (params: any) =>
   // 发送GET请求获取菜单数据，params作为查询参数
-  get("/api/menus/all", { params }).then(({ total, rows }: any) => {
+  get("menus/all", { params }).then(({ total, rows }: any) => {
     // 使用installTree函数将数据转换为树形结构，指定parent_id作为父子关联字段
     return { rows: installTree(rows, { key_fid: "parent_id" }), total };
   });
@@ -36,13 +36,13 @@ export const getMenusAll = (params: any) =>
  * @returns {Promise} 返回一个Promise对象，包含菜单树结构数据
  */
 export const getMenusTree = (): Promise<any> =>
-  get("/api/menus/tree").then((res: any) =>
+  get("menus/tree").then((res: any) =>
     installTree(res, { key_fid: "parent_id" }),
   );
 
 export const apiMenus = (params: ObjectMaps, method: RequestMethod = "get") => {
   return ($http as any)[method](
-    "/api/menus",
+    "menus",
     ["get", "delete"].includes(method) ? { params } : params,
   );
 };
