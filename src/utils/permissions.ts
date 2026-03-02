@@ -2,6 +2,12 @@ import { UserToken } from "@/types";
 import { getItem } from "./storage";
 import { TOKEN } from "@/constants";
 
+/** 存储 token 时计算 expires_at（OAuth2 expires_in 为剩余秒数） */
+export const normalizeToken = (token: UserToken): UserToken => ({
+  ...token,
+  expires_at: Date.now() + (token.expires_in || 0) * 1000,
+});
+
 /*
  * @Author: colpu
  * @Date: 2025-06-18 00:11:32
@@ -40,11 +46,15 @@ export const checkRoles = (
   );
 };
 
+/**
+ * 判断 token 是否过期
+ * expires_in 为 OAuth2 剩余秒数，存储时已转换为 expires_at（毫秒时间戳）
+ */
 export const isTokenExpire = () => {
   const userToken: UserToken = getItem(TOKEN) || {};
-  if (userToken.expires_in) {
-    const now = Date.now();
-    const expire = userToken.expires_in;
-    return now > expire;
-  } else return true;
+  const expiresAt = userToken.expires_at;
+  if (expiresAt) {
+    return Date.now() >= expiresAt;
+  }
+  return true;
 };

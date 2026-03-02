@@ -13,6 +13,7 @@ import { TOKEN } from "@/constants";
 import { getItem, removeItem, setItem } from "../storage";
 import { UserToken } from "@/types";
 import { Modal } from "antd";
+import { normalizeToken } from "../permissions";
 
 function installUrl(url: string, params: ParsedUrlQueryInput) {
   return `${url}${
@@ -178,11 +179,10 @@ function authInterceptor(instance: AxiosInstance) {
           if (!userToken) {
             throw new Error("No refresh token available");
           }
-          const token: UserToken = await instance.post(
+          const rawToken: UserToken = await instance.post(
             "/api/token",
             {
               grant_type: "refresh_token",
-              // 从登陆token中获取refresh_token标识
               refresh_token: userToken.refresh_token,
             },
             {
@@ -191,7 +191,8 @@ function authInterceptor(instance: AxiosInstance) {
               },
             },
           );
-          // 4、设置获取到的最新token，并做存储
+          // 4、计算 expires_at 并存储
+          const token = normalizeToken(rawToken);
           setItem(TOKEN, token);
           // 5、获取成功后将全局刷新标识置为false
           isRefreshing = false;

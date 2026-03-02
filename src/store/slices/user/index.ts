@@ -13,7 +13,7 @@ import { getItem, removeItem, setItem } from "@/utils/storage";
 import { TOKEN, USER } from "@/constants";
 import { User } from "./types";
 import { RootState } from "@/store";
-import { isTokenExpire } from "@/utils/permissions";
+import { isTokenExpire, normalizeToken } from "@/utils/permissions";
 interface UserState {
   user?: User;
   userToken?: UserToken;
@@ -47,7 +47,7 @@ const userSlice = createSlice({
       })
       .addCase(getUserToken.fulfilled, (state, action) => {
         state.status = StatusEnum.SUCCEEDED;
-        state.userToken = action.payload as UserToken;
+        state.userToken = normalizeToken(action.payload as UserToken);
         setItem(TOKEN, state.userToken);
       })
       .addCase(getUserToken.rejected, (state, action) => {

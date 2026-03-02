@@ -33,7 +33,10 @@ export interface ObjectMaps {
 }
 export interface UserToken {
   access_token: string;
+  /** OAuth2：剩余有效秒数 */
   expires_in: number;
   refresh_token: string;
   token_type: string;
+  /** 存储时计算：过期时间戳（毫秒），用于前端判断是否过期 */
+  expires_at?: number;
 }
