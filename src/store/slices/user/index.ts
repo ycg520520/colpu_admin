@@ -30,6 +30,10 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    setUserToken: (state, action: { payload: UserToken }) => {
+      state.userToken = action.payload;
+      setItem(TOKEN, action.payload);
+    },
     logout: (state) => {
       apiLogout().finally(() => {
         removeItem(TOKEN);
@@ -86,5 +90,5 @@ export const permissions = createSelector(
   [selectUser],
   (user) => user.user?.permissions || [],
 );
-export const { logout } = userSlice.actions;
+export const { logout, setUserToken } = userSlice.actions;
 export default userSlice.reducer;

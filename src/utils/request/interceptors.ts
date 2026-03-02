@@ -14,6 +14,8 @@ import { getItem, removeItem, setItem } from "../storage";
 import { UserToken } from "@/types";
 import { Modal } from "antd";
 import { normalizeToken } from "../permissions";
+import { store } from "@/store";
+import { setUserToken } from "@/store/slices/user";
 
 function installUrl(url: string, params: ParsedUrlQueryInput) {
   return `${url}${
@@ -191,9 +193,10 @@ function authInterceptor(instance: AxiosInstance) {
               },
             },
           );
-          // 4、计算 expires_at 并存储
+          // 4、计算 expires_at 并存储，同步 Redux store
           const token = normalizeToken(rawToken);
           setItem(TOKEN, token);
+          store.dispatch(setUserToken(token));
           // 5、获取成功后将全局刷新标识置为false
           isRefreshing = false;
           // 6、将获取到的最新token放入到队列中
