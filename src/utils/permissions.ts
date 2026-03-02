@@ -2,6 +2,9 @@ import { UserToken } from "@/types";
 import { getItem } from "./storage";
 import { TOKEN } from "@/constants";
 
+/** 提前多少毫秒视为过期（缓冲），便于提前刷新 token，默认 60 秒 */
+const TOKEN_EXPIRE_BUFFER_MS = 60 * 1000;
+
 /** 存储 token 时计算 expires_at（OAuth2 expires_in 为剩余秒数） */
 export const normalizeToken = (token: UserToken): UserToken => ({
   ...token,
@@ -47,14 +50,14 @@ export const checkRoles = (
 };
 
 /**
- * 判断 token 是否过期
+ * 判断 token 是否过期（含缓冲：提前 buffer 时间即视为过期）
  * expires_in 为 OAuth2 剩余秒数，存储时已转换为 expires_at（毫秒时间戳）
  */
 export const isTokenExpire = () => {
   const userToken: UserToken = getItem(TOKEN) || {};
   const expiresAt = userToken.expires_at;
   if (expiresAt) {
-    return Date.now() >= expiresAt;
+    return Date.now() >= expiresAt - TOKEN_EXPIRE_BUFFER_MS;
   }
   return true;
 };
