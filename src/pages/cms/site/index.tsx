@@ -2,14 +2,12 @@
  * @Author: colpu
  * @Date: 2026-01-15 16:01:17
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-15 21:54:52
+ * @LastEditTime: 2026-02-11 23:25:15
  *
  * Copyright (c) 2026 by colpu, All Rights Reserved.
  */
 import {
-  Group,
   ProForm,
-  ProFormGroup,
   ProFormInstance,
   ProFormRadio,
   ProFormSelect,
@@ -19,12 +17,10 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { Card, Col, message, Row, Space, Tabs, UploadFile } from "antd";
 import { formItemCol, formItemProps } from "@/constants/form";
-import { useNavigate } from "react-router";
 import CustomUpload from "@/components/Upload";
 import { urlToFileList } from "@/utils";
 import { apiSite } from "@/api/cms/sites";
 const SiteForm = () => {
-  const navigate = useNavigate();
   const formRef = useRef<ProFormInstance<any>>(undefined);
   const [editData, setEditData] = useState<any>({});
 
@@ -44,7 +40,6 @@ const SiteForm = () => {
     const isEdit = Object.keys(editData).length > 0;
     await apiSite(values, isEdit ? "put" : "post");
     message.success(isEdit ? "更新成功" : "提交成功");
-    navigate(-1);
     return true;
   };
   return (
@@ -82,10 +77,6 @@ const SiteForm = () => {
             {
               key: "basic",
               label: "基础信息",
-              style: {
-                padding: "0 10px",
-                margin: "0 5px 20px",
-              },
               children: [
                 <Row>
                   <Col span={12}>
@@ -144,6 +135,11 @@ const SiteForm = () => {
                     <ProFormText
                       name="icp"
                       label="ICP备案号"
+                      formItemProps={formItemProps}
+                    />
+                    <ProFormText
+                      name="copyright"
+                      label="版权信息"
                       formItemProps={formItemProps}
                     />
                     <ProFormTextArea

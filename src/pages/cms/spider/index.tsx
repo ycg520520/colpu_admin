@@ -23,7 +23,6 @@ import { apiSpider, getSpiderList } from "@/api/cms/spider";
 import useTableColor from "@/hooks/useTableColor";
 import ActionRender from "@/components/ActionRender";
 import { useNavigate } from "react-router";
-import { PermissionButton } from "@/components/Permission";
 import { renderStatus } from "@/constants/public";
 import { useAppSelector } from "@/store/hooks";
 export default function SpiderList() {

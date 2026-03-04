@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-03-21 23:33:14
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-31 19:57:05
+ * @LastEditTime: 2026-03-04 11:49:45
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -29,10 +29,10 @@ export default function AppMain() {
   const dispatch = useAppDispatch();
   const locale = useAppSelector((state: RootState) => state.locale);
   const settings = useAppSelector((state: RootState) => state.settings);
-  const { userToken } = useAppSelector((state: RootState) => state.user);
+  const { isLogin } = useAppSelector((state: RootState) => state.user);
   const [router, setRouter] = useState(initRouter);
   useEffect(() => {
-    if (userToken) {
+    if (isLogin) {
       dispatch(getRoutes()).then(({ payload }) => {
         setRouter(
           createRouter(generatorAllRouter(cloneDeep(payload as RouteType[]))),
@@ -42,7 +42,7 @@ export default function AppMain() {
       dispatch(getDict());
       dispatch(getDepartmentTree());
     }
-  }, [dispatch, userToken]);
+  }, [dispatch, isLogin]); // 仅登录状态变化时重拉路由，避免 token 刷新触发 router 重建导致闪烁
   return (
     <I18nextProvider i18n={i18n}>
       <ProConfigProvider hashed={false}>

@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-23 13:02:45
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-31 23:20:55
+ * @LastEditTime: 2026-03-04 13:35:35
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -32,6 +32,7 @@ import Lang from "@/components/Lang";
 import { setFlatMenus } from "@/store/slices/routes";
 import { flatMenu } from "@/router/utils";
 import { setSettings } from "@/store/slices/settings";
+
 export default function BasicLayout() {
   const { token } = theme.useToken();
   const dispatch = useAppDispatch();
@@ -170,6 +171,7 @@ export default function BasicLayout() {
             </div>
           </>
         );
+
         if (typeof window === "undefined") return defaultDom;
         if (document.body.clientWidth < 1400) {
           return defaultDom;

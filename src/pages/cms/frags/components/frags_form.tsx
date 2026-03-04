@@ -2,22 +2,20 @@
  * @Author: colpu
  * @Date: 2026-01-27 16:34:25
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-27 17:17:41
+ * @LastEditTime: 2026-02-10 16:52:50
  *
  * Copyright (c) 2026 by colpu, All Rights Reserved.
  */
 import {
   ModalForm,
-  ProForm,
   ProFormDateTimePicker,
   ProFormRadio,
-  ProFormSelect,
   ProFormText,
+  ProFormTextArea,
 } from "@ant-design/pro-components";
 import { useEffect } from "react";
 import { Col, message } from "antd";
 import { colProps, formItemCol, formItemProps } from "@/constants/form";
-import RichTextEditor from "@/components/RichTextEditor";
 import { useAppSelector } from "@/store/hooks";
 import dayjs from "dayjs";
 const FragsForm = (props: any) => {
@@ -67,33 +65,7 @@ const FragsForm = (props: any) => {
         colProps={colProps}
         formItemProps={{
           ...formItemProps,
-          rules: [{ required: true, message: "必须输入标签名称" }],
-        }}
-      />
-      <ProFormText
-        name="subtitle"
-        label="碎片小标题"
-        colProps={colProps}
-        formItemProps={formItemProps}
-      />
-      <ProFormText
-        name="code"
-        label="碎片标识"
-        colProps={colProps}
-        formItemProps={{
-          ...formItemProps,
-          rules: [{ required: true, message: "必须输入标签名称" }],
-        }}
-      />
-      <ProFormSelect
-        name="type"
-        label="碎片类型"
-        colProps={colProps}
-        formItemProps={formItemProps}
-        initialValue={1}
-        fieldProps={{
-          placeholder: "请选择栏目类型",
-          options: dict.frag_type ? dict.frag_type.options : [],
+          rules: [{ required: true, message: "必须输入碎片标题" }],
         }}
       />
       <ProFormDateTimePicker
@@ -103,6 +75,21 @@ const FragsForm = (props: any) => {
         formItemProps={formItemProps}
         initialValue={dayjs().format("YYYY-MM-DD HH:mm:ss")}
         fieldProps={{ style: { width: "100%" } }}
+      />
+      <ProFormText
+        name="type"
+        label="碎片类型"
+        colProps={colProps}
+        formItemProps={{
+          ...formItemProps,
+          rules: [
+            {
+              pattern: /^[A-Za-z][A-Za-z0-9_]*$/,
+              required: true,
+              message: "必须输入碎片类型",
+            },
+          ],
+        }}
       />
       <ProFormRadio.Group
         name="status"
@@ -115,9 +102,16 @@ const FragsForm = (props: any) => {
         }}
       />
       <Col span={24}>
-        <ProForm.Item name="content" label="碎片内容" {...formItemCol(4)}>
-          <RichTextEditor />
-        </ProForm.Item>
+        <ProFormTextArea
+          name="content"
+          label="碎片内容"
+          fieldProps={{
+            rows: 4,
+            showCount: true,
+            maxLength: 500,
+          }}
+          {...formItemCol(4)}
+        />
       </Col>
     </ModalForm>
   );

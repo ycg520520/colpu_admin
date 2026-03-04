@@ -73,8 +73,8 @@ const Page = () => {
   const [loginType, setLoginType] = useState<LoginType>("account");
   const { token } = theme.useToken();
   const { styles } = useStyles();
-  const { userToken } = useAppSelector((state) => state.user);
-  if (userToken) {
+  const { isLogin } = useAppSelector((state) => state.user);
+  if (isLogin) {
     return <Navigate to={searchParams.get("redirect") || "/"} replace />;
   }
   return (

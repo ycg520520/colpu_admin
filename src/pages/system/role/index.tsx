@@ -27,7 +27,10 @@ import { useNavigate } from "react-router";
 import { useAppSelector } from "@/store/hooks";
 import { renderStatus } from "@/constants/public";
 import PremForm from "./components/prem_form";
-import { MenuInfo } from "@rc-component/menu/lib/interface";
+interface MenuInfo {
+  key: string;
+  keyPath: string[];
+}
 export default function RoleList() {
   const [disabled, setDisabled] = useState(true);
   const { open, onOK, onCancel, formRef } = useFormModal();

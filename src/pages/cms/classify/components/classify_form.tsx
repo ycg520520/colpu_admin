@@ -116,7 +116,7 @@ const ClassifyForm = (props: any) => {
                   }}
                   fieldProps={{
                     options: cloneDeep(
-                      dict.template ? dict.template.options : []
+                      dict.template ? dict.template.options : [],
                     ),
                     fieldNames: {
                       value: "code",

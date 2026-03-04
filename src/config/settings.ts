@@ -2,26 +2,26 @@
  * @Author: colpu
  * @Date: 2025-03-18 21:23:51
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-31 23:18:43
+ * @LastEditTime: 2026-03-03 22:35:35
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 import logo from "@/assets/logo.svg";
 const colorPrimary = "#1890ff";
 const settings = {
-  splitMenus: false,
-  navTheme: "light",
   // 拂晓蓝
   colorPrimary,
-  layout: "mix",
-  contentWidth: "Fluid",
-  fixedHeader: false,
-  fixSiderbar: true,
   colorWeak: false,
-  title: '印点CMS',
-  slogan: '技术驱动创新，服务创造价值',
-  pwa: true,
+  fixSiderbar: true,
+  fixedHeader: false,
+  layout: "mix",
   logo,
+  navTheme: "light",
+  pwa: true,
+  slogan: "一款轻量级CMS管理系统",
+  splitMenus: false,
+  contentWidth: "Fluid",
+  title: "ColpuCMS",
   iconfontUrl: "",
   token: {
     colorPrimary,

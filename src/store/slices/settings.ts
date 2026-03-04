@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-07-02 08:48:54
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-31 16:28:07
+ * @LastEditTime: 2026-03-03 22:37:17
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -13,6 +13,7 @@ import { getItem, setItem } from "@/utils/storage";
 const initialState = {
   ...settings,
   ...getItem(LAYOUT_SETTINGS),
+  slogan: settings.slogan,
 };
 const settingsSlice = createSlice({
   name: "settings",

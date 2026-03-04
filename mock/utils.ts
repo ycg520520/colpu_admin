@@ -2,13 +2,13 @@
  * @Author: colpu
  * @Date: 2025-10-28 14:58:01
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-10-30 09:26:16
+ * @LastEditTime: 2026-03-02 15:33:36
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 import url from "url";
 import jwt from "jsonwebtoken";
-import crypto from 'crypto';
+import crypto from "crypto";
 import { MAXAGE, SECRET_KEY } from "./config";
 function parseJson(req: any) {
   return new Promise((resolve) => {
@@ -34,7 +34,7 @@ function parseJson(req: any) {
   });
 }
 export async function verifyToken(req: any, res: any, callback: any) {
-  console.log('ddd')
+  console.log("ddd");
   const { headers } = req;
   const tokenStr = headers.authorization?.split(" ")[1];
   let tokens: any;
@@ -74,7 +74,7 @@ export function rawResponse(callback: any, isVerify = false) {
       const body = await parseJson(req);
       req.query = queryParams.query;
       req.body = body;
-      console.log('-------')
+      console.log("-------");
       if (isVerify) {
         await verifyToken(req, res, callback);
       } else {
@@ -85,14 +85,15 @@ export function rawResponse(callback: any, isVerify = false) {
   }
 }
 
-export function generateToken(data:any) {
-  const expires_in = Math.floor(Date.now() / 1000) + MAXAGE; // 服务器过期时间
+export function generateToken(data: any) {
+  const expires_in = Math.floor(MAXAGE / 1000); // 服务器过期时间
   const accessToken = jwt.sign(
     {
-      uid: data.uid
+      iat: Math.floor(Date.now() / 1000),
+      uid: data.uid,
     },
     SECRET_KEY,
-    { expiresIn: MAXAGE }
+    { expiresIn: MAXAGE },
   );
   const refreshToken = crypto.randomBytes(16).toString("hex").toUpperCase();
   return {

@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-16 10:26:35
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-11-16 10:32:01
+ * @LastEditTime: 2026-03-02 10:34:47
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -47,21 +47,21 @@ const KeepAlive: React.FC<KeepAliveProps> = ({
       }
       return newCache;
     });
-  }, [location.pathname, element, shouldCache]);
+  }, [location.pathname, element, shouldCache, setCacheComponents]);
 
-  // 清除特定缓存
-  const clearCache = (pathname: any) => {
-    setCacheComponents((prev) => {
-      const newCache = new Map(prev);
-      newCache.delete(pathname);
-      return newCache;
-    });
-  };
+  // // 清除特定缓存
+  // const clearCache = (pathname: any) => {
+  //   setCacheComponents((prev) => {
+  //     const newCache = new Map(prev);
+  //     newCache.delete(pathname);
+  //     return newCache;
+  //   });
+  // };
 
-  // 清除所有缓存
-  const clearAllCache = () => {
-    setCacheComponents(new Map());
-  };
+  // // 清除所有缓存
+  // const clearAllCache = () => {
+  //   setCacheComponents(new Map());
+  // };
 
   return (
     <div ref={containerRef}>

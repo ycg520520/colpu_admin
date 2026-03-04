@@ -28,7 +28,7 @@ export default function UserModal(props: any) {
   const { tableStyles, rowClassName } = useTableColor();
   const { dict } = useAppSelector((state) => state.dict);
   const [selectedRows, setSelectedRows] = useState<any>([]);
-  const formRef = useRef<ProFormInstance>();
+  const formRef = useRef<ProFormInstance<any>>(null);
   const { open, onOk, onCancel } = props;
 
   // 表头配置

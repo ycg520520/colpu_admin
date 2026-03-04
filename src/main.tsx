@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2024-11-04 20:44:03
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-07 23:33:07
+ * @LastEditTime: 2026-03-04 16:18:34
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -15,6 +15,47 @@ import { Provider } from "react-redux";
 import i18n from "@/i18n";
 import "@ant-design/v5-patch-for-react-19"; // 解决react 19版本与antd 5版本冲突
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import {
+  addGlobalNetworkListener,
+  GLOBAL_NETWORK_TYPE,
+  delGlobalNetworkType,
+} from "@/utils/request/events";
+import { Modal } from "antd";
+
+const redirectToLogin = () => {
+  const location = window.location;
+  const url = `/login?redirect=${encodeURIComponent(
+    location.pathname + location.search,
+  )}`;
+  location.replace(url);
+};
+// 监听全局请求错误事件：同类型错误由 events 内部保证只触发一次
+addGlobalNetworkListener(({ type }) => {
+  if (type === GLOBAL_NETWORK_TYPE.AUTH_EXPIRED) {
+    Modal.error({
+      title: "登录已过期",
+      content: "您的登录状态已失效，请重新登录。",
+      okText: "去登录",
+      closable: false,
+      maskClosable: false,
+      keyboard: false,
+      onOk: () => {
+        delGlobalNetworkType(type);
+        redirectToLogin();
+      },
+    });
+  }
+  // 刷新失败直接跳转登陆
+  if (type === GLOBAL_NETWORK_TYPE.AUTH_REFRESH_FAILED) {
+    redirectToLogin();
+  }
+  // 刷新成功后设置登录状态
+  if (type === GLOBAL_NETWORK_TYPE.AUTH_REFRESH_SUCCESS) {
+    // todo 设置登录状态
+  }
+});
+
 const root = document.getElementById("root")! as HTMLElement;
 root.style.cssText = "height:100vh;overflow:auto";
 const queryClient = new QueryClient({

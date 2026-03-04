@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2023-08-09 23:45:55
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-17 15:03:34
+ * @LastEditTime: 2026-02-13 16:20:38
  * @
  * @Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -109,6 +109,7 @@ const ArticleForm = () => {
   }, [formRef, id, user]);
 
   const onFinish = async (values: any) => {
+    debugger
     await apiArticle(values, id ? "put" : "post");
     message.success(id ? "更新成功" : "提交成功");
     navigate(-1);
@@ -163,6 +164,12 @@ const ArticleForm = () => {
                       formItemProps={{ style: { display: "none" } }}
                       fieldProps={{ disabled: true }}
                     />
+                    <ProFormText
+                      name="page_type"
+                      label="页面类型"
+                      formItemProps={{ style: { display: "none" } }}
+                      fieldProps={{ disabled: true }}
+                    />
                     <ProFormTreeSelect
                       name="classify_id"
                       label="选择栏目"
@@ -176,7 +183,9 @@ const ArticleForm = () => {
                           children: "children",
                         },
                         onChange: (value) => {
-                          setArticleType(classifyMap[value].type);
+                          const type = classifyMap[value].type;
+                          formRef.current?.setFieldValue("page_type", type);
+                          setArticleType(type);
                         },
                         treeData,
                       }}
@@ -199,14 +208,11 @@ const ArticleForm = () => {
                     {articleType == 1 ? (
                       <ProFormSelect
                         name="type"
-                        label="文章类型"
-                        initialValue={1}
+                        label="推荐类型"
                         formItemProps={formItemProps}
                         fieldProps={{
-                          placeholder: "请选择栏目类型",
-                          options: cloneDeep(
-                            dict.article_type ? dict.article_type.options : []
-                          ),
+                          placeholder: "请选择推荐类型",
+                          options: cloneDeep(dict.article_type.options || []),
                         }}
                       />
                     ) : null}
@@ -278,7 +284,7 @@ const ArticleForm = () => {
                   <Col span={24}>
                     {articleType == 1 ? (
                       <ProFormTextArea
-                        name="code"
+                        name="summary"
                         label="内容摘要"
                         style={{ height: 75 }}
                       />

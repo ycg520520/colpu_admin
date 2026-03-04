@@ -2,13 +2,13 @@
  * @Author: colpu
  * @Date: 2025-06-18 08:55:08
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-31 10:21:08
+ * @LastEditTime: 2026-03-02 16:55:22
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 import { combineReducers } from "@reduxjs/toolkit";
 import locale from "@/store/slices/locale";
-import user from "@/store/slices/user/index";
+import user from "@/store/slices/user";
 import routes from "@/store/slices/routes";
 import dict from "@/store/slices/dict";
 import dept from "@/store/slices/dept";

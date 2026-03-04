@@ -6,7 +6,7 @@
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
-import { EllipsisOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { ProFormText } from "@ant-design/pro-components";
 import { useTranslation } from "react-i18next";
 export default function UserForm({ token }: { token: any }) {

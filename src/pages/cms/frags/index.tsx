@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-16 00:16:50
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-30 22:55:28
+ * @LastEditTime: 2026-02-10 17:58:18
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -81,7 +81,7 @@ export default function FragsList() {
       content: "确定删除吗？",
       okType: "danger",
       onOk() {
-        apiTags({ id }, "delete").then(async () => {
+        apiFrags({ id }, "delete").then(async () => {
           actionRef.current?.reset!();
           actionRef.current?.reset!();
           setEditData((prev: any) => {
@@ -123,8 +123,8 @@ export default function FragsList() {
         fixed: true,
       },
       {
-        title: "碎片标识",
-        dataIndex: "code",
+        title: "碎片类型",
+        dataIndex: "type",
         search: false,
         width: 120,
       },
@@ -181,7 +181,7 @@ export default function FragsList() {
   const modalProps = {
     open,
     modalProps: {
-      width: 860,
+      width: 640,
       onOK,
       onCancel,
       styles: {

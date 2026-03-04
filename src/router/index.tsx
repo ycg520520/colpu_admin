@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-03-18 21:46:37
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-02-02 20:53:45
+ * @LastEditTime: 2026-03-03 14:39:44
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -162,7 +162,6 @@ export function generatorAllRouter(routes: RouteType[] = []): RouteObject[] {
     ...asyncRouter,
     ...routes]);
   const routers = [...baseRoutes, ...asyncRouterRoot, ...noMatchRouters];
-  console.log(routers);
   return [
     {
       path: "/",
