@@ -7,14 +7,20 @@
     "start": "npm run dev",
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "deploy": "colpu-cli deploy -g",
     "lint": "eslint .",
     "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitee.com:ycg520520/colpu_admin.git"
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
     "@ant-design/pro-components": "^2.8.10",
     "@ant-design/use-emotion-css": "^1.0.4",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
+    "@colpu/cli": "^1.0.2",
     "@emotion/css": "^11.13.5",
     "@emotion/styled": "^11.14.1",
     "@reduxjs/toolkit": "^2.11.2",
