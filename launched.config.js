@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2026-03-01 22:33:32
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-03-04 17:18:26
+ * @LastEditTime: 2026-03-06 12:05:01
  * @
  * @Copyright (c) 2026 by colpu, All Rights Reserved.
  */
@@ -17,6 +17,7 @@ const WORKSPACE = `/var/www/${name}`;
 const command = [
   // "git fetch",
   `tar -xzf dist.tar.gz`,
+  // "touch startup.js",
   `echo "deploy ${name} ${env} success"`,
   // `pm2 startOrRestart launched.config.json --env ${env}`,
   // 'pm2 save && pm2 startup'
@@ -28,7 +29,7 @@ function deployLocal() {
       `scp -r dist.tar.gz root@${ip}:${WORKSPACE}/current/dist.tar.gz`,
       `scp -r launched.config.json root@${ip}:${WORKSPACE}/current/launched.config.json`].join(" && ");
   });
-  arr.unshift('tar -czf dist.tar.gz ./dist/')
+  arr.unshift('tar --no-xattrs -czf dist.tar.gz ./dist/')
   return arr.join(" && ");
 }
 const setDeployENV = () => {
@@ -57,36 +58,8 @@ const LAUNCHED = {
   apps: [
     {
       name,
-      script: '', // 不做启动
+      script: './startup.js', // 不做启动
       // args: 'start', // 启动参数
-      cwd: "./",
-      instances: 'max',
-      max_restarts: 2,
-      min_uptime: "1h",
-      exec_mode: "cluster",
-      max_memory_restart: "1024M",
-      node_args: "--experimental-modules --es-module-specifier-resolution=node",
-      env: {
-        NODE_ENV: 'production',
-        PORT: 3000
-      },
-      env_preview: {
-        NODE_ENV: "preview",
-        PORT: 3001
-      },
-      env_release: {
-        NODE_ENV: "release",
-        PORT: 3002
-      },
-      env_production: {
-        NODE_ENV: "production",
-        PORT: 3000
-      },
-      error_file: `/var/logs/${name}_err.log`,
-      out_file: `/var/logs/${name}_out.log`,
-      merge_logs: true,
-      log_date_format: "YYYY-MM-DD HH:mm Z",
-      interpreter_args: "--no-warnings",
     },
   ],
   deploy: setDeployENV(),
