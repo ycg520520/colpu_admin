@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2026-03-01 22:33:32
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-03-06 12:06:13
+ * @LastEditTime: 2026-03-06 12:07:57
  * @
  * @Copyright (c) 2026 by colpu, All Rights Reserved.
  */
@@ -15,10 +15,8 @@ const {
 } = await getConfig(import.meta.dirname, { dir: './', env });
 const WORKSPACE = `/var/www/${name}`;
 const command = [
+  "tar -xzf dist.tar.gz",
   // "git fetch",
-  `tar -xzf dist.tar.gz`,
-  "touch startup.js",
-  `echo "deploy ${name} ${env} success"`,
   // `pm2 startOrRestart launched.config.json --env ${env}`,
   // 'pm2 save && pm2 startup'
 ];
