@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-23 13:02:45
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-03-04 13:35:35
+ * @LastEditTime: 2026-03-05 23:56:49
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -16,7 +16,7 @@ import { Dropdown, theme } from "antd";
 import { useEffect, useState } from "react";
 import SearchInput from "@/components/Search";
 import { useTranslation } from "react-i18next";
-import { RouteHandle } from "@/router";
+import { RouteHandle } from "@/router/types";
 import { Outlet, useLocation, useMatches, useNavigate } from "react-router";
 import { composeMenu } from "@/utils";
 import MenuFooter from "@/components/MenuFooter";

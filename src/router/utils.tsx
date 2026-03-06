@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-06-17 09:14:12
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-10 09:14:50
+ * @LastEditTime: 2026-03-05 23:50:53
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -10,7 +10,7 @@
 import Loading from "@/components/Loading";
 import { ComponentType, lazy, Suspense } from "react";
 import { LazyRouteFunction, RouteObject } from "react-router";
-import { RouteHandle, RouteType } from ".";
+import { RouteHandle, RouteType } from "./types";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { createBrowserRouter } from "react-router-dom";
 import { ObjectMaps } from "@/types";

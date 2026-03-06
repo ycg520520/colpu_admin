@@ -1,10 +1,10 @@
-﻿import { RouteType } from ".";
+﻿import { RouteType } from "./types";
 
 /*
  * @Author: colpu
  * @Date: 2025-03-18 21:23:51
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-10 15:31:25
+ * @LastEditTime: 2026-03-05 23:50:09
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */

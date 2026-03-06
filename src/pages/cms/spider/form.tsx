@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2026-01-14 16:24:37
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-02-08 22:54:44
+ * @LastEditTime: 2026-03-05 14:54:40
  *
  * Copyright (c) 2026 by colpu, All Rights Reserved.
  */
@@ -23,14 +23,15 @@ import { apiSpider, apiSpiderSchedule } from "@/api/cms/spider";
 import { useNavigate, useParams } from "react-router";
 import { urlToFileList } from "@/utils";
 import { getClassifyTree } from "@/api/cms/classify";
-import AceEditor from "react-ace";
-import "ace-builds/src-noconflict/theme-monokai";
-import "ace-builds/src-noconflict/theme-github";
-import "ace-builds/src-noconflict/snippets/javascript";
-import "ace-builds/src-noconflict/snippets/typescript";
-import "ace-builds/src-noconflict/mode-json";
-import "ace-builds/src-noconflict/mode-javascript";
-import "ace-builds/src-noconflict/ext-language_tools";
+// import AceEditor from "react-ace";
+// import "ace-builds/src-noconflict/theme-monokai";
+// import "ace-builds/src-noconflict/theme-github";
+// import "ace-builds/src-noconflict/snippets/javascript";
+// import "ace-builds/src-noconflict/snippets/typescript";
+// import "ace-builds/src-noconflict/mode-json";
+// import "ace-builds/src-noconflict/mode-javascript";
+// import "ace-builds/src-noconflict/ext-language_tools";
+import AceEditor from "@/components/AceEditor";
 import { apiSchedule } from "@/api/common";
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const SpiderForm = () => {
@@ -154,6 +155,7 @@ const SpiderForm = () => {
       enableMobileMenu: true,
       showLineNumbers: true,
       tabSize: 2,
+      // useWorker: false,
     },
   };
   const ruleTips = (

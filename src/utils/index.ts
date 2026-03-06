@@ -2,12 +2,12 @@
  * @Author: colpu
  * @Date: 2025-06-15 12:01:36
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-02-02 20:50:50
+ * @LastEditTime: 2026-03-05 23:55:10
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 
-import { RouteType } from "@/router";
+import { RouteType } from "@/router/types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { UploadFile } from "antd";
 import { TFunction } from "i18next";

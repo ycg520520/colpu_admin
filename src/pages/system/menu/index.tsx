@@ -2,12 +2,12 @@
  * @Author: colpu
  * @Date: 2025-11-16 00:16:50
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-04 14:16:30
+ * @LastEditTime: 2026-03-05 16:10:50
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
-import { Card, Modal, Space } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { Card, Modal, Space, Spin } from "antd";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import "@/assets/styles/table.scss";
 import {
   ActionType,
@@ -23,7 +23,8 @@ import ToolBarTitle from "@/components/ToolBarTitle";
 import { apiMenus, getMenusAll } from "@/api/menus";
 import { DownOutlined, RightOutlined } from "@ant-design/icons";
 import { dynamicIcon } from "@/utils/public";
-import MenuForm from "./components/menu_form";
+// import MenuForm from "./components/menu_form";
+const MenuForm = lazy(() => import("./components/menu_form"));
 import useTableColor from "@/hooks/useTableColor";
 import ActionRender from "@/components/ActionRender";
 import { renderStatus, renderWhether } from "@/constants/public";
@@ -238,7 +239,7 @@ export default function MenuList() {
           );
         },
       },
-    }
+    },
   );
   // 搜索表单配置
   const formColumns = columns.filter((item) => {
@@ -403,7 +404,11 @@ export default function MenuList() {
           />
         </div>
       </Space>
-      <MenuForm {...modalProps} />
+      {open && (
+        <Suspense fallback={<Spin />}>
+          <MenuForm {...modalProps} />
+        </Suspense>
+      )}
     </>
   );
 }

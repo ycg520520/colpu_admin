@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2023-08-09 23:45:55
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-02-13 16:20:38
+ * @LastEditTime: 2026-03-05 23:53:26
  * @
  * @Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -109,7 +109,6 @@ const ArticleForm = () => {
   }, [formRef, id, user]);
 
   const onFinish = async (values: any) => {
-    debugger
     await apiArticle(values, id ? "put" : "post");
     message.success(id ? "更新成功" : "提交成功");
     navigate(-1);

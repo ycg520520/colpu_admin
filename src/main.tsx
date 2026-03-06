@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2024-11-04 20:44:03
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-03-04 16:18:34
+ * @LastEditTime: 2026-03-05 14:01:20
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -13,7 +13,7 @@ import App from "@/app";
 import store from "@/store";
 import { Provider } from "react-redux";
 import i18n from "@/i18n";
-import "@ant-design/v5-patch-for-react-19"; // 解决react 19版本与antd 5版本冲突
+// import "@ant-design/v5-patch-for-react-19"; // 解决react 19版本与antd 5版本冲突
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import {

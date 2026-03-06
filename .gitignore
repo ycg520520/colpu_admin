@@ -25,3 +25,4 @@ package-lock.json
 *.sw?
 
 launched.config.json
+*.tar.gz

@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-03-21 23:33:14
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-03-04 11:49:45
+ * @LastEditTime: 2026-03-05 23:55:52
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -17,7 +17,8 @@ import { ProConfigProvider } from "@ant-design/pro-components";
 import { AliveScope } from "react-activation";
 import { createRouter } from "@/router/utils";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { generatorAllRouter, RouteType } from "@/router";
+import { generatorAllRouter } from "@/router";
+import { RouteType } from "@/router/types";
 import { useEffect, useState } from "react";
 import { getRoutes } from "./api/menus";
 import { getDict } from "@/api/dict";

@@ -2,12 +2,12 @@
  * @Author: colpu
  * @Date: 2025-07-02 08:48:54
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-17 13:38:43
+ * @LastEditTime: 2026-03-05 23:56:59
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
 import { getRoutes } from "@/api/menus";
-import { RouteType } from "@/router";
+import { RouteType } from "@/router/types";
 import { StatusEnum, Status } from "@/types";
 import { MenuDataItem } from "@ant-design/pro-components";
 import { createSlice } from "@reduxjs/toolkit";
