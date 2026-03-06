@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2026-03-01 22:33:32
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-03-06 12:05:01
+ * @LastEditTime: 2026-03-06 12:06:13
  * @
  * @Copyright (c) 2026 by colpu, All Rights Reserved.
  */
@@ -17,7 +17,7 @@ const WORKSPACE = `/var/www/${name}`;
 const command = [
   // "git fetch",
   `tar -xzf dist.tar.gz`,
-  // "touch startup.js",
+  "touch startup.js",
   `echo "deploy ${name} ${env} success"`,
   // `pm2 startOrRestart launched.config.json --env ${env}`,
   // 'pm2 save && pm2 startup'
@@ -55,13 +55,7 @@ const setDeployENV = () => {
   return map;
 };
 const LAUNCHED = {
-  apps: [
-    {
-      name,
-      script: './startup.js', // 不做启动
-      // args: 'start', // 启动参数
-    },
-  ],
+  apps: [],
   deploy: setDeployENV(),
 };
 export default LAUNCHED;
