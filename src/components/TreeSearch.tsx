@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-23 16:44:31
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-04 23:39:48
+ * @LastEditTime: 2026-03-22 21:07:46
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -78,7 +78,7 @@ const TreeSearch = forwardRef<TreeSearchRef, TreeSearchProps>((props, ref) => {
         const keyword = value.trim();
         if (keyword !== "") {
           data = filterTree(data, (item: any) =>
-            predicateFilter(item, keyword, fieldNames)
+            predicateFilter(item, keyword, fieldNames),
           );
         }
         const allKey = treeToPlan(data)
@@ -92,11 +92,11 @@ const TreeSearch = forwardRef<TreeSearchRef, TreeSearchProps>((props, ref) => {
       }
       setAutoExpandParent(true);
     },
-    [treeProps]
+    [treeProps],
   );
   const debounceChange = debounce(
     (value: string) => changeTreeData(value),
-    500
+    500,
   );
   const onChangeSearch = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = evt.target;

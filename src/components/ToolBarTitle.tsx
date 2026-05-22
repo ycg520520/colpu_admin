@@ -29,16 +29,21 @@ export default function ToolBarTitle(props: any) {
   useEffect(() => {
     setIsExpand(isExpanded);
   }, [isExpanded]);
-  const { text = "新增", ...restAddProps } = addProps || {};
-  const addBtnProps = {
-    icon: <PlusOutlined />,
+  const { text = "新增", icon: addIcon = <PlusOutlined />, ...restAddProps } =
+    addProps || {};
+  const addBtnProps: Record<string, unknown> = {
     type: "primary",
     onClick: onAdd,
     ...restAddProps,
   };
+  if (addIcon !== false && addIcon !== null) {
+    addBtnProps.icon = addIcon;
+  }
   return (
     <Space>
-      <PermissionButton buttonProps={addBtnProps}>{text}</PermissionButton>
+      <PermissionButton buttonProps={addBtnProps} permission={permissions.add}>
+        {text}
+      </PermissionButton>
       {onEdit ? (
         <PermissionButton
           buttonProps={{

@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2025-11-16 00:16:50
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-01-17 14:35:36
+ * @LastEditTime: 2026-04-23 12:21:01
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -127,8 +127,8 @@ export default function ClassifyList() {
         dataIndex: "code",
       },
       {
-        title: "类型",
-        dataIndex: "type",
+        title: "栏目类型",
+        dataIndex: "page_type",
         search: false,
         align: "center",
         width: 60,

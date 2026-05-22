@@ -124,7 +124,7 @@ const ClassifyForm = (props: any) => {
                   }}
                 />
                 <ProFormRadio.Group
-                  name="type"
+                  name="page_type"
                   label="栏目类型"
                   colProps={colProps}
                   formItemProps={formItemProps}
@@ -206,7 +206,7 @@ const ClassifyForm = (props: any) => {
                   }}
                 />
                 <ProFormDigit name="sort_order" label="排序" />
-                <ProFormTextArea name="description" label="栏目描述" />
+                <ProFormTextArea name="remark" label="栏目描述" />
               </Row>,
             ],
           },

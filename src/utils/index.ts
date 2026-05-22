@@ -296,6 +296,8 @@ export function filterValues(data: any) {
   });
   return result;
 }
+export { getImageSrc, stripImageSrc } from "./image";
+
 // 工具函数：URL→UploadFile
 export function urlToFileList(options: any = {}): UploadFile[] {
   const { url, uid = "-1", name, status = "done" } = options;
