@@ -27,9 +27,8 @@ export default function UserForm({ token }: { token: any }) {
           ),
         }}
         placeholder={t("pages.login.username.placeholder", {
-          defaultValue: "用户名: admin or manager or editor",
+          defaultValue: "请输入用户名",
         })}
-        initialValue="superadmin"
         rules={[
           {
             required: true,
@@ -41,7 +40,6 @@ export default function UserForm({ token }: { token: any }) {
       />
       <ProFormText.Password
         name="password"
-        initialValue="admin"
         fieldProps={{
           size: "large",
           prefix: (
@@ -54,13 +52,13 @@ export default function UserForm({ token }: { token: any }) {
           ),
         }}
         placeholder={t("pages.login.password.placeholder", {
-          defaultValue: "密码: admin",
+          defaultValue: "请输入密码",
         })}
         rules={[
           {
             required: true,
-            message: t("pages.login.username.required", {
-              defaultValue: "请输入密码！",
+            message: t("pages.login.password.required", {
+              defaultValue: "请输入密码",
             }),
           },
         ]}

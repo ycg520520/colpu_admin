@@ -40,6 +40,7 @@ export default {
     post: "Post Manager",
   },
   example: {
+    name: "Example",
     form: "Form Example",
     table: "Table Example",
     layout: "Child Layout",

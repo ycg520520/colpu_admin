@@ -40,6 +40,7 @@ export default {
     post: "岗位管理",
   },
   example: {
+    name: "例子",
     form: "表单示例",
     table: "表格示例",
     layout: "嵌套布局",
