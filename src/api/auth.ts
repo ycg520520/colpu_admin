@@ -1,7 +1,12 @@
 import { get, post } from "@/utils/request";
 
 /** 三方登录渠道 */
-export type OAuthProvider = "wechat" | "alipay" | "taobao" | "weibo";
+export type OAuthProvider =
+  | "wechat"
+  | "qq"
+  | "alipay"
+  | "taobao"
+  | "weibo";
 
 /** POST /api/sms/send — 发送手机登录验证码 */
 export const sendLoginSms = (mobile: string) =>

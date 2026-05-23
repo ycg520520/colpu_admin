@@ -1,6 +1,7 @@
 import {
-  AlipayOutlined,
-  TaobaoOutlined,
+  // AlipayOutlined,
+  QqOutlined,
+  // TaobaoOutlined,
   WechatOutlined,
   WeiboOutlined,
 } from "@ant-design/icons";
@@ -159,6 +160,14 @@ export default function ThirdPartyLogin({ onSuccess }: Props) {
           <WechatOutlined />
         </OAuthIconButton>
         <OAuthIconButton
+          title="QQ登录"
+          color="#12B7F5"
+          onClick={() => handleRedirectOAuth("qq")}
+        >
+          <QqOutlined />
+        </OAuthIconButton>
+        {/* 支付宝 / 淘宝登录暂未开放
+        <OAuthIconButton
           title="支付宝登录"
           color="#1677FF"
           onClick={() => handleRedirectOAuth("alipay")}
@@ -172,6 +181,7 @@ export default function ThirdPartyLogin({ onSuccess }: Props) {
         >
           <TaobaoOutlined />
         </OAuthIconButton>
+        */}
         <OAuthIconButton
           title="微博登录"
           color="#1890ff"
