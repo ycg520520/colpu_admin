@@ -1,29 +1,18 @@
 import { getUserToken } from "@/api/user";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import {
-  AlipayOutlined,
-  TaobaoOutlined,
-  WeiboOutlined,
-} from "@ant-design/icons";
-import { LoginFormPage } from "@ant-design/pro-components";
+import { LoginFormPage, ProFormInstance } from "@ant-design/pro-components";
 import { Divider, Space, Tabs, theme, message } from "antd";
 import { createStyles } from "antd-style";
-import type { CSSProperties } from "react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Navigate, useSearchParams } from "react-router";
 import UserForm from "./components/UserForm";
 import PhoneForm from "./components/PhoneForm";
+import ThirdPartyLogin from "./components/ThirdPartyLogin";
 import Lang from "@/components/Lang";
 import { useTranslation } from "react-i18next";
 import { ObjectMaps } from "@/types";
 type LoginType = "phone" | "account";
 
-const iconStyles: CSSProperties = {
-  color: "rgba(0, 0, 0, 0.2)",
-  fontSize: "18px",
-  verticalAlign: "middle",
-  cursor: "pointer",
-};
 const useStyles = createStyles(({ token }) => {
   return {
     action: {
@@ -71,14 +60,45 @@ const Page = () => {
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
   const [loginType, setLoginType] = useState<LoginType>("account");
+  const formRef = useRef<ProFormInstance>();
   const { token } = theme.useToken();
   const { styles } = useStyles();
   const { isLogin } = useAppSelector((state) => state.user);
+
+  const submitLogin = (values: Record<string, unknown>) => {
+    const payload =
+      loginType === "phone"
+        ? {
+            grant_type: "sms",
+            mobile: values.mobile,
+            code: values.captcha,
+          }
+        : {
+            grant_type: "password",
+            username: values.username,
+            password: values.password,
+          };
+    return dispatch(getUserToken(payload as ObjectMaps))
+      .then(() => {
+        message.success(
+          t("pages.login.success", { defaultMessage: "登录成功！" }),
+        );
+      })
+      .catch(() => {
+        message.error(
+          t("pages.login.failure", {
+            defaultMessage: "登录失败，请重试！",
+          }),
+        );
+      });
+  };
   if (isLogin) {
     return <Navigate to={searchParams.get("redirect") || "/"} replace />;
   }
   return (
+    <>
     <LoginFormPage
+      formRef={formRef}
       // backgroundImageUrl="https://mdn.alipayobjects.com/huamei_gcee1x/afts/img/A*y0ZTS6WLwvgAAAAAAAAAAAAADml6AQ/fmt.webp"
       logo="https://github.githubassets.com/favicons/favicon.png"
       backgroundVideoUrl="https://res.creatiai.ai/web/creatiai/stuido-landing-top-video-202509041951.webm"
@@ -131,50 +151,13 @@ const Page = () => {
               })}
             </span>
           </Divider>
-          <Space align="center" size={24}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
-                height: 40,
-                width: 40,
-                border: "1px solid " + token.colorPrimaryBorder,
-                borderRadius: "50%",
-              }}
-            >
-              <AlipayOutlined style={{ ...iconStyles, color: "#1677FF" }} />
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
-                height: 40,
-                width: 40,
-                border: "1px solid " + token.colorPrimaryBorder,
-                borderRadius: "50%",
-              }}
-            >
-              <TaobaoOutlined style={{ ...iconStyles, color: "#FF6A10" }} />
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
-                height: 40,
-                width: 40,
-                border: "1px solid " + token.colorPrimaryBorder,
-                borderRadius: "50%",
-              }}
-            >
-              <WeiboOutlined style={{ ...iconStyles, color: "#1890ff" }} />
-            </div>
-          </Space>
+          <ThirdPartyLogin
+            onSuccess={() =>
+              message.success(
+                t("pages.login.success", { defaultMessage: "登录成功！" }),
+              )
+            }
+          />
         </div>
       }
       submitter={{
@@ -182,23 +165,7 @@ const Page = () => {
           submitText: t("pages.login.submit", { defaultValue: "去登录" }),
         },
       }}
-      onFinish={(values) => {
-        dispatch(getUserToken(values as ObjectMaps))
-          .then(() => {
-            message.success(
-              t("pages.login.success", {
-                defaultMessage: "登录成功！",
-              }),
-            );
-          })
-          .catch(() => {
-            message.error(
-              t("pages.login.failure", {
-                defaultMessage: "登录失败，请重试！",
-              }),
-            );
-          });
-      }}
+      onFinish={submitLogin}
     >
       <Tabs
         centered
@@ -217,7 +184,12 @@ const Page = () => {
               defaultValue: "手机号登录",
             }),
             key: "phone",
-            children: <PhoneForm token={token} />,
+            children: (
+              <PhoneForm
+                token={token}
+                getMobile={() => formRef.current?.getFieldValue("mobile")}
+              />
+            ),
           },
         ]}
       ></Tabs>
@@ -229,6 +201,7 @@ const Page = () => {
         </a>
       </div>
     </LoginFormPage>
+    </>
   );
 };
 

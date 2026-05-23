@@ -10,7 +10,14 @@ import { LockOutlined, MobileOutlined } from "@ant-design/icons";
 import { ProFormCaptcha, ProFormText } from "@ant-design/pro-components";
 import { message } from "antd";
 import { useTranslation } from "react-i18next";
-export default function UserForm({ token }: { token: any }) {
+import { sendLoginSms } from "@/api/auth";
+
+type PhoneFormProps = {
+  token: any;
+  getMobile?: () => string | undefined;
+};
+
+export default function PhoneForm({ token, getMobile }: PhoneFormProps) {
   const { t } = useTranslation();
   return (
     <>
@@ -82,7 +89,22 @@ export default function UserForm({ token }: { token: any }) {
           },
         ]}
         onGetCaptcha={async () => {
-          message.success("获取验证码成功！验证码为：1234");
+          const mobile = getMobile?.();
+          if (!mobile || !/^1\d{10}$/.test(mobile)) {
+            message.warning("请先输入正确的手机号");
+            throw new Error("invalid mobile");
+          }
+          try {
+            const res: any = await sendLoginSms(mobile);
+            const tip =
+              res?.mock_code != null
+                ? `验证码已发送（开发环境：${res.mock_code}）`
+                : "验证码已发送";
+            message.success(tip);
+          } catch (e: any) {
+            message.error(e?.message || "发送失败");
+            throw e;
+          }
         }}
       />
     </>
