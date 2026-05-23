@@ -63,12 +63,6 @@ export default defineConfig({
     //   mockPath: "./mock/router",
     //   logger: true,
     // }),
-    visualizer({
-      open: true,
-      filename: "dist/stats.html",
-      gzipSize: true,
-      brotliSize: true,
-    }),
   ],
   build: {
     outDir: "dist", // 指定输出目录
@@ -78,6 +72,14 @@ export default defineConfig({
     minify: "esbuild", // 代码压缩工具，可选 'terser' 或 'esbuild'
     chunkSizeWarningLimit: 500, // 调整块大小警告限制 (KB)
     rollupOptions: {
+      plugins: [
+        visualizer({
+          open: true,
+          filename: "dist/stats.html",
+          gzipSize: true,
+          brotliSize: true,
+        }) as import("vite").PluginOption,
+      ],
       output: {
         entryFileNames: "assets/js/[name]-[hash].js",
         assetFileNames: "assets/[ext]/[name]-[hash].[ext]",

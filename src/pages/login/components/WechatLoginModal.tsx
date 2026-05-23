@@ -17,12 +17,12 @@ export default function WechatLoginModal({ open, onClose, onSuccess }: Props) {
   const [qrImage, setQrImage] = useState("");
   const [error, setError] = useState("");
   const stateRef = useRef("");
-  const timerRef = useRef<ReturnType<typeof setInterval>>();
+  const timerRef = useRef<ReturnType<typeof setInterval>>(null);
 
   const stopPoll = useCallback(() => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
-      timerRef.current = undefined;
+      timerRef.current = null;
     }
   }, []);
 

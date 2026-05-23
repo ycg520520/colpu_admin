@@ -7,7 +7,11 @@ import {
 import { message, Space } from "antd";
 import type { CSSProperties, ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { startOAuthLogin, pollOAuthLogin, type OAuthProvider } from "@/api/auth";
+import {
+  startOAuthLogin,
+  pollOAuthLogin,
+  type OAuthProvider,
+} from "@/api/auth";
 import { useAppDispatch } from "@/store/hooks";
 import { setUserToken } from "@/store/slices/user";
 import type { UserToken } from "@/types";
@@ -64,12 +68,12 @@ export default function ThirdPartyLogin({ onSuccess }: Props) {
   const dispatch = useAppDispatch();
   const [wechatOpen, setWechatOpen] = useState(false);
   const stateRef = useRef("");
-  const timerRef = useRef<ReturnType<typeof setInterval>>();
+  const timerRef = useRef<ReturnType<typeof setInterval>>(null);
 
   const stopPoll = useCallback(() => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
-      timerRef.current = undefined;
+      timerRef.current = null;
     }
   }, []);
 

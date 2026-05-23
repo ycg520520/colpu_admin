@@ -6,7 +6,7 @@
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
-import { Card, Modal, Space } from "antd";
+import { Card, Modal, Space, type MenuProps } from "antd";
 import { useRef, useState } from "react";
 import "@/assets/styles/table.scss";
 import {
@@ -31,8 +31,9 @@ import useTableColor from "@/hooks/useTableColor";
 import ActionRender from "@/components/ActionRender";
 import { useAppSelector } from "@/store/hooks";
 import { renderStatus } from "@/constants/public";
-import { MenuInfo } from "rc-menu/lib/interface";
 import GivePermForm from "./components/give_perm_form";
+
+type MenuInfo = Parameters<NonNullable<MenuProps["onClick"]>>[0];
 
 export default function PermissionList() {
   const [disabled, setDisabled] = useState(true);

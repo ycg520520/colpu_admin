@@ -1,7 +1,17 @@
+/*
+ * @Author: colpu
+ * @Date: 2026-05-22 13:14:46
+ * @LastEditors: colpu ycg520520@qq.com
+ * @LastEditTime: 2026-05-23 14:30:49
+ *
+ * Copyright (c) 2026 by colpu, All Rights Reserved.
+ */
 import { jsonToText, textToJson } from "../classify/form_utils";
 import { stripImageSrc } from "@/utils/image";
 
-export function toExtendFormValues(record: Record<string, unknown> = {}) {
+export function toExtendFormValues(
+  record: Record<string, unknown> = {},
+): Record<string, unknown> {
   return {
     ...record,
     is_scale: !!record.is_scale,
@@ -17,22 +27,15 @@ export function fromExtendFormValues(values: Record<string, unknown>) {
   delete payload.classify_name;
   delete payload.classify_model;
   if ("example_right_text" in values) {
-    payload.example_right = textToJson(
-      values.example_right_text as string,
-      [],
-    );
+    payload.example_right = textToJson(values.example_right_text as string, []);
   }
   if ("example_error_text" in values) {
-    payload.example_error = textToJson(
-      values.example_error_text as string,
-      [],
-    );
+    payload.example_error = textToJson(values.example_error_text as string, []);
   }
   const pickUrl = (files: any) => {
     const f = files?.[0];
     if (!f) return "";
-    const raw =
-      typeof f === "string" ? f : f?.url || f?.response?.url || "";
+    const raw = typeof f === "string" ? f : f?.url || f?.response?.url || "";
     return stripImageSrc(raw);
   };
   if (payload.src_files) {

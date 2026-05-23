@@ -2,7 +2,7 @@
  * @Author: colpu
  * @Date: 2026-05-22 10:53:00
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2026-05-22 12:03:55
+ * @LastEditTime: 2026-05-23 14:31:44
  *
  * Copyright (c) 2026 by colpu, All Rights Reserved.
  */
@@ -15,7 +15,7 @@ import {
   ProFormInstance,
 } from "@ant-design/pro-components";
 import { useEffect, useRef, useState } from "react";
-import { Card, Col, InputNumber, message, Space } from "antd";
+import { Card, Col, message, Space } from "antd";
 import { formItemCol, formItemProps } from "@/constants/form";
 import { getAiAdSettings, updateAiAdSettings } from "@/api/ai/ads";
 import { useAppSelector } from "@/store/hooks";

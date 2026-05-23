@@ -1,7 +1,15 @@
+/*
+ * @Author: colpu
+ * @Date: 2026-05-22 12:09:56
+ * @LastEditors: colpu ycg520520@qq.com
+ * @LastEditTime: 2026-05-23 14:31:58
+ *
+ * Copyright (c) 2026 by colpu, All Rights Reserved.
+ */
 import { jsonToText, textToJson } from "../classify/form_utils";
 import { stripImageSrc } from "@/utils/image";
 
-export function toTemplateFormValues(record: Record<string, unknown> = {}) {
+export function toTemplateFormValues(record: Record<string, unknown> = {}):Record<string, unknown> {
   return {
     ...record,
     classify_ids: record.classify_ids || [],

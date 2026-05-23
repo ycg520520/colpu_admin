@@ -1,7 +1,7 @@
 import { getUserToken } from "@/api/user";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { LoginFormPage, ProFormInstance } from "@ant-design/pro-components";
-import { Divider, Space, Tabs, theme, message } from "antd";
+import { Divider, Tabs, theme, message } from "antd";
 import { createStyles } from "antd-style";
 import { useRef, useState } from "react";
 import { Navigate, useSearchParams } from "react-router";
@@ -60,7 +60,7 @@ const Page = () => {
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
   const [loginType, setLoginType] = useState<LoginType>("account");
-  const formRef = useRef<ProFormInstance>();
+  const formRef = useRef<ProFormInstance | undefined>(undefined);
   const { token } = theme.useToken();
   const { styles } = useStyles();
   const { isLogin } = useAppSelector((state) => state.user);

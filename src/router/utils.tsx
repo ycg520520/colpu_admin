@@ -226,11 +226,7 @@ export function routerToTree(data: RouteType[]) {
  * @returns
  */
 export function createRouter(routes: RouteObject[]) {
-  return createBrowserRouter(routes, {
-    future: {
-      v7_relativeSplatPath: true,
-    },
-  });
+  return createBrowserRouter(routes);
 }
 
 export function flatMenu(menus: any[], fatherPath?: string): any[] {

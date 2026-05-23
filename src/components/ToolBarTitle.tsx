@@ -1,13 +1,12 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Space } from "antd";
-import { useEffect, useState } from "react";
+import { Button, Space, type ButtonProps } from "antd";
 import { PermissionButton } from "./Permission";
 
 /*
  * @Author: colpu
  * @Date: 2025-11-14 12:24:53
  * @LastEditors: colpu ycg520520@qq.com
- * @LastEditTime: 2025-12-02 16:16:14
+ * @LastEditTime: 2026-05-23 14:26:09
  *
  * Copyright (c) 2025 by colpu, All Rights Reserved.
  */
@@ -20,18 +19,17 @@ export default function ToolBarTitle(props: any) {
     onExport,
     onClose,
     onExpand,
-    isExpanded,
+    isExpanded = false,
     addProps,
     buttons = [],
     permissions = {},
   } = props;
-  const [isExpand, setIsExpand] = useState(false); // 是否展开
-  useEffect(() => {
-    setIsExpand(isExpanded);
-  }, [isExpanded]);
-  const { text = "新增", icon: addIcon = <PlusOutlined />, ...restAddProps } =
-    addProps || {};
-  const addBtnProps: Record<string, unknown> = {
+  const {
+    text = "新增",
+    icon: addIcon = <PlusOutlined />,
+    ...restAddProps
+  } = addProps || {};
+  const addBtnProps: ButtonProps = {
     type: "primary",
     onClick: onAdd,
     ...restAddProps,
@@ -93,11 +91,10 @@ export default function ToolBarTitle(props: any) {
           color="cyan"
           variant="dashed"
           onClick={(e) => {
-            setIsExpand(!isExpand);
-            onExpand(e, isExpand);
+            onExpand(e, isExpanded);
           }}
         >
-          {isExpand ? "收起" : "展开"}
+          {isExpanded ? "收起" : "展开"}
         </Button>
       ) : null}
     </Space>

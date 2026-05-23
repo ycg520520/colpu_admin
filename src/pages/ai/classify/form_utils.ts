@@ -14,7 +14,9 @@ export function textToJson(text: string, fallback: unknown) {
   return JSON.parse(s);
 }
 
-export function toFormValues(record: Record<string, unknown> = {}) {
+export function toFormValues(
+  record: Record<string, unknown> = {},
+): Record<string, unknown> {
   return {
     ...record,
     template_ids: record.template_ids || [],
